@@ -1,5 +1,5 @@
-import HomePage from "./page/home";
+import CircularRotator from "./page/CircularRotator/CircularRotator";
 
 export default function Home() {
-  return <HomePage />;
+  return <CircularRotator  itemSpacing={24} />;
 }
