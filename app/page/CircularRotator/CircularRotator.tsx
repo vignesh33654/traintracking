@@ -77,7 +77,7 @@ export default function CircularRotator({
     >
       <div ref={scrollRef} className="relative" style={{ height: `${totalScrollHeight}px` }}>
         <div className="sticky top-0 w-full h-screen flex items-center justify-center">
-          <div className="relative w-[390px] h-full bg-white">
+          <div className="relative w-[390px] h-full bg-bg-0">
             {/* <div className="absolute border border-[#f4f4f4] border-solid h-[870px] left-1/2 rounded-[334px] top-[-158px] -translate-x-1/2 w-[250px]" />
             <div className="absolute border border-[#f4f4f4] border-solid h-[920px] left-1/2 rounded-[334px] top-[-178px] -translate-x-1/2 w-[295px]" /> */}
             
