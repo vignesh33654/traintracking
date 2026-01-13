@@ -1,5 +1,5 @@
-import CircularRotator from "./components/ui/CircularRotator";
+import { TrainTest } from "./components/TrainTest";
 
 export default function Home() {
-  return <CircularRotator />;
+  return <TrainTest />;
 }
