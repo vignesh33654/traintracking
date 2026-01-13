@@ -1,5 +1,5 @@
-import HomePage from "./page/home";
+import CircularRotator from "./components/ui/CircularRotator";
 
 export default function Home() {
-  return <HomePage />;
+  return <CircularRotator />;
 }
