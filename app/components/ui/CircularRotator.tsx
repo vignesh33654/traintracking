@@ -65,7 +65,7 @@ export default function CircularRotator({
     if (itemSpacing !== undefined) {
       return calculateItemCountFromSpacing(itemSpacing);
     }
-    return 140;
+    return 100;
   }, [propItemCount, stationCount, itemsPerSegment, itemSpacing]);
 
   const scrollItemSpacing = 24;
@@ -81,8 +81,8 @@ export default function CircularRotator({
       <div ref={scrollRef} className={cn("relative")} style={{ height: `${totalScrollHeight}px` }}>
         <div className={cn("sticky top-0 w-full h-screen flex items-center justify-center")}>
           <div className={cn("relative w-[360px] h-full bg-bg-0")}>
-            {/* <div className="absolute border border-[#f4f4f4] border-solid h-[870px] left-1/2 rounded-[334px] top-[-158px] -translate-x-1/2 w-[250px]" />
-            <div className="absolute border border-[#f4f4f4] border-solid h-[920px] left-1/2 rounded-[334px] top-[-178px] -translate-x-1/2 w-[295px]" /> */}
+            <div className="absolute border border-bg-1 border-solid h-[744px] left-1/2 rounded-[334px] top-[-158px] -translate-x-1/2 w-[254px]" />
+            <div className="absolute border border-bg-1 border-solid h-[792px] left-1/2 rounded-[334px] top-[-178px] -translate-x-1/2 w-[306px]" />
             
             {Array.from({ length: itemCount }).map((_, index) => (
               <TrackItem
