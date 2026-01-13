@@ -11,13 +11,13 @@ interface TrackConfig {
 }
 
 export const TRACK_CONFIG: TrackConfig = {
-  leftRailX: 61,
-  rightRailX: 329,
+  leftRailX: 41,
+  rightRailX: 320,
   railTop: 10,
-  arcStartY: 600,
-  arcCenterX: 195,
-  arcCenterY: 600,
-  arcRadius: 133,
+  arcStartY: 460,
+  arcCenterX: 180,
+  arcCenterY: 460,
+  arcRadius: 139,
 };
 
 export function calculateItemCount(stationCount: number, itemsPerSegment: number = 5): number {
