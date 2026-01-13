@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useMemo } from "react";
 import PillItem from "./PillItem";
-import { getPositionOnPath, TRACK_CONFIG, calculateItemCount, calculateItemCountFromSpacing } from "./utils";
+import { getPositionOnPath, TRACK_CONFIG, calculateItemCount, calculateItemCountFromSpacing } from "../../utils/utils";
 
 interface CircularRotatorProps {
   stationCount?: number;
