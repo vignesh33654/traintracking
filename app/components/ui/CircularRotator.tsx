@@ -3,7 +3,8 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useMemo } from "react";
 import PillItem from "./PillItem";
-import { getPositionOnPath, TRACK_CONFIG, calculateItemCount, calculateItemCountFromSpacing } from "../../utils/utils";
+import { cn } from "../../utils/utils";
+import { getPositionOnPath, TRACK_CONFIG, calculateItemCount, calculateItemCountFromSpacing } from "../../utils/circular-rotator-utils";
 
 interface CircularRotatorProps {
   stationCount?: number;
@@ -28,7 +29,7 @@ function TrackItem({ index, itemCount, scrollYProgress }: { index: number; itemC
 
   return (
     <motion.div
-      className="absolute left-0 top-0"
+      className={cn("absolute left-0 top-0")}
       style={{
         transform: transform,
         transformOrigin: "center center",
@@ -64,20 +65,25 @@ export default function CircularRotator({
     if (itemSpacing !== undefined) {
       return calculateItemCountFromSpacing(itemSpacing);
     }
-    return 80;
+    return 140;
   }, [propItemCount, stationCount, itemsPerSegment, itemSpacing]);
 
   const scrollItemSpacing = 24;
   const totalScrollHeight = itemCount * scrollItemSpacing;
+  console.log("totalScrollHeight", totalScrollHeight);
+  console.log("itemCount", itemCount);
+  console.log("scrollItemSpacing", scrollItemSpacing);
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-screen overflow-y-scroll overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      className={cn(
+        "relative w-full h-screen overflow-y-scroll overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      )}
     >
-      <div ref={scrollRef} className="relative" style={{ height: `${totalScrollHeight}px` }}>
-        <div className="sticky top-0 w-full h-screen flex items-center justify-center">
-          <div className="relative w-[390px] h-full bg-bg-0">
+      <div ref={scrollRef} className={cn("relative")} style={{ height: `${totalScrollHeight}px` }}>
+        <div className={cn("sticky top-0 w-full h-screen flex items-center justify-center")}>
+          <div className={cn("relative w-[390px] h-full bg-bg-0")}>
             {/* <div className="absolute border border-[#f4f4f4] border-solid h-[870px] left-1/2 rounded-[334px] top-[-158px] -translate-x-1/2 w-[250px]" />
             <div className="absolute border border-[#f4f4f4] border-solid h-[920px] left-1/2 rounded-[334px] top-[-178px] -translate-x-1/2 w-[295px]" /> */}
             
