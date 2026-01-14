@@ -3,13 +3,12 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useMemo } from "react";
 import PillItem from "./PillItem";
-import { getPositionOnPath, TRACK_CONFIG, calculateItemCount, calculateItemCountFromSpacing } from "../../utils/utils";
+import { cn } from "../../utils/utils";
+import { getPositionOnPath, TRACK_CONFIG } from "../../utils/circular-rotator-utils";
+import { useTrainData } from "../../hooks/useTrainData";
 
 interface CircularRotatorProps {
-  stationCount?: number;
-  itemsPerSegment?: number;
-  itemSpacing?: number;
-  itemCount?: number;
+  trainNumber: string;
 }
 
 function TrackItem({ index, itemCount, scrollYProgress }: { index: number; itemCount: number; scrollYProgress: any }) {
@@ -28,7 +27,7 @@ function TrackItem({ index, itemCount, scrollYProgress }: { index: number; itemC
 
   return (
     <motion.div
-      className="absolute left-0 top-0"
+      className={cn("absolute left-0 top-0")}
       style={{
         transform: transform,
         transformOrigin: "center center",
@@ -40,14 +39,11 @@ function TrackItem({ index, itemCount, scrollYProgress }: { index: number; itemC
   );
 }
 
-export default function CircularRotator({ 
-  stationCount,
-  itemsPerSegment = 5,
-  itemSpacing,
-  itemCount: propItemCount,
-}: CircularRotatorProps) {
+export default function CircularRotator({ trainNumber }: CircularRotatorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const { data: trainData } = useTrainData(trainNumber);
 
   const { scrollYProgress } = useScroll({
     container: containerRef,
@@ -55,17 +51,8 @@ export default function CircularRotator({
   });
 
   const itemCount = useMemo(() => {
-    if (propItemCount !== undefined) {
-      return propItemCount;
-    }
-    if (stationCount !== undefined) {
-      return calculateItemCount(stationCount, itemsPerSegment);
-    }
-    if (itemSpacing !== undefined) {
-      return calculateItemCountFromSpacing(itemSpacing);
-    }
-    return 80;
-  }, [propItemCount, stationCount, itemsPerSegment, itemSpacing]);
+    return trainData?.route?.length || 100;
+  }, [trainData]);
 
   const scrollItemSpacing = 24;
   const totalScrollHeight = itemCount * scrollItemSpacing;
@@ -73,13 +60,15 @@ export default function CircularRotator({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-screen overflow-y-scroll overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      className={cn(
+        "relative w-full h-screen overflow-y-scroll overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      )}
     >
-      <div ref={scrollRef} className="relative" style={{ height: `${totalScrollHeight}px` }}>
-        <div className="sticky top-0 w-full h-screen flex items-center justify-center">
-          <div className="relative w-[390px] h-full bg-bg-0">
-            {/* <div className="absolute border border-[#f4f4f4] border-solid h-[870px] left-1/2 rounded-[334px] top-[-158px] -translate-x-1/2 w-[250px]" />
-            <div className="absolute border border-[#f4f4f4] border-solid h-[920px] left-1/2 rounded-[334px] top-[-178px] -translate-x-1/2 w-[295px]" /> */}
+      <div ref={scrollRef} className={cn("relative")} style={{ height: `${totalScrollHeight}px` }}>
+        <div className={cn("sticky top-0 w-full h-screen flex items-center justify-center")}>
+          <div className={cn("relative w-[360px] h-full bg-bg-0")}>
+            <div className="absolute border border-bg-1 border-solid h-[744px] left-1/2 rounded-[334px] top-[-158px] -translate-x-1/2 w-[254px]" />
+            <div className="absolute border border-bg-1 border-solid h-[792px] left-1/2 rounded-[334px] top-[-178px] -translate-x-1/2 w-[306px]" />
             
             {Array.from({ length: itemCount }).map((_, index) => (
               <TrackItem

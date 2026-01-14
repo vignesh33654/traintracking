@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 /* -------------------------------
    Theme Configuration
 --------------------------------*/
@@ -29,6 +30,7 @@
   --spacing-pill-width: 36px;
   --spacing-pill-height: 6px;
   --spacing-pill-dot: 2px;
+  
 }
 
 /* -------------------------------
@@ -41,6 +43,7 @@
     --text-h2: 24px;
     --text-h3: 20px;
     --text-body-16: 16px;
+
   }
 
   html,
