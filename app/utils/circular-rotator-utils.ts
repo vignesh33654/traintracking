@@ -22,6 +22,7 @@ export const TRACK_CONFIG: TrackConfig = {
 
 export function calculateItemCount(stationCount: number, itemsPerSegment: number = 5): number {
   return stationCount * itemsPerSegment;
+  console.log(calculateItemCount);  
 }
 
 export function getPathTotalLength(config: TrackConfig = TRACK_CONFIG): number {
@@ -36,8 +37,9 @@ export function calculateItemCountFromSpacing(spacing: number, config: TrackConf
   return Math.floor(totalLength / spacing);
 }
 
-function lerp(a: number, b: number, t: number): number {
-  return a + (b - a) * t;
+// Interpolates between start and end by amount (0-1)
+function simpleLinearInterpolation(start: number, end: number, amount: number): number {
+  return start + (end - start) * amount;
 }
 
 export interface PathPosition {
@@ -46,45 +48,53 @@ export interface PathPosition {
   rotation: number;
 }
 
-export function getPositionOnPath(t: number, config: TrackConfig = TRACK_CONFIG): PathPosition {
+
+// Calculates item position (x, y, rotation) on the track based on progress (0-1)
+// Track: Left Straight -> Bottom Curve -> Right Straight
+export function getPositionOnPath(progress: number, config: TrackConfig = TRACK_CONFIG): PathPosition {
   const { leftRailX, rightRailX, railTop, arcStartY, arcCenterX, arcCenterY, arcRadius } = config;
   
-  const leftRailLength = arcStartY - railTop;
-  const rightRailLength = arcStartY - railTop;
-  const arcLength = Math.PI * arcRadius;
-  const totalLength = leftRailLength + arcLength + rightRailLength;
+  // Track segment lengths
+  const leftStraightLineLength = arcStartY - railTop;
+  const rightStraightLineLength = arcStartY - railTop;
+  const curvedPartLength = Math.PI * arcRadius;
+  const totalTrackLength = leftStraightLineLength + curvedPartLength + rightStraightLineLength;
   
-  const leftRailEnd = leftRailLength / totalLength;
-  const rightRailStart = (leftRailLength + arcLength) / totalLength;
+  // Progress thresholds
+  const endOfLeftLine = leftStraightLineLength / totalTrackLength;
+  const startOfRightLine = (leftStraightLineLength + curvedPartLength) / totalTrackLength;
   
-  if (t < leftRailEnd) {
-    const railT = t / leftRailEnd;
+  // Case 1: Left straight line
+  if (progress < endOfLeftLine) {
+    const lineProgress = progress / endOfLeftLine;
     return {
       x: leftRailX,
-      y: lerp(railTop, arcStartY, railT),
+      y: simpleLinearInterpolation(railTop, arcStartY, lineProgress),
       rotation: 0,
     };
-  } else if (t < rightRailStart) {
-    const arcT = (t - leftRailEnd) / (rightRailStart - leftRailEnd);
-    const angle = 180 - arcT * 180;
-    const angleRad = angle * DEG2RAD;
+  } 
+  // Case 2: Bottom curve
+  else if (progress < startOfRightLine) {
+    const curveProgress = (progress - endOfLeftLine) / (startOfRightLine - endOfLeftLine);
     
-    const x = arcCenterX + arcRadius * Math.cos(angleRad);
-    const y = arcCenterY + arcRadius * Math.sin(angleRad);
+    // 180 to 0 degrees
+    const angle = 180 - curveProgress * 180;
+    const angleInRadians = angle * DEG2RAD;
     
-    let rotation: number;
-    if (angle >= 180) {
-      rotation = 180 - angle;
-    } else {
-      rotation = angle;
-    }
+    const x = arcCenterX + arcRadius * Math.cos(angleInRadians);
+    const y = arcCenterY + arcRadius * Math.sin(angleInRadians);
+    
+    // Rotate item to match curve
+    const rotation = angle >= 180 ? 180 - angle : angle;
     
     return { x, y, rotation };
-  } else {
-    const railT = (t - rightRailStart) / (1 - rightRailStart);
+  } 
+  // Case 3: Right straight line
+  else {
+    const lineProgress = (progress - startOfRightLine) / (1 - startOfRightLine);
     return {
       x: rightRailX,
-      y: lerp(arcStartY, railTop, railT),
+      y: simpleLinearInterpolation(arcStartY, railTop, lineProgress),
       rotation: 0,
     };
   }
