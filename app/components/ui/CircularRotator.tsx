@@ -4,13 +4,11 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useMemo } from "react";
 import PillItem from "./PillItem";
 import { cn } from "../../utils/utils";
-import { getPositionOnPath, TRACK_CONFIG, calculateItemCount, calculateItemCountFromSpacing } from "../../utils/circular-rotator-utils";
+import { getPositionOnPath, TRACK_CONFIG } from "../../utils/circular-rotator-utils";
+import { useTrainData } from "../../hooks/useTrainData";
 
 interface CircularRotatorProps {
-  stationCount?: number;
-  itemsPerSegment?: number;
-  itemSpacing?: number;
-  itemCount?: number;
+  trainNumber: string;
 }
 
 function TrackItem({ index, itemCount, scrollYProgress }: { index: number; itemCount: number; scrollYProgress: any }) {
@@ -41,14 +39,11 @@ function TrackItem({ index, itemCount, scrollYProgress }: { index: number; itemC
   );
 }
 
-export default function CircularRotator({ 
-  stationCount,
-  itemsPerSegment = 5,
-  itemSpacing,
-  itemCount: propItemCount,
-}: CircularRotatorProps) {
+export default function CircularRotator({ trainNumber }: CircularRotatorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const { data: trainData } = useTrainData(trainNumber);
 
   const { scrollYProgress } = useScroll({
     container: containerRef,
@@ -56,17 +51,8 @@ export default function CircularRotator({
   });
 
   const itemCount = useMemo(() => {
-    if (propItemCount !== undefined) {
-      return propItemCount;
-    }
-    if (stationCount !== undefined) {
-      return calculateItemCount(stationCount, itemsPerSegment);
-    }
-    if (itemSpacing !== undefined) {
-      return calculateItemCountFromSpacing(itemSpacing);
-    }
-    return 100;
-  }, [propItemCount, stationCount, itemsPerSegment, itemSpacing]);
+    return trainData?.route?.length || 100;
+  }, [trainData]);
 
   const scrollItemSpacing = 24;
   const totalScrollHeight = itemCount * scrollItemSpacing;

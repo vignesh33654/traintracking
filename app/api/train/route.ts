@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { API_CONFIG } from '@/app/config/api.config';
-import { getMockTrainData } from '@/app/api/mockTrainData';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -14,22 +13,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (API_CONFIG.useMockAPI) {
-    const mockData = getMockTrainData(trainNumber);
-    if (mockData) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return NextResponse.json(mockData);
-    }
-    return NextResponse.json(
-      { message: 'Train not found in mock data' },
-      { status: 404 }
-    );
-  }
-
-  let apiUrl = `${API_CONFIG.baseURL}/trains/${trainNumber}`;
-  if (journeyDate) {
-    apiUrl += `?journeyDate=${journeyDate}`;
-  }
+  const apiUrl = `${API_CONFIG.baseURL}/trains/${trainNumber}${journeyDate ? `?journeyDate=${journeyDate}` : ''}`;
 
   try {
     const response = await fetch(apiUrl, {
@@ -39,27 +23,19 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const responseText = await response.text();
-
     if (!response.ok) {
-      let errorData = {};
-      try {
-        errorData = JSON.parse(responseText);
-      } catch {}
+      const errorData = await response.json().catch(() => ({}));
       return NextResponse.json(
         { 
-          message: (errorData as { message?: string }).message || `API Error: ${response.status}`, 
+          message: errorData.message || `API Error: ${response.status}`, 
           status: response.status,
         },
         { status: response.status }
       );
     }
 
-    const responseData = JSON.parse(responseText);
-    if (responseData.success && responseData.data) {
-      return NextResponse.json(responseData.data);
-    }
-    return NextResponse.json(responseData);
+    const responseData = await response.json();
+    return NextResponse.json(responseData.success ? responseData.data : responseData);
   } catch (error) {
     return NextResponse.json(
       { message: 'Failed to fetch train data', status: 500 },

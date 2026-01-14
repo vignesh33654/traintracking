@@ -1,5 +1,5 @@
-import CircularRotator from "./components/ui/CircularRotator";
+import TrainTrackingPage from "./page/train-tracking/page";
 
 export default function Home() {
-  return <CircularRotator stationCount={40} itemsPerSegment={2} itemSpacing={24} />;
+  return <TrainTrackingPage />;
 }
