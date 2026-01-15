@@ -38,9 +38,9 @@ export default function PillItem({
 
       {isActualStation && (
         <div
-          className="absolute left-1/2  top-4.5"
+          className="absolute left-1.5 top-2"
           style={{
-            transform: `translate(-50%, -50%))`,
+            transform: `translate(-50%, -50%)) rotate(${rotation}deg)`,
             transformOrigin: "center",
             width: "24px",
             height: "24px",

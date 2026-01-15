@@ -7,6 +7,7 @@ import { useTrainData } from "../../hooks/useTrainData";
 import { useTrainScroll } from "../../hooks/useTrainScroll";
 import { calculatePillProgress } from "../../utils/train-scroll-calculator";
 import { useNativeScroll } from "../../hooks/useNativeScroll";
+import { useScrollSound } from "../../hooks/useScrollSound";
 
 const TRACK_CONTAINER_WIDTH = 360;
 const INNER_TRACK_CONFIG = {
@@ -113,6 +114,8 @@ export default function CircularRotator({
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollProgress = useNativeScroll(scrollRef);
   const [isMounted, setIsMounted] = useState(false);
+  
+  useScrollSound();
 
   const { data: trainData } = useTrainData(trainNumber);
 
