@@ -20,9 +20,8 @@ export const TRACK_CONFIG: TrackConfig = {
   arcRadius: 139,
 };
 
-export function calculateItemCount(stationCount: number, itemsPerSegment: number = 5): number {
+export function calculateItemCount(stationCount: number, itemsPerSegment: number = 1 ): number {
   return stationCount * itemsPerSegment;
-  console.log(calculateItemCount);  
 }
 
 export function getPathTotalLength(config: TrackConfig = TRACK_CONFIG): number {
@@ -36,18 +35,17 @@ export function calculateItemCountFromSpacing(spacing: number, config: TrackConf
   const totalLength = getPathTotalLength(config);
   return Math.floor(totalLength / spacing);
 }
-
 // Interpolates between start and end by amount (0-1)
 function simpleLinearInterpolation(start: number, end: number, amount: number): number {
   return start + (end - start) * amount;
 }
+
 
 export interface PathPosition {
   x: number;
   y: number;
   rotation: number;
 }
-
 
 // Calculates item position (x, y, rotation) on the track based on progress (0-1)
 // Track: Left Straight -> Bottom Curve -> Right Straight
@@ -99,4 +97,5 @@ export function getPositionOnPath(progress: number, config: TrackConfig = TRACK_
     };
   }
 }
+
 
