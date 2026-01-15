@@ -6,8 +6,6 @@ import { getPositionOnPath, TRACK_CONFIG } from "../../utils/circular-rotator-ut
 import { useTrainData } from "../../hooks/useTrainData";
 import { useTrainScroll } from "../../hooks/useTrainScroll";
 import { calculatePillProgress } from "../../utils/train-scroll-calculator";
-import { useStationToggle } from "../../hooks/useStationToggle";
-import { categorizeStations, calculatePillCount, getPillStation, type PillStationInfo } from "../../utils/station-filter";
 import { useNativeScroll } from "../../hooks/useNativeScroll";
 
 const TRACK_CONTAINER_WIDTH = 360;
@@ -37,8 +35,6 @@ interface TrackItemProps {
   scrollProgress: number;
   stationName: string;
   isActualStation: boolean;
-  isHalt: boolean;
-  onDoubleClick: () => void;
 }
 
 // Individual pill that animates along the U-shaped track based on scroll
@@ -48,9 +44,7 @@ function TrackItem({
   scrollRange, 
   scrollProgress, 
   stationName, 
-  isActualStation, 
-  isHalt, 
-  onDoubleClick 
+  isActualStation
 }: TrackItemProps) {
   const { x, y, rotation, isVisible } = useMemo(() => {
     const pillProgress = calculatePillProgress(index, scrollProgress, gapRatio, scrollRange);
@@ -69,18 +63,18 @@ function TrackItem({
 
   return (
     <div
-      className="absolute left-0 top-0"
+      className="absolute left-0 top-0 hover:z-50"
       style={{
         transform,
         transformOrigin: "center center",
         opacity,
+        zIndex: isActualStation ? 1 : 0,
       }}
     >
       <PillItem 
         stationName={stationName}
         isActualStation={isActualStation}
-        isHalt={isHalt}
-        onDoubleClick={onDoubleClick}
+        rotation={rotation}
       />
     </div>
   );
@@ -113,42 +107,44 @@ function TrackRails() {
 
 export default function CircularRotator({ 
   trainNumber, 
-  pillGap = 24, 
-  pillsPerStation = 4
+  pillGap = 28, 
+  pillsPerStation = 12
 }: CircularRotatorProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollProgress = useNativeScroll(scrollRef);
   const [isMounted, setIsMounted] = useState(false);
 
   const { data: trainData } = useTrainData(trainNumber);
-  const { showAllStations, toggleStations } = useStationToggle();
 
-  const { haltStations, nonHaltStations } = useMemo(
-    () => categorizeStations(trainData?.route),
+  const stations = useMemo(
+    () => trainData?.route || [],
     [trainData?.route]
   );
   
   const itemCount = useMemo(
-    () => calculatePillCount(haltStations.length, nonHaltStations.length, pillsPerStation, showAllStations),
-    [haltStations.length, nonHaltStations.length, pillsPerStation, showAllStations]
+    () => stations.length * pillsPerStation,
+    [stations.length, pillsPerStation]
   );
   
   const { gapRatio, scrollRange, totalScrollHeight } = useTrainScroll(
-    haltStations.length,
+    stations.length,
     pillGap,
     pillsPerStation
   );
 
-  const getPillInfo = (pillIndex: number): PillStationInfo => {
-    return getPillStation(pillIndex, haltStations, nonHaltStations, pillsPerStation, showAllStations);
-  };
-
   const pills = useMemo(
-    () => Array.from({ length: itemCount }, (_, index) => ({
-      index,
-      ...getPillInfo(index),
-    })),
-    [itemCount, haltStations, nonHaltStations, showAllStations]
+    () => Array.from({ length: itemCount }, (_, index) => {
+      const stationIndex = Math.floor(index / pillsPerStation);
+      const isFirstPill = index % pillsPerStation === 0;
+      const station = stations[stationIndex];
+      
+      return {
+        index,
+        stationName: station?.stationName || '',
+        isActualStation: isFirstPill && !!station,
+      };
+    }),
+    [itemCount, stations, pillsPerStation]
   );
 
   // Prevent hydration mismatch by ensuring height is calculated client-side only
@@ -169,7 +165,7 @@ export default function CircularRotator({
         >
           <TrackRails />
           
-          {pills.map(({ index, stationName, isActualStation, isHalt }) => (
+          {pills.map(({ index, stationName, isActualStation }) => (
             <TrackItem
               key={index}
               index={index}
@@ -178,8 +174,6 @@ export default function CircularRotator({
               scrollProgress={scrollProgress}
               stationName={stationName}
               isActualStation={isActualStation}
-              isHalt={isHalt}
-              onDoubleClick={toggleStations}
             />
           ))}
         </div>
