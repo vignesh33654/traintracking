@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import PillItem from "./PillItem";
 import { getPositionOnPath, TRACK_CONFIG } from "../../utils/circular-rotator-utils";
 import { useTrainData } from "../../hooks/useTrainData";
@@ -9,6 +8,7 @@ import { useTrainScroll } from "../../hooks/useTrainScroll";
 import { calculatePillProgress } from "../../utils/train-scroll-calculator";
 import { useStationToggle } from "../../hooks/useStationToggle";
 import { categorizeStations, calculatePillCount, getPillStation, type PillStationInfo } from "../../utils/station-filter";
+import { useNativeScroll } from "../../hooks/useNativeScroll";
 
 const TRACK_CONTAINER_WIDTH = 360;
 const INNER_TRACK_CONFIG = {
@@ -34,7 +34,7 @@ interface TrackItemProps {
   index: number;
   gapRatio: number;
   scrollRange: number;
-  scrollYProgress: MotionValue<number>;
+  scrollProgress: number;
   stationName: string;
   isActualStation: boolean;
   isHalt: boolean;
@@ -46,41 +46,35 @@ function TrackItem({
   index, 
   gapRatio, 
   scrollRange, 
-  scrollYProgress, 
+  scrollProgress, 
   stationName, 
   isActualStation, 
   isHalt, 
   onDoubleClick 
 }: TrackItemProps) {
-  const progress = useTransform(
-    scrollYProgress, 
-    (scrollProgress: number) => calculatePillProgress(index, scrollProgress, gapRatio, scrollRange)
-  );
-  
-  const clampedProgress = useTransform(progress, (p) => p.clampedProgress);
-  const isVisible = useTransform(progress, (p) => p.isVisible);
-  
-  const position = useTransform(
-    clampedProgress, 
-    (value) => getPositionOnPath(1 - value, TRACK_CONFIG)
-  );
+  const { x, y, rotation, isVisible } = useMemo(() => {
+    const pillProgress = calculatePillProgress(index, scrollProgress, gapRatio, scrollRange);
+    const position = getPositionOnPath(1 - pillProgress.clampedProgress, TRACK_CONFIG);
+    
+    return {
+      x: position.x,
+      y: position.y,
+      rotation: position.rotation,
+      isVisible: pillProgress.isVisible,
+    };
+  }, [scrollProgress, index, gapRatio, scrollRange]);
 
-  const transform = useTransform(
-    position, 
-    (p) => `translate(${p.x}px, ${p.y}px) translate(-50%, -50%) rotate(${p.rotation}deg)`
-  );
-  
-  const opacity = useTransform(isVisible, (visible) => (visible ? 1 : 0));
+  const transform = `translate(${x}px, ${y}px) translate(-50%, -50%) rotate(${rotation}deg)`;
+  const opacity = isVisible ? 1 : 0;
 
   return (
-    <motion.div
+    <div
       className="absolute left-0 top-0"
       style={{
         transform,
         transformOrigin: "center center",
         opacity,
       }}
-      suppressHydrationWarning
     >
       <PillItem 
         stationName={stationName}
@@ -88,7 +82,7 @@ function TrackItem({
         isHalt={isHalt}
         onDoubleClick={onDoubleClick}
       />
-    </motion.div>
+    </div>
   );
 }
 
@@ -123,14 +117,11 @@ export default function CircularRotator({
   pillsPerStation = 4
 }: CircularRotatorProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollProgress = useNativeScroll(scrollRef);
+  const [isMounted, setIsMounted] = useState(false);
 
   const { data: trainData } = useTrainData(trainNumber);
   const { showAllStations, toggleStations } = useStationToggle();
-
-  const { scrollYProgress } = useScroll({
-    target: scrollRef,
-    offset: ["start start", "end end"],
-  });
 
   const { haltStations, nonHaltStations } = useMemo(
     () => categorizeStations(trainData?.route),
@@ -160,6 +151,15 @@ export default function CircularRotator({
     [itemCount, haltStations, nonHaltStations, showAllStations]
   );
 
+  // Prevent hydration mismatch by ensuring height is calculated client-side only
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div ref={scrollRef} className="relative" style={{ height: `${totalScrollHeight}px` }}>
       <div className="sticky top-0 w-full h-screen flex items-center justify-center">
@@ -175,7 +175,7 @@ export default function CircularRotator({
               index={index}
               gapRatio={gapRatio}
               scrollRange={scrollRange}
-              scrollYProgress={scrollYProgress}
+              scrollProgress={scrollProgress}
               stationName={stationName}
               isActualStation={isActualStation}
               isHalt={isHalt}
