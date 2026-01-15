@@ -5,10 +5,11 @@ interface FetchOptions extends RequestInit {
   timeout?: number;
 }
 
-export async function apiClient<T>(
-  url: string,
-  options: FetchOptions = {}
-): Promise<T> {
+function createApiError(message: string, status: number, code?: string): ApiError {
+  return { message, status, code };
+}
+
+export async function apiClient<T>(url: string, options: FetchOptions = {}): Promise<T> {
   const { timeout = API_CONFIG.timeout, ...fetchOptions } = options;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -27,35 +28,23 @@ export async function apiClient<T>(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const error: ApiError = {
-        message: errorData.message || `HTTP Error: ${response.status}`,
-        status: response.status,
-        code: errorData.code,
-      };
-      throw error;
+      throw createApiError(
+        errorData.message || `HTTP Error: ${response.status}`,
+        response.status,
+        errorData.code
+      );
     }
 
-    const data = await response.json();
-    return data as T;
+    return (await response.json()) as T;
   } catch (error) {
     clearTimeout(timeoutId);
 
     if (error instanceof Error && error.name === 'AbortError') {
-      const timeoutError: ApiError = {
-        message: 'Request timed out. Please try again.',
-        status: 408,
-        code: 'TIMEOUT',
-      };
-      throw timeoutError;
+      throw createApiError('Request timed out. Please try again.', 408, 'TIMEOUT');
     }
 
     if (error instanceof TypeError && error.message === 'Failed to fetch') {
-      const networkError: ApiError = {
-        message: 'Network error. Please check your connection.',
-        status: 0,
-        code: 'NETWORK_ERROR',
-      };
-      throw networkError;
+      throw createApiError('Network error. Please check your connection.', 0, 'NETWORK_ERROR');
     }
 
     throw error;

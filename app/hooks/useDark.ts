@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+
+const STORAGE_KEY = "darkMode";
 
 export function useDark() {
   const [isDark, setIsDark] = useState(false);
@@ -10,19 +12,17 @@ export function useDark() {
     setIsDark(isDarkMode);
   }, []);
 
-  function toggleDarkMode() {
-    const html = document.documentElement;
-    const willBeDark = !isDark;
-    
-    if (willBeDark) {
-      html.classList.add("dark");
-    } else {
-      html.classList.remove("dark");
-    }
-    
-    setIsDark(willBeDark);
-    localStorage.setItem("darkMode", willBeDark ? "true" : "false");
-  }
+  const toggleDarkMode = useCallback(() => {
+    setIsDark((prev) => {
+      const newValue = !prev;
+      const html = document.documentElement;
+      
+      html.classList.toggle("dark", newValue);
+      localStorage.setItem(STORAGE_KEY, String(newValue));
+      
+      return newValue;
+    });
+  }, []);
 
   return { isDark, toggleDarkMode };
 }

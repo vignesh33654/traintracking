@@ -7,24 +7,23 @@ interface QueryProviderProps {
   children: ReactNode;
 }
 
+const STALE_TIME = 30 * 1000; // 30 seconds
+const RETRY_COUNT = 2;
+
 export function QueryProvider({ children }: QueryProviderProps) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 30 * 1000,
-            retry: 2,
+            staleTime: STALE_TIME,
+            retry: RETRY_COUNT,
             refetchOnWindowFocus: true,
           },
         },
       })
   );
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
 

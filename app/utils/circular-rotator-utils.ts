@@ -20,23 +20,17 @@ export const TRACK_CONFIG: TrackConfig = {
   arcRadius: 139,
 };
 
-export function calculateItemCount(stationCount: number, itemsPerSegment: number = 1 ): number {
+export function calculateItemCount(stationCount: number, itemsPerSegment = 1): number {
   return stationCount * itemsPerSegment;
 }
 
 export function getPathTotalLength(config: TrackConfig = TRACK_CONFIG): number {
-  const leftRailLength = config.arcStartY - config.railTop;
-  const rightRailLength = config.arcStartY - config.railTop;
+  const straightLength = config.arcStartY - config.railTop;
   const arcLength = Math.PI * config.arcRadius;
-  return leftRailLength + arcLength + rightRailLength;
+  return 2 * straightLength + arcLength;
 }
 
-export function calculateItemCountFromSpacing(spacing: number, config: TrackConfig = TRACK_CONFIG): number {
-  const totalLength = getPathTotalLength(config);
-  return Math.floor(totalLength / spacing);
-}
-// Interpolates between start and end by amount (0-1)
-function simpleLinearInterpolation(start: number, end: number, amount: number): number {
+function linearInterpolation(start: number, end: number, amount: number): number {
   return start + (end - start) * amount;
 }
 
@@ -47,55 +41,47 @@ export interface PathPosition {
   rotation: number;
 }
 
-// Calculates item position (x, y, rotation) on the track based on progress (0-1)
-// Track: Left Straight -> Bottom Curve -> Right Straight
+// Calculates position (x, y, rotation) on U-shaped track: Left Rail → Bottom Arc → Right Rail
 export function getPositionOnPath(progress: number, config: TrackConfig = TRACK_CONFIG): PathPosition {
   const { leftRailX, rightRailX, railTop, arcStartY, arcCenterX, arcCenterY, arcRadius } = config;
   
-  // Track segment lengths
-  const leftStraightLineLength = arcStartY - railTop;
-  const rightStraightLineLength = arcStartY - railTop;
-  const curvedPartLength = Math.PI * arcRadius;
-  const totalTrackLength = leftStraightLineLength + curvedPartLength + rightStraightLineLength;
+  const straightLength = arcStartY - railTop;
+  const arcLength = Math.PI * arcRadius;
+  const totalLength = 2 * straightLength + arcLength;
   
-  // Progress thresholds
-  const endOfLeftLine = leftStraightLineLength / totalTrackLength;
-  const startOfRightLine = (leftStraightLineLength + curvedPartLength) / totalTrackLength;
+  const leftThreshold = straightLength / totalLength;
+  const rightThreshold = (straightLength + arcLength) / totalLength;
   
-  // Case 1: Left straight line
-  if (progress < endOfLeftLine) {
-    const lineProgress = progress / endOfLeftLine;
+  // Left straight rail
+  if (progress < leftThreshold) {
+    const t = progress / leftThreshold;
     return {
       x: leftRailX,
-      y: simpleLinearInterpolation(railTop, arcStartY, lineProgress),
-      rotation: 0,
-    };
-  } 
-  // Case 2: Bottom curve
-  else if (progress < startOfRightLine) {
-    const curveProgress = (progress - endOfLeftLine) / (startOfRightLine - endOfLeftLine);
-    
-    // 180 to 0 degrees
-    const angle = 180 - curveProgress * 180;
-    const angleInRadians = angle * DEG2RAD;
-    
-    const x = arcCenterX + arcRadius * Math.cos(angleInRadians);
-    const y = arcCenterY + arcRadius * Math.sin(angleInRadians);
-    
-    // Rotate item to match curve
-    const rotation = angle >= 180 ? 180 - angle : angle;
-    
-    return { x, y, rotation };
-  } 
-  // Case 3: Right straight line
-  else {
-    const lineProgress = (progress - startOfRightLine) / (1 - startOfRightLine);
-    return {
-      x: rightRailX,
-      y: simpleLinearInterpolation(arcStartY, railTop, lineProgress),
+      y: linearInterpolation(railTop, arcStartY, t),
       rotation: 0,
     };
   }
+  
+  // Bottom arc (180° to 0°)
+  if (progress < rightThreshold) {
+    const t = (progress - leftThreshold) / (rightThreshold - leftThreshold);
+    const angle = 180 - t * 180;
+    const angleRad = angle * DEG2RAD;
+    
+    return {
+      x: arcCenterX + arcRadius * Math.cos(angleRad),
+      y: arcCenterY + arcRadius * Math.sin(angleRad),
+      rotation: angle >= 180 ? 180 - angle : angle,
+    };
+  }
+  
+  // Right straight rail
+  const t = (progress - rightThreshold) / (1 - rightThreshold);
+  return {
+    x: rightRailX,
+    y: linearInterpolation(arcStartY, railTop, t),
+    rotation: 0,
+  };
 }
 
 

@@ -1,7 +1,9 @@
 export const API_CONFIG = {
-  baseURL: 'https://api.railradar.in/api/v1',
-  apiKey: 'rr_9mo485czvt0q3om47ck4cylpavtcvi2w',
-  trainNumber: '12618',
+  baseURL: process.env.RAIL_RADAR_BASE_URL || 'https://api.railradar.in/api/v1',
+  trainNumber: '41055',
   timeout: 15000,
-  // 43941, 43821, // 12618
-};
+} as const;
+
+export const SERVER_API_CONFIG = {
+  apiKey: process.env.RAIL_RADAR_API_KEY || '',
+} as const;

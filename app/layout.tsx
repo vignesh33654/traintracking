@@ -20,6 +20,15 @@ export const metadata: Metadata = {
   description: "Live train tracking application",
 };
 
+const DARK_MODE_SCRIPT = `
+  (function() {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,21 +36,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(geistSans.variable, geistMono.variable, "antialiased")}
-      >
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                const darkMode = localStorage.getItem('darkMode') === 'true';
-                if (darkMode) {
-                  document.documentElement.classList.add('dark');
-                }
-              })();
-            `,
-          }}
-        />
+      <body className={cn(geistSans.variable, geistMono.variable, "antialiased")}>
+        <script dangerouslySetInnerHTML={{ __html: DARK_MODE_SCRIPT }} />
         <QueryProvider>
           <DarkModeToggle />
           {children}
