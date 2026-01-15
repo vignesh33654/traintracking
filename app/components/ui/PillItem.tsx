@@ -51,6 +51,8 @@ export default function PillItem({
             alt="Platform"
             width={24}
             height={24}
+            loading="eager"
+            fetchPriority="high"
           />
         </div>
       )}
