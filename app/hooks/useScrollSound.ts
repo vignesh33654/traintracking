@@ -3,56 +3,50 @@
 import { useEffect, useRef } from 'react';
 import { useSound } from './useSound';
 import { AUDIO_CONFIG, SOUND_PATHS } from '../config/audio.config';
+import { calculatePillProgress } from '../utils/train-scroll-calculator';
 
-export function useScrollSound() {
-  const isScrolling = useRef(false);
-  const isLooping = useRef(false);
-  const scrollStartTime = useRef<number>(0);
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
-  
-  const { play: playInitial, stop: stopInitial } = useSound(SOUND_PATHS.SCROLL);
-  const { play: playLoop, stop: stopLoop } = useSound(SOUND_PATHS.SCROLL_LOOP);
+interface UseScrollSoundParams {
+  scrollProgress: number;
+  gapRatio: number;
+  scrollRange: number;
+  itemCount: number;
+}
+
+export function useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount }: UseScrollSoundParams) {
+  const lastPillAtTrigger = useRef<number>(-1);
+  const isInitialized = useRef(false);
+
+  const { play } = useSound(SOUND_PATHS.SCROLL);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const now = Date.now();
+    if (itemCount === 0) return;
 
-      if (!isScrolling.current) {
-        // Single scroll - play initial sound once
-        isScrolling.current = true;
-        scrollStartTime.current = now;
-        playInitial();
-      } else if (!isLooping.current && (now - scrollStartTime.current > AUDIO_CONFIG.LOOP_THRESHOLD_MS)) {
-        // Continuous scrolling detected - switch to loop sound
-        isLooping.current = true;
-        stopInitial();
-        playLoop({ loop: true });
+    const triggerPosition = AUDIO_CONFIG.PILL_TRIGGER_POSITION;
+    const threshold = AUDIO_CONFIG.TRIGGER_THRESHOLD;
+
+    // Find which pill is currently at the trigger position
+    let currentPillAtTrigger = -1;
+    for (let i = 0; i < itemCount; i++) {
+      const { clampedProgress } = calculatePillProgress(i, scrollProgress, gapRatio, scrollRange);
+      const pillPosition = 1 - clampedProgress;
+
+      if (pillPosition >= triggerPosition - threshold && pillPosition <= triggerPosition + threshold) {
+        currentPillAtTrigger = i;
+        break;
       }
+    }
 
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
-      }
+    // Skip first render to avoid playing sound on initial load
+    if (!isInitialized.current) {
+      isInitialized.current = true;
+      lastPillAtTrigger.current = currentPillAtTrigger;
+      return;
+    }
 
-      scrollTimeout.current = setTimeout(() => {
-        // Scroll ended
-        isScrolling.current = false;
-        
-        if (isLooping.current) {
-          stopLoop();
-          isLooping.current = false;
-        }
-      }, AUDIO_CONFIG.SCROLL_DEBOUNCE_MS);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
-      }
-      stopInitial();
-      stopLoop();
-    };
-  }, [playInitial, stopInitial, playLoop, stopLoop]);
+    // Play sound when a different pill reaches the trigger position
+    if (currentPillAtTrigger !== -1 && currentPillAtTrigger !== lastPillAtTrigger.current) {
+      play();
+      lastPillAtTrigger.current = currentPillAtTrigger;
+    }
+  }, [scrollProgress, gapRatio, scrollRange, itemCount, play]);
 }

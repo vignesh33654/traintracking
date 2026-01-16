@@ -50,6 +50,7 @@ function TrackItem({
   const { x, y, rotation, isVisible } = useMemo(() => {
     const pillProgress = calculatePillProgress(index, scrollProgress, gapRatio, scrollRange);
     const position = getPositionOnPath(1 - pillProgress.clampedProgress, TRACK_CONFIG);
+
     
     return {
       x: position.x,
@@ -114,8 +115,6 @@ export default function CircularRotator({
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollProgress = useNativeScroll(scrollRef);
   const [isMounted, setIsMounted] = useState(false);
-  
-  useScrollSound();
 
   const { data: trainData } = useTrainData(trainNumber);
 
@@ -123,17 +122,19 @@ export default function CircularRotator({
     () => trainData?.route || [],
     [trainData?.route]
   );
-  
+
   const itemCount = useMemo(
     () => stations.length * pillsPerStation,
     [stations.length, pillsPerStation]
   );
-  
+
   const { gapRatio, scrollRange, totalScrollHeight } = useTrainScroll(
     stations.length,
     pillGap,
     pillsPerStation
   );
+
+  useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount });
 
   const pills = useMemo(
     () => Array.from({ length: itemCount }, (_, index) => {

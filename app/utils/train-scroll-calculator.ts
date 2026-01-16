@@ -16,7 +16,7 @@ export interface PillProgress {
   isVisible: boolean;
 }
 
-const DEFAULT_VIEWPORT_HEIGHT = 800;
+const DEFAULT_VIEWPORT_HEIGHT = 600;
 
 // Calculates scroll parameters for the animation
 export function calculateScrollParams(config: ScrollConfig): ScrollParams {
