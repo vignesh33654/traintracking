@@ -38,7 +38,7 @@ export default function TimePathText({
             fontWeight: 400,
             textTransform: "uppercase",
             letterSpacing: "-0.02em",
-            fill: "var(--color-bg-2)",
+            fill: "var(--color-text-secondary)",
             opacity: isVisible ? 1 : 0,
             transition: "opacity 0.15s ease-out",
           }}

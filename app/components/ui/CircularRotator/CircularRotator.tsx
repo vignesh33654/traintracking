@@ -16,11 +16,11 @@ export default function CircularRotator({
   pillGap = 28,
   pillsPerStation = 12,
 }: CircularRotatorProps) {
+
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollProgress = useNativeScroll(scrollRef);
-
   const { data: trainData } = useTrainData(trainNumber);
-
   const stations = useMemo(() => trainData?.route || [], [trainData?.route]);
 
   const itemCount = useMemo(
