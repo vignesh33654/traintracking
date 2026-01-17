@@ -62,8 +62,8 @@ export function generatePillData(
   stations: RouteStation[],
   pillsPerStation: number
 ): PillData[] {
-  return Array.from({ length: itemCount - 1  }, (_, i) => { 
-    const index = i + 1; 
+  return Array.from({ length: itemCount - 1 }, (_, i) => {
+    const index = i + 1;
     const stationIndex = Math.floor(index / pillsPerStation);
     const isFirstPill = index % pillsPerStation === 0;
     const station = stations[stationIndex];
@@ -74,5 +74,18 @@ export function generatePillData(
       isActualStation: isFirstPill && !!station,
     };
   });
+}
+
+export function calculateInitialScrollTop(
+  initialStationIndex: number,
+  pillsPerStation: number,
+  gapRatio: number,
+  scrollRange: number,
+  totalScrollHeight: number
+): number {
+  if (initialStationIndex <= 0) return 0;
+  const pillIndex = initialStationIndex * pillsPerStation;
+  const targetProgress = (pillIndex * gapRatio) / Math.abs(scrollRange);
+  return targetProgress * (totalScrollHeight - window.innerHeight);
 }
 
