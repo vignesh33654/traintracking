@@ -5,6 +5,8 @@ export const TRACK_PATH_CONFIG = {
   railTop: 10,
   arcStartY: 460,
   arcRadius: 139,
+  arcCenterX: 180,  // Explicit center X (not 180.5 from calculation)
+  arcCenterY: 460,  // Explicit center Y (same as arcStartY - arc curves from this point)
 } as const;
 
 // Pill animation settings

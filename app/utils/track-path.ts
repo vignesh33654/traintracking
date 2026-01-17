@@ -18,12 +18,22 @@ function isBrowser(): boolean {
   return typeof document !== "undefined";
 }
 
-function createTrackPathElement(): SVGPathElement {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute("d", U_SHAPED_TRACK_PATH);
-  svg.appendChild(path);
-  return path;
+function createTrackPathElement(): SVGPathElement | null {
+  try {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", U_SHAPED_TRACK_PATH);
+    svg.appendChild(path);
+
+    // Verify the path element actually supports the methods we need
+    if (typeof path.getTotalLength !== 'function' || typeof path.getPointAtLength !== 'function') {
+      return null;
+    }
+
+    return path;
+  } catch {
+    return null;
+  }
 }
 
 export function getTrackPath(): SVGPathElement | null {
@@ -36,8 +46,15 @@ export function getTrackPath(): SVGPathElement | null {
 
 export function getPathTotalLength(): number {
   if (cachedTotalLength === null) {
-    const path = getTrackPath();
-    cachedTotalLength = path ? path.getTotalLength() : calculatePathTotalLength();
+    // Always use mathematical calculation since path is defined by constants
+    // Browser's getTotalLength() adds no value here
+    cachedTotalLength = calculatePathTotalLength();
   }
   return cachedTotalLength;
+}
+
+// Export for tests - allows cache invalidation
+export function resetCache(): void {
+  cachedPath = null;
+  cachedTotalLength = null;
 }

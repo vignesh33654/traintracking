@@ -17,9 +17,10 @@ export function calculateItemCount(stationCount: number, itemsPerSegment = 1): n
 
 // Fallback calculation for SSR using mathematical approach
 function getPositionOnPathFallback(progress: number): PathPosition {
-  const { leftRailX, rightRailX, railTop, arcStartY, arcRadius } = TRACK_PATH_CONFIG;
-  const arcCenterX = (leftRailX + rightRailX) / 2;
-  const arcCenterY = arcStartY;
+  // Arc center coordinates:
+  // - arcCenterX: Horizontal center of the bottom arc (180px, not 180.5px from (41+320)/2)
+  // - arcCenterY: Vertical position where arc begins (460px = arcStartY, the arc curves from this point)
+  const { leftRailX, rightRailX, railTop, arcStartY, arcRadius, arcCenterX, arcCenterY } = TRACK_PATH_CONFIG;
 
   const straightLength = arcStartY - railTop;
   const arcLength = Math.PI * arcRadius;
@@ -67,29 +68,34 @@ function getPositionOnPathFallback(progress: number): PathPosition {
 export function getPositionOnPath(progress: number): PathPosition {
   const path = getTrackPath();
 
-  // Fallback to mathematical calculation for SSR
-  if (!path) {
+  // Fallback to mathematical calculation if path not available or methods not supported
+  if (!path || typeof path.getPointAtLength !== 'function') {
     return getPositionOnPathFallback(progress);
   }
 
-  const totalLength = getPathTotalLength();
-  const distance = Math.max(0, Math.min(progress, 1)) * totalLength;
+  try {
+    const totalLength = getPathTotalLength();
+    const distance = Math.max(0, Math.min(progress, 1)) * totalLength;
 
-  // Browser calculates the position
-  const point = path.getPointAtLength(distance);
+    // Browser calculates the position
+    const point = path.getPointAtLength(distance);
 
-  // Calculate rotation from tangent (sample a point slightly ahead)
-  const delta = 1;
-  const nextDistance = Math.min(distance + delta, totalLength);
-  const nextPoint = path.getPointAtLength(nextDistance);
+    // Calculate rotation from tangent (sample a point slightly ahead)
+    const delta = 1;
+    const nextDistance = Math.min(distance + delta, totalLength);
+    const nextPoint = path.getPointAtLength(nextDistance);
 
-  const dx = nextPoint.x - point.x;
-  const dy = nextPoint.y - point.y;
-  const rotation = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+    const dx = nextPoint.x - point.x;
+    const dy = nextPoint.y - point.y;
+    const rotation = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
 
-  return {
-    x: point.x,
-    y: point.y,
-    rotation,
-  };
+    return {
+      x: point.x,
+      y: point.y,
+      rotation,
+    };
+  } catch {
+    // Fall back to mathematical calculation if browser method fails
+    return getPositionOnPathFallback(progress);
+  }
 }
