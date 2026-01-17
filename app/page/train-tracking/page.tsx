@@ -1,5 +1,4 @@
-
-import CircularRotator from "@/app/components/ui/CircularRotator";
+import CircularRotator from "../../components/ui/CircularRotator/CircularRotator";
 import { API_CONFIG } from "@/app/config/api.config";
 
 export default function TrainTrackingPage() {

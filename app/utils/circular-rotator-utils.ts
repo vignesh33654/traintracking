@@ -20,16 +20,19 @@ export const TRACK_CONFIG: TrackConfig = {
   arcRadius: 139,
 };
 
+// Calculates total item count by multiplying stations with items per segment
 export function calculateItemCount(stationCount: number, itemsPerSegment = 1): number {
   return stationCount * itemsPerSegment;
 }
 
+// Calculates total track length by adding both straight rails and the bottom arc
 export function getPathTotalLength(config: TrackConfig = TRACK_CONFIG): number {
   const straightLength = config.arcStartY - config.railTop;
   const arcLength = Math.PI * config.arcRadius;
   return 2 * straightLength + arcLength;
 }
 
+// Blends between start and end values based on amount (0 = start, 1 = end)
 function linearInterpolation(start: number, end: number, amount: number): number {
   return start + (end - start) * amount;
 }
@@ -41,7 +44,7 @@ export interface PathPosition {
   rotation: number;
 }
 
-// Calculates position (x, y, rotation) on U-shaped track: Left Rail → Bottom Arc → Right Rail
+// Calculates exact position and rotation on the U-shaped track based on progress (0-1)
 export function getPositionOnPath(progress: number, config: TrackConfig = TRACK_CONFIG): PathPosition {
   const { leftRailX, rightRailX, railTop, arcStartY, arcCenterX, arcCenterY, arcRadius } = config;
   

@@ -27,13 +27,14 @@ export function calculateScrollParams(config: ScrollConfig): ScrollParams {
   const scrollRange = 1 - contentLength;
   
   const minScrollDistance = itemCount * pillGap;
-  const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : DEFAULT_VIEWPORT_HEIGHT;
+  const viewportHeight = DEFAULT_VIEWPORT_HEIGHT;
   
   const totalScrollHeight = Math.max(
     minScrollDistance,
     Math.abs(scrollRange) * pathTotalLength
   ) + viewportHeight;
-  
+
+
   return {
     gapRatio,
     scrollRange,

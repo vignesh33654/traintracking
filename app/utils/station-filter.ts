@@ -13,10 +13,10 @@ export interface PillStationInfo {
 }
 
 const EMPTY_CATEGORIES: StationCategories = {
-  haltStations: [],
-  nonHaltStations: [],
-  allStations: [],
-};
+      haltStations: [],
+      nonHaltStations: [],
+      allStations: [],
+    };
 
 export function categorizeStations(route?: RouteStation[]): StationCategories {
   if (!route) return EMPTY_CATEGORIES;
@@ -37,8 +37,8 @@ export function calculatePillCount(
 ): number {
   const haltPills = haltCount * pillsPerStation;
   return showAll ? haltPills + nonHaltCount : haltPills;
-}
-
+  }
+  
 // Maps pill index to station info based on view mode
 export function getPillStation(
   index: number,
@@ -63,13 +63,13 @@ export function getPillStation(
   }
 
   // Non-halt stations (only in "show all" mode)
-  const nonHaltIndex = index - haltPillsCount;
-  const station = nonHaltStations[nonHaltIndex];
-  
-  return {
-    stationName: station?.stationName || '',
-    isActualStation: !!station,
-    isHalt: false,
-  };
+    const nonHaltIndex = index - haltPillsCount;
+    const station = nonHaltStations[nonHaltIndex];
+    
+    return {
+      stationName: station?.stationName || '',
+      isActualStation: !!station,
+      isHalt: false,
+    };
 }
 

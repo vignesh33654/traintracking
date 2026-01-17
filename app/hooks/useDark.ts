@@ -15,7 +15,7 @@ export function useDark() {
   const toggleDarkMode = useCallback(() => {
     setIsDark((prev) => {
       const newValue = !prev;
-      const html = document.documentElement;
+    const html = document.documentElement;
       
       html.classList.toggle("dark", newValue);
       localStorage.setItem(STORAGE_KEY, String(newValue));
