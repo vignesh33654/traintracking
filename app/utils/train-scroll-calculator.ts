@@ -50,7 +50,7 @@ export function calculatePillProgress(
   scrollRange: number
 ): PillProgress {
   const basePosition = index * gapRatio;
-  const unclampedProgress = basePosition + scrollProgress * scrollRange;
+  const unclampedProgress = basePosition + (scrollProgress) * scrollRange; // scroll 
   const clampedProgress = Math.max(0, Math.min(1, unclampedProgress));
   const isVisible = unclampedProgress >= 0 && unclampedProgress <= 1;
   

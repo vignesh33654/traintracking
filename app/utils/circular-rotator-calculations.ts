@@ -12,7 +12,7 @@ export function calculatePillPosition(
   scrollRange: number
 ): PillPosition {
   const pillProgress = calculatePillProgress(index, scrollProgress, gapRatio, scrollRange);
-  const position = getPositionOnPath(1 - pillProgress.clampedProgress, TRACK_CONFIG);
+  const position = getPositionOnPath(pillProgress.clampedProgress, TRACK_CONFIG);
 
   return {
     x: position.x,
@@ -45,7 +45,7 @@ export function calculateTimeLabels(
         scrollRange
       );
 
-      const offset = (1 - clampedProgress) * 100;
+      const offset = clampedProgress * 100;
       const time = formatTimeAmPm(station.scheduledArrival);
 
       return {
@@ -62,7 +62,8 @@ export function generatePillData(
   stations: RouteStation[],
   pillsPerStation: number
 ): PillData[] {
-  return Array.from({ length: itemCount }, (_, index) => {
+  return Array.from({ length: itemCount - 1  }, (_, i) => { 
+    const index = i + 1; 
     const stationIndex = Math.floor(index / pillsPerStation);
     const isFirstPill = index % pillsPerStation === 0;
     const station = stations[stationIndex];
