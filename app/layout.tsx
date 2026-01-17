@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import DarkModeToggle from "./components/ui/DarkModeToggle";
 import { cn } from "./utils/utils";
@@ -14,6 +15,38 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const circularStd = localFont({
+  src: [
+    {
+      path: "../public/font/CircularStd-Light.otf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../public/font/CircularStd-Book.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/font/CircularStd-Medium.otf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../public/font/CircularStd-Bold.otf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../public/font/CircularStd-Black.otf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+  variable: "--font-circular-std",
   display: "swap",
 });
 
@@ -38,7 +71,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(geistSans.variable, geistMono.variable, "antialiased")}>
+      <body className={cn(geistSans.variable, geistMono.variable, circularStd.variable, "antialiased")}>
         <script dangerouslySetInnerHTML={{ __html: DARK_MODE_SCRIPT }} />
         <QueryProvider>
           <DarkModeToggle />

@@ -111,5 +111,17 @@
   .focus-ring:focus-visible {
     @apply ring-2 ring-orange ring-offset-2;
   }
+
+  .font-circular {
+    font-family: var(--font-circular-std), system-ui, sans-serif;
+  }
+
+  .text-label {
+    font-family: var(--font-circular-std), system-ui, sans-serif;
+    font-size: 8px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
 }
 
