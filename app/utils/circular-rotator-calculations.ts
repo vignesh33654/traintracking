@@ -1,4 +1,4 @@
-import { getPositionOnPath, TRACK_CONFIG } from "./circular-rotator-utils";
+import { getPositionOnPath } from "./circular-rotator-utils";
 import { calculatePillProgress } from "./train-scroll-calculator";
 import { formatTimeAmPm } from "./train-formatters";
 import type { RouteStation } from "../types/train.types";
@@ -12,7 +12,7 @@ export function calculatePillPosition(
   scrollRange: number
 ): PillPosition {
   const pillProgress = calculatePillProgress(index, scrollProgress, gapRatio, scrollRange);
-  const position = getPositionOnPath(pillProgress.clampedProgress, TRACK_CONFIG);
+  const position = getPositionOnPath(pillProgress.clampedProgress);
 
   return {
     x: position.x,

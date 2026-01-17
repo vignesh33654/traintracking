@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { calculateScrollParams, type ScrollParams } from '../utils/train-scroll-calculator';
-import { getPathTotalLength, TRACK_CONFIG } from '../utils/circular-rotator-utils';
+import { getPathTotalLength } from '../utils/circular-rotator-utils';
 
 export function useTrainScroll(
   stationCount: number,
@@ -9,8 +9,8 @@ export function useTrainScroll(
 ): ScrollParams {
   return useMemo(() => {
     const itemCount = stationCount * pillsPerStation;
-    const pathTotalLength = getPathTotalLength(TRACK_CONFIG);
-    
+    const pathTotalLength = getPathTotalLength();
+
     return calculateScrollParams({
       itemCount,
       pillGap,
