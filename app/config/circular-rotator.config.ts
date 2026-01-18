@@ -5,8 +5,8 @@ export const TRACK_PATH_CONFIG = {
   railTop: 10,
   arcStartY: 460,
   arcRadius: 139,
-  arcCenterX: 180,  // Explicit center X (not 180.5 from calculation)
-  arcCenterY: 460,  // Explicit center Y (same as arcStartY - arc curves from this point)
+  arcCenterX: 180,
+  arcCenterY: 460,
 } as const;
 
 // Pill animation settings
@@ -40,6 +40,7 @@ export const TIME_TRACK_CONFIG = {
   railTop: 0,
   arcStartY: 555,
   arcRadius: 100,
+  betweenStationsPercentage: 90,
 } as const;
 
 export const TIME_PATH_SVG_CONFIG = {
