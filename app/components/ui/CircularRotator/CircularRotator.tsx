@@ -13,8 +13,8 @@ import TrackRails from "./TrackRails";
 
 export default function CircularRotator({
   trainNumber,
-  pillGap = 28,
-  pillsPerStation = 12,
+  pillGap = PILL_CONFIG.gap,
+  pillsPerStation = PILL_CONFIG.perStation,
 }: CircularRotatorProps) {
 
 

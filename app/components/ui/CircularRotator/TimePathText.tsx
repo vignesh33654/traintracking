@@ -40,7 +40,7 @@ export default function TimePathText({
             letterSpacing: "-0.02em",
             fill: "var(--color-text-secondary)",
             opacity: isVisible ? 1 : 0,
-            transition: "opacity 0.15s ease-out",
+            transition: "none",
           }}
         >
           <textPath href="#innerTrackTextPath" startOffset={`${offset}%`}>

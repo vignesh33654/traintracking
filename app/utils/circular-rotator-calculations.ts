@@ -45,8 +45,9 @@ export function calculateTimeLabels(
         scrollRange
       );
 
-      const offset = clampedProgress * 100;
-      const time = formatTimeAmPm(station.scheduledArrival);
+      const offset = clampedProgress * TIME_TRACK_CONFIG.betweenStationsPercentage;
+      const time = formatTimeAmPm(station.scheduledArrival)
+
 
       return {
         id: station.id,
