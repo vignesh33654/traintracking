@@ -74,7 +74,7 @@ export default function CircularRotator({
             pillsPerStation={pillsPerStation}
           />
 
-          {pills.map(({ index, stationName, isActualStation }) => (
+          {pills.map(({ index, stationName, stationCode, isActualStation, distanceFromSourceKm }) => (
             <TrackItem
               key={index}
               index={index}
@@ -82,7 +82,9 @@ export default function CircularRotator({
               scrollRange={scrollRange}
               scrollProgress={scrollProgress}
               stationName={stationName}
+              stationCode={stationCode}
               isActualStation={isActualStation}
+              distanceFromSourceKm={distanceFromSourceKm}
             />
           ))}
         </div>

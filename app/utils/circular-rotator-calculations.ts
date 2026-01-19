@@ -3,7 +3,7 @@ import { calculatePillProgress } from "./train-scroll-calculator";
 import { formatTimeAmPm } from "./train-formatters";
 import type { RouteStation } from "../types/train.types";
 import type { PillPosition, PillData, TimeLabelData } from "../types/circular-rotator.types";
-import { TIME_TRACK_CONFIG } from "../config/circular-rotator.config";
+import { TIME_TRACK_CONFIG, MILESTONE_CONFIG } from "../config/circular-rotator.config";
 
 export function calculatePillPosition(
   index: number,
@@ -58,21 +58,54 @@ export function calculateTimeLabels(
     });
 }
 
+function calculateMilestonePillIndices(
+  stations: RouteStation[],
+  pillsPerStation: number
+): Map<number, number> {
+  const milestonePills = new Map<number, number>();
+  if (stations.length === 0) return milestonePills;
+
+  const maxDistance = stations[stations.length - 1]?.distanceFromSourceKm || 0;
+  let currentMilestone = MILESTONE_CONFIG.intervalKm;
+
+  for (let stationIndex = 0; stationIndex < stations.length && currentMilestone <= maxDistance; stationIndex++) {
+    const stationDistance = stations[stationIndex].distanceFromSourceKm;
+
+    while (currentMilestone <= stationDistance) {
+      const stationFirstPill = stationIndex * pillsPerStation + 1;
+      const distancePillIndex = stationFirstPill - MILESTONE_CONFIG.pillOffsetBeforeStation;
+
+      if (distancePillIndex > 0) {
+        milestonePills.set(distancePillIndex, currentMilestone);
+      }
+      currentMilestone += MILESTONE_CONFIG.intervalKm;
+    }
+  }
+
+  return milestonePills;
+}
+
 export function generatePillData(
   itemCount: number,
   stations: RouteStation[],
   pillsPerStation: number
 ): PillData[] {
+  const milestonePills = calculateMilestonePillIndices(stations, pillsPerStation);
+
   return Array.from({ length: itemCount - 1 }, (_, i) => {
     const index = i + 1;
     const stationIndex = Math.floor(index / pillsPerStation);
-    const isFirstPill = index % pillsPerStation === 0;
+    const isFirstPill = index % pillsPerStation === 1;
     const station = stations[stationIndex];
+
+    const milestoneValue = milestonePills.get(index);
 
     return {
       index,
       stationName: station?.stationName || "",
+      stationCode: station?.stationCode || "",
       isActualStation: isFirstPill && !!station,
+      distanceFromSourceKm: milestoneValue,
     };
   });
 }

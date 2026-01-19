@@ -12,7 +12,9 @@ export interface TrackItemProps {
   scrollRange: number;
   scrollProgress: number;
   stationName: string;
+  stationCode: string;
   isActualStation: boolean;
+  distanceFromSourceKm?: number;
 }
 
 export interface TimePathTextProps {
@@ -35,7 +37,9 @@ export interface TrackRailsProps {
 export interface PillData {
   index: number;
   stationName: string;
+  stationCode: string;
   isActualStation: boolean;
+  distanceFromSourceKm?: number;
 }
 
 export interface TimeLabelData {

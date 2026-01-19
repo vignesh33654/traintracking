@@ -1,10 +1,31 @@
 import { getTrackPath, getPathTotalLength } from "./track-path";
-import { TRACK_PATH_CONFIG } from "../config/circular-rotator.config";
+import { ARC_PILL_ROTATION_OFFSET_DEG, TRACK_PATH_CONFIG } from "../config/circular-rotator.config";
 
 export interface PathPosition {
   x: number;
   y: number;
   rotation: number;
+}
+
+function clamp01(n: number): number {
+  return Math.max(0, Math.min(1, n));
+}
+
+// Smooth arc-only rotation tweak to improve visual readability on the curve.
+function getArcRotationOffsetDeg(progress01: number): number {
+  const { railTop, arcStartY, arcRadius } = TRACK_PATH_CONFIG;
+  const straightLength = arcStartY - railTop;
+  const arcLength = Math.PI * arcRadius;
+  const totalLength = 2 * straightLength + arcLength;
+
+  const leftThreshold = straightLength / totalLength;
+  const rightThreshold = (straightLength + arcLength) / totalLength;
+  const p = clamp01(progress01);
+  if (p <= leftThreshold || p >= rightThreshold) return 0;
+
+  const tArc = (p - leftThreshold) / (rightThreshold - leftThreshold); // 0..1 across arc
+  const blend = Math.sin(Math.PI * tArc); // 0 at ends, 1 at middle
+  return ARC_PILL_ROTATION_OFFSET_DEG * blend;
 }
 
 // Re-export for backward compatibility
@@ -29,7 +50,7 @@ function getPositionOnPathFallback(progress: number): PathPosition {
   const leftThreshold = straightLength / totalLength;
   const rightThreshold = (straightLength + arcLength) / totalLength;
 
-  const clampedProgress = Math.max(0, Math.min(1, progress));
+  const clampedProgress = clamp01(progress);
 
   // Left straight rail
   if (clampedProgress < leftThreshold) {
@@ -47,10 +68,13 @@ function getPositionOnPathFallback(progress: number): PathPosition {
     const angle = 180 - t * 180;
     const angleRad = (angle * Math.PI) / 180;
 
+    const baseRotation = angle >= 180 ? 180 - angle : angle;
+    const rotationOffset = getArcRotationOffsetDeg(clampedProgress);
+
     return {
       x: arcCenterX + arcRadius * Math.cos(angleRad),
       y: arcCenterY + arcRadius * Math.sin(angleRad),
-      rotation: angle >= 180 ? 180 - angle : angle,
+      rotation: baseRotation + rotationOffset,
     };
   }
 
@@ -75,7 +99,8 @@ export function getPositionOnPath(progress: number): PathPosition {
 
   try {
     const totalLength = getPathTotalLength();
-    const distance = Math.max(0, Math.min(progress, 1)) * totalLength;
+    const clampedProgress = clamp01(progress);
+    const distance = clampedProgress * totalLength;
 
     // Browser calculates the position
     const point = path.getPointAtLength(distance);
@@ -87,7 +112,9 @@ export function getPositionOnPath(progress: number): PathPosition {
 
     const dx = nextPoint.x - point.x;
     const dy = nextPoint.y - point.y;
-    const rotation = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+    const baseRotation = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+    const rotationOffset = getArcRotationOffsetDeg(clampedProgress);
+    const rotation = baseRotation + rotationOffset;
 
     return {
       x: point.x,
