@@ -8,13 +8,14 @@ import { useScrollSound } from "../../../hooks/useScrollSound";
 import { generatePillData, calculateInitialScrollTop } from "../../../utils/circular-rotator-calculations";
 import { TRACK_CONTAINER_WIDTH } from "../../../config/circular-rotator.config";
 import type { CircularRotatorProps } from "../../../types/circular-rotator.types";
+import { PILL_CONFIG } from "../../../config/circular-rotator.config";
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
 
 export default function CircularRotator({
   trainNumber,
-  pillGap = 28,
-  pillsPerStation = 12,
+  pillGap = PILL_CONFIG.gap,
+  pillsPerStation = PILL_CONFIG.perStation,
 }: CircularRotatorProps) {
 
 
