@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { B612_Mono, Doto } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import DarkModeToggle from "./components/ui/DarkModeToggle";
 import { cn } from "./utils/utils";
 import { QueryProvider } from "./providers/QueryProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const b612Mono = B612_Mono({
+  variable: "--font-b612-mono",
   subsets: ["latin"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const doto = Doto({
+  variable: "--font-doto",
   subsets: ["latin"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -71,7 +73,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(geistSans.variable, geistMono.variable, circularStd.variable, "antialiased")}>
+      <body
+        className={cn(
+      
+          circularStd.variable,
+          b612Mono.variable,
+          doto.variable,
+          "antialiased",
+        )}
+      >
         <script dangerouslySetInnerHTML={{ __html: DARK_MODE_SCRIPT }} />
         <QueryProvider>
           <DarkModeToggle />
