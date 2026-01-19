@@ -1,49 +1,34 @@
 @import "tailwindcss";
 
-
-/* -------------------------------
-   Theme Configuration
---------------------------------*/
 @theme {
-  /* Breakpoints */
   --breakpoint-sm: 768px;
   --breakpoint-md: 1024px;
   --breakpoint-lg: 1280px;
 
-  /* Colors - Background */
   --color-bg-0: #ffffff;
   --color-bg-1: #dbdbdb;
   --color-bg-2: #555353;
   --color-divider: #f4f4f4;
 
-  /* Colors - Text */
   --color-text-primary: #0b0b0b;
   --color-text-secondary: #5d5d5d;
 
-  /* Colors - Accent */
   --color-orange: #ff5801;
   --color-red: #ff4646;
   --color-green: #207d53;
   --color-yellow: #fba303;
 
-  /* Spacing */
   --spacing-pill-width: 36px;
   --spacing-pill-height: 6px;
   --spacing-pill-dot: 2px;
-  
 }
 
-/* -------------------------------
-   Base Styles & Variables
---------------------------------*/
 @layer base {
   :root {
-    /* Typography Variables */
     --text-h1: 32px;
     --text-h2: 24px;
     --text-h3: 20px;
     --text-body-16: 16px;
-
   }
 
   html,
@@ -52,19 +37,15 @@
     color: var(--color-text-default);
   }
 
-  /* Dark Mode Overrides */
   .dark {
-    /* Background */
     --color-bg-0: #131313;
     --color-bg-1: #1c1c1c;
     --color-bg-2: #555353;
     --color-divider: #232323;
 
-    /* Text */
     --color-text-primary: #ffffff;
     --color-text-secondary: #5d5d5d;
 
-    /* Accent */
     --color-orange: #ff5801;
     --color-red: #ff4646;
     --color-green: #6acf6a;
@@ -83,37 +64,40 @@
     font-size: var(--text-h1);
     font-weight: 600;
     line-height: 40px;
-    letter-spacing: -0.021em; /* Converted -2.1% */
+    letter-spacing: -0.021em;
   }
+
   h2 {
     font-size: var(--text-h2);
     font-weight: 600;
     line-height: 32px;
-    letter-spacing: -0.019em; /* Converted -1.9% */
+    letter-spacing: -0.019em;
   }
+
   h3 {
     font-size: var(--text-h3);
     font-weight: 600;
     line-height: 32px;
-    letter-spacing: -0.017em; /* Converted -1.7% */
+    letter-spacing: -0.017em;
   }
+
   p {
     font-size: var(--text-body-16);
     font-weight: 400;
     line-height: 24px;
-    letter-spacing: -0.011em; /* Converted -1.1% */
-  }
-
-  .focus-ring {
-    @apply outline-none transition-shadow duration-200;
-  }
-
-  .focus-ring:focus-visible {
-    @apply ring-2 ring-orange ring-offset-2;
+    letter-spacing: -0.011em;
   }
 
   .font-circular {
     font-family: var(--font-circular-std), system-ui, sans-serif;
+  }
+
+  .font-doto {
+    font-family: var(--font-doto), system-ui, sans-serif;
+  }
+
+  .font-b612-mono {
+    font-family: var(--font-b612-mono), system-ui, sans-serif;
   }
 
   .text-label {
@@ -123,5 +107,49 @@
     text-transform: uppercase;
     letter-spacing: -0.02em;
   }
+
+  .font-b612-mono-10 {
+    font-family: var(--font-b612-mono), system-ui, sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+  }
+
+  .font-b612-mono-11 {
+    font-family: var(--font-b612-mono), system-ui, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+  }
+
+  .font-b612-mono-12 {
+    font-family: var(--font-b612-mono), system-ui, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+  }
+
+  .font-b612-mono-13 {
+    font-family: var(--font-b612-mono), system-ui, sans-serif;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+
+  }
+
+  .font-doto-11-bold {
+    font-family: var(--font-doto), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
 }
 
+.focus-ring {
+  @apply outline-none transition-shadow duration-200;
+}
+
+.focus-ring:focus-visible {
+  @apply ring-2 ring-orange ring-offset-2;
+}
