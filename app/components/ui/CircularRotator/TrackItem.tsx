@@ -15,6 +15,7 @@ export default function TrackItem({
   isActualStation,
   distanceFromSourceKm,
 }: TrackItemProps) {
+  
   const { x, y, rotation, isVisible } = useMemo(
     () => calculatePillPosition(index, scrollProgress, gapRatio, scrollRange),
     [scrollProgress, index, gapRatio, scrollRange]
