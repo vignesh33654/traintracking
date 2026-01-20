@@ -9,9 +9,6 @@ export const TRACK_PATH_CONFIG = {
   arcCenterY: 460,
 } as const;
 
-// Arc-only rotation tweak for pills (degrees). Negative reduces tilt; positive increases it.
-export const ARC_PILL_ROTATION_OFFSET_DEG = -8 as const;
-
 // Pill animation settings
 export const PILL_CONFIG = {
   gap: 28,
@@ -20,8 +17,8 @@ export const PILL_CONFIG = {
 
 // Distance milestone configuration
 export const MILESTONE_CONFIG = {
-  intervalKm: 50,
-  pillOffsetBeforeStation: 3,
+  intervalKm: 100,
+  pillOffsetBeforeStation: 4,
 } as const;
 
 // Container dimensions
@@ -46,10 +43,10 @@ export const OUTER_TRACK_CONFIG = {
 export const TIME_TRACK_CONFIG = {
   leftRailX: 64,
   rightRailX: 296,
-  railTop: 0,
+  railTop: 105,
   arcStartY: 555,
   arcRadius: 100,
-  betweenStationsPercentage: 90,
+  betweenStationsPercentage: 105,
 } as const;
 
 export const TIME_PATH_SVG_CONFIG = {

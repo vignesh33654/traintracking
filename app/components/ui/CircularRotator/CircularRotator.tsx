@@ -22,7 +22,10 @@ export default function CircularRotator({
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollProgress = useNativeScroll(scrollRef);
   const { data: trainData } = useTrainData(trainNumber);
-  const stations = useMemo(() => trainData?.route || [], [trainData?.route]);
+  const stations = useMemo(
+    () => (trainData?.route || []).filter((station) => station.isHalt > 0),
+    [trainData?.route]
+  );
 
   const liveData = trainData?.liveData;
   const currentStationSequence = liveData?.currentLocation?.sequence;

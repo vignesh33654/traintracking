@@ -1,11 +1,14 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import PillItem from "../PillItem";
 import StationCodeIcon from "../StationCodeIcon";
 import { DistanceKm } from "../DistanceKm";
+import { DayMarker } from "../DayMarker";
 import { calculatePillPosition } from "../../../utils/circular-rotator-calculations";
 import type { TrackItemProps } from "../../../types/circular-rotator.types";
 
-export default function TrackItem({
+const ICON_POSITION_CLASS = "absolute left-[18px] top-[19px] -translate-x-1/2 -translate-y-1/2";
+
+function TrackItem({
   index,
   gapRatio,
   scrollRange,
@@ -14,6 +17,7 @@ export default function TrackItem({
   stationCode,
   isActualStation,
   distanceFromSourceKm,
+  dayNumber,
 }: TrackItemProps) {
   
   const { x, y, rotation, isVisible } = useMemo(
@@ -23,14 +27,13 @@ export default function TrackItem({
 
   const transform = `translate(${x}px, ${y}px) translate(-50%, -50%) rotate(${rotation}deg)`;
   const opacity = isVisible ? 1 : 0;
-  const counterRotate = `translate(-50%, -50%) rotate(${-rotation}deg)`;
 
   return (
     <div
-      className="group absolute left-0 top-0 hover:z-50"
+      className="group absolute left-0 top-0 hover:z-10"
       style={{
         transform,
-        transformOrigin: "center center",
+        transformOrigin: "center",
         opacity,
         zIndex: isActualStation ? 1 : 0,
       }}
@@ -38,14 +41,7 @@ export default function TrackItem({
       <PillItem isActualStation={isActualStation} />
 
       {isActualStation && stationCode && (
-        <div
-          className="absolute left-4.5 top-4 "
-          style={{
-            transform: counterRotate,
-            transformOrigin: "center center",
-            zIndex: 10,
-          }}
-        >
+        <div className={ICON_POSITION_CLASS} style={{ zIndex: 10 }}>
           <StationCodeIcon stationCode={stationCode} className="w-6 h-6" />
         </div>
       )}
@@ -57,17 +53,19 @@ export default function TrackItem({
       )}
 
       {distanceFromSourceKm !== undefined && (
-        <div
-          className="absolute left-4.5 top-4"
-          style={{
-            transform: counterRotate,
-            transformOrigin: "center center",
-          }}
-        >
-          <DistanceKm distanceFromOriginKm={distanceFromSourceKm} className="w-6 h-6" />
+        <div className={`${ICON_POSITION_CLASS} -z-10`}>
+          <DistanceKm distanceFromOriginKm={distanceFromSourceKm} className="w-6 h-6"/>
+        </div>
+      )}
+
+      {dayNumber !== undefined && (
+        <div className= "absolute left-[18px] top-[19px] -translate-x-1/2 -translate-y-1/2 -z-10 ">
+          <DayMarker dayNumber={dayNumber} />
         </div>
       )}
     </div>
   );
 }
+
+export default memo(TrackItem);
 

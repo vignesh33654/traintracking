@@ -22,7 +22,7 @@ export default function PillItem({
   return (
     <div
       className={cn(
-        "relative h-pill-height w-pill-width rounded-full transition-all bg-bg-1 z-10",
+        "relative h-pill-height w-pill-width rounded-full bg-bg-1 z-10",
         isActualStation && "cursor-pointer",
         className
       )}
