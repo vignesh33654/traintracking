@@ -36,6 +36,7 @@ interface StationTooltipProps {
   scheduledDeparture: string;
   platform: string;
   direction: Direction;
+  day: number;
   className?: string;
 }
 
@@ -75,6 +76,7 @@ export default function StationTooltip({
   scheduledDeparture,
   platform,
   direction,
+  day,
   className,
 }: StationTooltipProps) {
   const styles = DIRECTION_STYLES[direction];
@@ -100,8 +102,8 @@ export default function StationTooltip({
         >
           {stationName}
         </p>
-
         <div className={cn("flex gap-[4px] items-center", styles.row)}>
+        <InfoItem icon="/placeholder.svg" label={`DAY:${day}`} />
           <InfoItem icon="/placeholder.svg" label={`DEP:${scheduledDeparture}`} />
           <InfoItem icon="/platform.svg" label={`P-${platform}`} />
         </div>

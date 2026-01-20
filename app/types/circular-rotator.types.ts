@@ -15,6 +15,10 @@ export interface TrackItemProps {
   stationCode: string;
   isActualStation: boolean;
   distanceFromSourceKm?: number;
+  dayNumber?: number;
+  scheduledDeparture?: string;
+  platform?: string;
+  day?: number;
 }
 
 export interface TimePathTextProps {
@@ -40,6 +44,10 @@ export interface PillData {
   stationCode: string;
   isActualStation: boolean;
   distanceFromSourceKm?: number;
+  dayNumber?: number;
+  scheduledDeparture?: string;
+  platform?: string;
+  day?: number;
 }
 
 export interface TimeLabelData {
