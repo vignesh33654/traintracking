@@ -110,16 +110,20 @@ function calculateDayMarkerPillIndices(
 export function generatePillData(
   itemCount: number,
   stations: RouteStation[],
-  pillsPerStation: number
+  pillsPerStation: number,
+  pillsBeforeFirstStation: number = 0
 ): PillData[] {
   const milestonePills = calculateMilestonePillIndices(stations, pillsPerStation);
   const dayMarkerPills = calculateDayMarkerPillIndices(stations, pillsPerStation);
 
   return Array.from({ length: itemCount - 1 }, (_, i) => {
     const index = i + 1;
-    const stationIndex = Math.floor(index / pillsPerStation);
-    const isFirstPill = index % pillsPerStation === 1;
-    const station = stations[stationIndex];
+    const adjustedIndex = index - pillsBeforeFirstStation;
+    const stationIndex = adjustedIndex > 0
+      ? Math.floor(adjustedIndex / pillsPerStation)
+      : -1;
+    const isFirstPill = adjustedIndex > 0 && adjustedIndex % pillsPerStation === 1;
+    const station = stationIndex >= 0 ? stations[stationIndex] : undefined;
 
     const milestoneValue = milestonePills.get(index);
     const dayNumber = dayMarkerPills.get(index);

@@ -6,11 +6,14 @@ import { useNativeScroll } from "../../../hooks/useNativeScroll";
 import { useScrollSound } from "../../../hooks/useScrollSound";
 import { useInitialStationScroll } from "../../../hooks/useInitialStationScroll";
 import { usePillPositions } from "../../../hooks/usePillPositions";
+import { useIsMobile } from "../../../hooks/useIsMobile";
+import { useActiveStation } from "../../../hooks/useMobileActiveStation";
 import { generatePillData } from "../../../utils/circular-rotator-calculations";
 import { TRACK_CONTAINER_WIDTH, PILL_CONFIG } from "../../../config/circular-rotator.config";
 import type { CircularRotatorProps } from "../../../types/circular-rotator.types";
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
+import MobileStationTooltip from "./MobileStationTooltip";
 
 export default function CircularRotator({
   stations,
@@ -50,11 +53,21 @@ export default function CircularRotator({
   });
 
   const pills = useMemo(
-    () => generatePillData(itemCount, stations, pillsPerStation),
+    () => generatePillData(itemCount, stations, pillsPerStation, PILL_CONFIG.pillsBeforeFirstStation),
     [itemCount, stations, pillsPerStation]
   );
 
   const registerPillRef = usePillPositions({ gapRatio, scrollRange, scrollProgress });
+
+  const isMobile = useIsMobile();
+  const activeStation = useActiveStation(
+    scrollProgress,
+    stations,
+    pillsPerStation,
+    gapRatio,
+    scrollRange,
+    PILL_CONFIG.pillsBeforeFirstStation
+  );
 
   return (
     <div ref={scrollRef} className="relative" style={{ height: totalScrollHeight }}>
@@ -86,6 +99,17 @@ export default function CircularRotator({
               registerPillRef={registerPillRef}
             />
           ))}
+
+          {isMobile && activeStation && (
+            <MobileStationTooltip
+              stationName={activeStation.stationName}
+              stationCode={activeStation.stationCode}
+              scheduledDeparture={activeStation.scheduledDeparture}
+              platform={activeStation.platform}
+              day={activeStation.day}
+              gapRatio={gapRatio}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -11,6 +11,7 @@ export const TRACK_PATH_CONFIG = {
 export const PILL_CONFIG = {
   gap: 28,
   perStation: 12,
+  pillsBeforeFirstStation: 2,
 } as const;
 
 export const MILESTONE_CONFIG = {
