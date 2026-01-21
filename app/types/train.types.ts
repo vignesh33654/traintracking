@@ -133,6 +133,5 @@ export interface TrainApiResponse {
 export interface ApiError {
   message: string;
   status: number;
-  code?: string;
+  code: string | null;
 }
-

@@ -20,10 +20,11 @@ export const MILESTONE_CONFIG = {
 
 export const TRACK_CONTAINER_WIDTH = 360;
 
+export const TRACK_VIEWPORT_HEIGHT = 600;
+
 export const TIME_PATH_OFFSET = 28;
 
-// Vertical offset for time labels on straight rail sections
 export const TIME_LABEL_VERTICAL_OFFSET = {
-  left: 10,   // Offset on left rail (downward)
-  right: -10, // Offset on right rail (upward)
+  left: 10,
+  right: -10,
 } as const;

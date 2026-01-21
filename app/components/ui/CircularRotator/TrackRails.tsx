@@ -2,9 +2,9 @@ import TimePathText from "./TimePathText";
 import type { TrackRailsProps } from "../../../types/circular-rotator.types";
 
 const TRACK_RAILS = [
-  { height: 744, width: 254, top: -158 }, // Inner
-  { height: 792, width: 306, top: -178 }, // Outer
-  { height: 744, width: 198, top: -188 }, // Center
+  { height: 744, width: 254, top: -158 },
+  { height: 792, width: 306, top: -178 },
+  { height: 744, width: 198, top: -188 },
 ] as const;
 
 export default function TrackRails({
@@ -33,4 +33,3 @@ export default function TrackRails({
     </>
   );
 }
-

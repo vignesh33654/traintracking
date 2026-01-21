@@ -1,9 +1,5 @@
-import TrainTrackingPage from "./page/train-tracking/page";
+import TrainTracking from "./components/ui/tracking/TrainTracking";
 
 export default function Home() {
-  return (
-    <div>
-      <TrainTrackingPage />
-    </div>
-  );
+  return <TrainTracking />;
 }

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { calculateTimeLabels } from "../../../utils/circular-rotator-calculations";
+import { TRACK_CONTAINER_WIDTH, TRACK_VIEWPORT_HEIGHT } from "../../../config/circular-rotator.config";
 import type { TimePathTextProps } from "../../../types/circular-rotator.types";
 
 export default function TimePathText({
@@ -16,10 +17,10 @@ export default function TimePathText({
 
   return (
     <div
-      className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
-      style={{ width: 360, height: 600, top: 0 }}
+      className="absolute left-1/2 top-0 -translate-x-1/2 pointer-events-none"
+      style={{ width: TRACK_CONTAINER_WIDTH, height: TRACK_VIEWPORT_HEIGHT }}
     >
-      {timeLabels.map(({ id, time, x, y, rotation, isVisible }, index) => (
+      {timeLabels.map(({ id, time, x, y, rotation, isVisible }) => (
         <div
           key={id}
           className="absolute text-label whitespace-nowrap"
