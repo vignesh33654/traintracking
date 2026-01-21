@@ -24,12 +24,5 @@ export const MILESTONE_CONFIG = {
 // Container dimensions
 export const TRACK_CONTAINER_WIDTH = 360;
 
-// Time label path (positioned inside track)
-export const TIME_TRACK_CONFIG = {
-  leftRailX: 64,
-  rightRailX: 296,
-  railTop: 105,
-  arcStartY: 555,
-  arcRadius: 100,
-  betweenStationsPercentage: 105,
-} as const;
+// Time label inner offset (distance from track to inner time path)
+export const TIME_PATH_OFFSET = 25;

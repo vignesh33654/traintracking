@@ -3,7 +3,7 @@ import { calculatePillProgress } from "./train-scroll-calculator";
 import { formatTimeAmPm, formatTime } from "./train-formatters";
 import type { RouteStation } from "../types/train.types";
 import type { PillPosition, PillData, TimeLabelData } from "../types/circular-rotator.types";
-import { MILESTONE_CONFIG, TIME_TRACK_CONFIG } from "../config/circular-rotator.config";
+import { MILESTONE_CONFIG } from "../config/circular-rotator.config";
 
 export function calculatePillPosition(
   index: number,
@@ -20,11 +20,6 @@ export function calculatePillPosition(
     rotation: position.rotation,
     isVisible: pillProgress.isVisible,
   };
-}
-
-export function generateTimePathD(): string {
-  const { leftRailX, rightRailX, railTop, arcStartY, arcRadius } = TIME_TRACK_CONFIG;
-  return `M ${leftRailX} ${railTop} L ${leftRailX} ${arcStartY} A ${arcRadius} ${arcRadius} 0 0 0 ${rightRailX} ${arcStartY} L ${rightRailX} ${railTop}`;
 }
 
 export function calculateTimeLabels(
@@ -45,9 +40,9 @@ export function calculateTimeLabels(
         scrollRange
       );
 
-      const offset = clampedProgress * TIME_TRACK_CONFIG.betweenStationsPercentage;
-      const time = formatTimeAmPm(station.scheduledArrival)
-
+      // Convert progress (0-1) to percentage offset (0-100%) for SVG textPath
+      const offset = clampedProgress * 100;
+      const time = formatTimeAmPm(station.scheduledArrival);
 
       return {
         id: station.id,

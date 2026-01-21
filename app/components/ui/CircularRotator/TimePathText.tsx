@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { generateTimePathD, calculateTimeLabels } from "../../../utils/circular-rotator-calculations";
+import { calculateTimeLabels } from "../../../utils/circular-rotator-calculations";
+import { INNER_TIME_PATH } from "../../../utils/track-path";
 import type { TimePathTextProps } from "../../../types/circular-rotator.types";
 
 export default function TimePathText({
@@ -9,8 +10,6 @@ export default function TimePathText({
   scrollRange,
   pillsPerStation,
 }: TimePathTextProps) {
-  const pathD = useMemo(() => generateTimePathD(), []);
-
   const timeLabels = useMemo(
     () => calculateTimeLabels(stations, scrollProgress, gapRatio, scrollRange, pillsPerStation),
     [stations, scrollProgress, gapRatio, scrollRange, pillsPerStation]
@@ -20,12 +19,12 @@ export default function TimePathText({
     <svg
       className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
       width={360}
-      height={700}
-      style={{ top: -100 }}
+      height={600}
+      style={{ top: 0 }}
       overflow="visible"
     >
       <defs>
-        <path id="innerTrackTextPath" d={pathD} fill="none" />
+        <path id="trackTextPath" d={INNER_TIME_PATH} fill="none" />
       </defs>
 
       {timeLabels.map(({ id, time, offset, isVisible }, index) => (
@@ -37,7 +36,7 @@ export default function TimePathText({
             opacity: isVisible ? 1 : 0,
           }}
         >
-          <textPath href="#innerTrackTextPath" startOffset={`${offset}%`}>
+          <textPath href="#trackTextPath" startOffset={`${offset}%`}>
             {index === 0 ? "" : time}
           </textPath>
         </text>

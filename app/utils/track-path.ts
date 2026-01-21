@@ -1,7 +1,21 @@
-import { TRACK_PATH_CONFIG } from "../config/circular-rotator.config";
+import { TRACK_PATH_CONFIG, TIME_PATH_OFFSET } from "../config/circular-rotator.config";
 
 // U-shaped track path: left rail → bottom arc → right rail
 export const U_SHAPED_TRACK_PATH = `M ${TRACK_PATH_CONFIG.leftRailX} ${TRACK_PATH_CONFIG.railTop} L ${TRACK_PATH_CONFIG.leftRailX} ${TRACK_PATH_CONFIG.arcStartY} A ${TRACK_PATH_CONFIG.arcRadius} ${TRACK_PATH_CONFIG.arcRadius} 0 0 0 ${TRACK_PATH_CONFIG.rightRailX} ${TRACK_PATH_CONFIG.arcStartY} L ${TRACK_PATH_CONFIG.rightRailX} ${TRACK_PATH_CONFIG.railTop}`;
+
+// Generate inner U-shaped path offset inward from main track
+export function generateInnerPath(offset: number): string {
+  const { leftRailX, rightRailX, railTop, arcStartY, arcRadius } = TRACK_PATH_CONFIG;
+
+  const innerLeftX = leftRailX + offset;
+  const innerRightX = rightRailX - offset;
+  const innerRadius = arcRadius - offset;
+
+  return `M ${innerLeftX} ${railTop} L ${innerLeftX} ${arcStartY} A ${innerRadius} ${innerRadius} 0 0 0 ${innerRightX} ${arcStartY} L ${innerRightX} ${railTop}`;
+}
+
+// Inner path for time labels (offset inward from track)
+export const INNER_TIME_PATH = generateInnerPath(TIME_PATH_OFFSET);
 
 let cachedPath: SVGPathElement | null = null;
 let cachedTotalLength: number | null = null;
