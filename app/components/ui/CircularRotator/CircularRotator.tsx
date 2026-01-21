@@ -38,7 +38,7 @@ export default function CircularRotator({
     pillsPerStation
   );
 
-  useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount });
+  useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount, containerRef: scrollRef });
   useInitialStationScroll({
     scrollRef,
     stationsLength: stations.length,
