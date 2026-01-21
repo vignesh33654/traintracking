@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { calculateTimeLabels } from "../../../utils/circular-rotator-calculations";
-import { INNER_TIME_PATH } from "../../../utils/track-path";
 import type { TimePathTextProps } from "../../../types/circular-rotator.types";
 
 export default function TimePathText({
@@ -16,31 +15,24 @@ export default function TimePathText({
   );
 
   return (
-    <svg
+    <div
       className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
-      width={360}
-      height={600}
-      style={{ top: 0 }}
-      overflow="visible"
+      style={{ width: 360, height: 600, top: 0 }}
     >
-      <defs>
-        <path id="trackTextPath" d={INNER_TIME_PATH} fill="none" />
-      </defs>
-
-      {timeLabels.map(({ id, time, offset, isVisible }, index) => (
-        <text
+      {timeLabels.map(({ id, time, x, y, rotation, isVisible }, index) => (
+        <div
           key={id}
-          className="text-label"
+          className="absolute text-label whitespace-nowrap"
           style={{
-            fill: "var(--color-text-secondary)",
+            color: "var(--color-text-secondary)",
             opacity: isVisible ? 1 : 0,
+            transform: `translate(${x}px, ${y}px) translate(-50%, -50%) rotate(${rotation}deg)`,
+            transformOrigin: "center",
           }}
         >
-          <textPath href="#trackTextPath" startOffset={`${offset}%`}>
-            {index === 0 ? "" : time}
-          </textPath>
-        </text>
+          {time}
+        </div>
       ))}
-    </svg>
+    </div>
   );
 }

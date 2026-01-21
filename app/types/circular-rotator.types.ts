@@ -53,7 +53,9 @@ export interface PillData {
 export interface TimeLabelData {
   id: number;
   time: string;
-  offset: number;
+  x: number;
+  y: number;
+  rotation: number;
   isVisible: boolean;
 }
 

@@ -64,12 +64,12 @@ function TrackItem({
         </div>
       )}
 
-      {isActualStation && stationName && scheduledDeparture && platform && (() => {
+      {isActualStation && stationName && platform && (() => {
         const direction = getTooltipDirection(x);
         const offset = TOOLTIP_OFFSETS[direction];
         return (
           <div
-            className="pointer-events-none absolute z-50 opacity-0 transition-opacity group-hover:opacity-100 "
+            className="pointer-events-none absolute z-50 opacity-0 group-hover:opacity-100 "
             style={{
               left: `${offset.x}px`,
               top: `${offset.y}px`,

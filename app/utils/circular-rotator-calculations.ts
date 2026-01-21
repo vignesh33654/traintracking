@@ -1,6 +1,6 @@
-import { getPositionOnPath } from "./circular-rotator-utils";
+import { getPositionOnPath, getPositionOnInnerPath } from "./circular-rotator-utils";
 import { calculatePillProgress } from "./train-scroll-calculator";
-import { formatTimeAmPm, formatTime } from "./train-formatters";
+import { formatTimeAmPm } from "./train-formatters";
 import type { RouteStation } from "../types/train.types";
 import type { PillPosition, PillData, TimeLabelData } from "../types/circular-rotator.types";
 import { MILESTONE_CONFIG } from "../config/circular-rotator.config";
@@ -30,9 +30,10 @@ export function calculateTimeLabels(
   pillsPerStation: number
 ): TimeLabelData[] {
   return stations
-    .filter((station) => station.scheduledArrival != null)
-    .map((station, stationIndex) => {
-      const pillIndex = stationIndex * pillsPerStation;
+    .map((station, originalIndex) => ({ station, originalIndex }))
+    .filter(({ station }) => station.sequence > 0 && station.scheduledArrival > 0)
+    .map(({ station, originalIndex }) => {
+      const pillIndex = originalIndex * pillsPerStation;
       const { clampedProgress, isVisible } = calculatePillProgress(
         pillIndex,
         scrollProgress,
@@ -40,14 +41,15 @@ export function calculateTimeLabels(
         scrollRange
       );
 
-      // Convert progress (0-1) to percentage offset (0-100%) for SVG textPath
-      const offset = clampedProgress * 100;
+      const position = getPositionOnInnerPath(clampedProgress);
       const time = formatTimeAmPm(station.scheduledArrival);
 
       return {
         id: station.id,
         time,
-        offset,
+        x: position.x,
+        y: position.y,
+        rotation: position.rotation,
         isVisible,
       };
     });
@@ -63,7 +65,11 @@ function calculateMilestonePillIndices(
   const maxDistance = stations[stations.length - 1]?.distanceFromSourceKm || 0;
   let currentMilestone = MILESTONE_CONFIG.intervalKm;
 
-  for (let stationIndex = 0; stationIndex < stations.length && currentMilestone <= maxDistance; stationIndex++) {
+  for (
+    let stationIndex = 0;
+    stationIndex < stations.length && currentMilestone <= maxDistance;
+    stationIndex++
+  ) {
     const stationDistance = stations[stationIndex].distanceFromSourceKm;
 
     while (currentMilestone <= stationDistance) {
@@ -91,9 +97,7 @@ function calculateDayMarkerPillIndices(
     const currentDay = stations[i].day;
     const nextDay = stations[i + 1].day;
 
-    // Day transition detected - only show markers for day 2+
     if (nextDay > currentDay && nextDay >= 2) {
-      // Position 2 pills after the current station
       const stationFirstPill = i * pillsPerStation + 1;
       const dayMarkerPillIndex = stationFirstPill + 2;
       dayMarkerPills.set(dayMarkerPillIndex, nextDay);
@@ -127,7 +131,10 @@ export function generatePillData(
       isActualStation: isFirstPill && !!station,
       distanceFromSourceKm: milestoneValue,
       dayNumber,
-      scheduledDeparture: station ? formatTime(station.scheduledDeparture) : undefined,
+      scheduledDeparture:
+        station && stationIndex < stations.length - 1
+          ? formatTimeAmPm(station.scheduledDeparture)
+          : undefined,
       platform: station?.platform || undefined,
       day: station?.day,
     };
@@ -146,4 +153,3 @@ export function calculateInitialScrollTop(
   const targetProgress = (pillIndex * gapRatio) / Math.abs(scrollRange);
   return targetProgress * (totalScrollHeight - window.innerHeight);
 }
-
