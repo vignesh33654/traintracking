@@ -24,21 +24,6 @@ export const MILESTONE_CONFIG = {
 // Container dimensions
 export const TRACK_CONTAINER_WIDTH = 360;
 
-// Visual rail styling (CSS borders)
-export const INNER_TRACK_CONFIG = {
-  height: 744,
-  width: 254,
-  borderRadius: 334,
-  top: -158,
-} as const;
-
-export const OUTER_TRACK_CONFIG = {
-  height: 792,
-  width: 306,
-  borderRadius: 334,
-  top: -178,
-} as const;
-
 // Time label path (positioned inside track)
 export const TIME_TRACK_CONFIG = {
   leftRailX: 64,
@@ -47,10 +32,4 @@ export const TIME_TRACK_CONFIG = {
   arcStartY: 555,
   arcRadius: 100,
   betweenStationsPercentage: 105,
-} as const;
-
-export const TIME_PATH_SVG_CONFIG = {
-  width: 360,
-  height: 700,
-  top: "-100px",
 } as const;

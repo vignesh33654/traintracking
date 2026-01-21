@@ -18,10 +18,9 @@ const getTooltipDirection = (x: number): TooltipDirection => {
   return x < midX ? "left" : "right";
 };
 
-// Tooltip offset values - tweak these to adjust positioning
 const TOOLTIP_OFFSETS = {
-  left: { x: 38, y: 20 },   // left direction tooltip position
-  right: { x: 38, y: 19 },  // right direction tooltip position
+  left: { x: 28, y: 20 }, 
+  right: { x: 28, y: 19 },  
 };
 
 function TrackItem({
@@ -49,7 +48,7 @@ function TrackItem({
 
   return (
     <div
-      className="group absolute left-0 top-0 hover:z-10"
+      className="group absolute left-0 top-0"
       style={{
         transform,
         transformOrigin: "center",
@@ -70,7 +69,7 @@ function TrackItem({
         const offset = TOOLTIP_OFFSETS[direction];
         return (
           <div
-            className="pointer-events-none absolute z-50 opacity-0 transition-opacity group-hover:opacity-100"
+            className="pointer-events-none absolute z-50 opacity-0 transition-opacity group-hover:opacity-100 "
             style={{
               left: `${offset.x}px`,
               top: `${offset.y}px`,

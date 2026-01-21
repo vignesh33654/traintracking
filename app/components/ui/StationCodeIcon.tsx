@@ -14,7 +14,7 @@ export default function StationCodeIcon({
       <div className="absolute left-1/2 top-[3px] h-[10px] w-[24px] -translate-x-1/2 border border-yellow" />
       <div className="absolute left-[5px] top-[13px] h-[8px] w-px bg-yellow" />
       <div className="absolute right-[5px] top-[13px] h-[8px] w-px bg-yellow" />
-      <span className="absolute left-1/2 top-pill-dot -translate-x-1/2 text-center text-[8px] text-uppercase text-yellow tracking-[-0.32px] font-circular">
+      <span className="absolute left-1/2 top-pill-dot -translate-x-1/2 text-center text-[8px] uppercase text-yellow font-circular">
         {stationCode}
       </span>
     </div>

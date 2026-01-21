@@ -64,7 +64,7 @@ function InfoItem({ icon, label }: { icon: string; label: string }) {
         aria-hidden="true"
         className="shrink-0"
       />
-      <span className="font-b612-mono-10 leading-[14px] text-text-secondary uppercase whitespace-nowrap ">
+      <span className="font-b612-mono-10 leading-[14px] text-text-secondary uppercase whitespace-nowrap text-pretty">
         {label}
       </span>
     </div>
@@ -93,17 +93,17 @@ export default function StationTooltip({
     >
       <TooltipArrow direction={direction} />
 
-      <div className={cn("flex flex-col  gap-pill-dot", styles.content)}>
+      <div className={cn("flex flex-col gap-pill-dot", styles.content)}>
         <p
           className={cn(
-            "font-b612-mono-10 leading-[14px] text-text-primary uppercase w-full",
+            "font-b612-mono-10 leading-[14px] text-text-primary uppercase w-full text-pretty",
             styles.text
           )}
         >
           {stationName}
         </p>
-        <div className={cn("flex gap-[4px] items-center", styles.row)}>
-        <InfoItem icon="/placeholder.svg" label={`DAY:${day}`} />
+        <div className={cn("flex gap-1 items-center", styles.row)}>
+          {day > 1 && <InfoItem icon="/placeholder.svg" label={`DAY:${day}`} />}
           <InfoItem icon="/placeholder.svg" label={`DEP:${scheduledDeparture}`} />
           <InfoItem icon="/platform.svg" label={`P-${platform}`} />
         </div>

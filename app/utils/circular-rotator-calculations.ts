@@ -3,7 +3,7 @@ import { calculatePillProgress } from "./train-scroll-calculator";
 import { formatTimeAmPm, formatTime } from "./train-formatters";
 import type { RouteStation } from "../types/train.types";
 import type { PillPosition, PillData, TimeLabelData } from "../types/circular-rotator.types";
-import { TIME_TRACK_CONFIG, MILESTONE_CONFIG } from "../config/circular-rotator.config";
+import { MILESTONE_CONFIG, TIME_TRACK_CONFIG } from "../config/circular-rotator.config";
 
 export function calculatePillPosition(
   index: number,
