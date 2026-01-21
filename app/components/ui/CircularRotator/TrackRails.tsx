@@ -1,6 +1,11 @@
 import TimePathText from "./TimePathText";
-import { INNER_TRACK_CONFIG, OUTER_TRACK_CONFIG } from "../../../config/circular-rotator.config";
 import type { TrackRailsProps } from "../../../types/circular-rotator.types";
+
+const TRACK_RAILS = [
+  { height: 744, width: 254, top: -158 }, // Inner
+  { height: 792, width: 306, top: -178 }, // Outer
+  { height: 744, width: 198, top: -188 }, // Center
+] as const;
 
 export default function TrackRails({
   stations,
@@ -11,24 +16,13 @@ export default function TrackRails({
 }: TrackRailsProps) {
   return (
     <>
-      <div
-        className="absolute left-1/2 -translate-x-1/2 border border-bg-1 border-solid rounded-[334px]"
-        style={{
-          height: `${INNER_TRACK_CONFIG.height}px`,
-          width: `${INNER_TRACK_CONFIG.width}px`,
-          borderRadius: `${INNER_TRACK_CONFIG.borderRadius}px`,
-          top: `${INNER_TRACK_CONFIG.top}px`,
-        }}
-      />
-      <div
-        className="absolute left-1/2 -translate-x-1/2 border border-bg-1 border-solid rounded-[334px]"
-        style={{
-          height: `${OUTER_TRACK_CONFIG.height}px`,
-          width: `${OUTER_TRACK_CONFIG.width}px`,
-          borderRadius: `${OUTER_TRACK_CONFIG.borderRadius}px`,
-          top: `${OUTER_TRACK_CONFIG.top}px`,
-        }}
-      />
+      {TRACK_RAILS.map((rail, i) => (
+        <div
+          key={i}
+          className="absolute left-1/2 -translate-x-1/2 border border-bg-1 border-solid"
+          style={{ ...rail, borderRadius: 334 }}
+        />
+      ))}
       <TimePathText
         stations={stations}
         scrollProgress={scrollProgress}

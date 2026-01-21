@@ -6,9 +6,8 @@ import { useTrainScroll } from "../../../hooks/useTrainScroll";
 import { useNativeScroll } from "../../../hooks/useNativeScroll";
 import { useScrollSound } from "../../../hooks/useScrollSound";
 import { generatePillData, calculateInitialScrollTop } from "../../../utils/circular-rotator-calculations";
-import { TRACK_CONTAINER_WIDTH } from "../../../config/circular-rotator.config";
+import { TRACK_CONTAINER_WIDTH, PILL_CONFIG } from "../../../config/circular-rotator.config";
 import type { CircularRotatorProps } from "../../../types/circular-rotator.types";
-import { PILL_CONFIG } from "../../../config/circular-rotator.config";
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
 
@@ -17,12 +16,13 @@ export default function CircularRotator({
   pillGap = PILL_CONFIG.gap,
   pillsPerStation = PILL_CONFIG.perStation,
 }: CircularRotatorProps) {
-
-
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollProgress = useNativeScroll(scrollRef);
   const { data: trainData } = useTrainData(trainNumber);
-  const stations = useMemo(() => trainData?.route || [], [trainData?.route]);
+  const stations = useMemo(
+    () => (trainData?.route || []).filter((station) => station.isHalt > 0),
+    [trainData?.route]
+  );
 
   const liveData = trainData?.liveData;
   const currentStationSequence = liveData?.currentLocation?.sequence;
@@ -61,7 +61,7 @@ export default function CircularRotator({
 
   return (
     <div ref={scrollRef} className="relative" style={{ height: `${totalScrollHeight}px` }}>
-      <div className="sticky top-0 w-full h-screen flex items-center justify-center">
+      <div className="sticky top-0 w-full h-dvh flex items-center justify-center">
         <div
           className="relative h-full bg-bg-0"
           style={{ width: `${TRACK_CONTAINER_WIDTH}px` }}
@@ -74,7 +74,7 @@ export default function CircularRotator({
             pillsPerStation={pillsPerStation}
           />
 
-          {pills.map(({ index, stationName, isActualStation }) => (
+          {pills.map(({ index, stationName, stationCode, isActualStation, distanceFromSourceKm, dayNumber, scheduledDeparture, platform, day }) => (
             <TrackItem
               key={index}
               index={index}
@@ -82,7 +82,13 @@ export default function CircularRotator({
               scrollRange={scrollRange}
               scrollProgress={scrollProgress}
               stationName={stationName}
+              stationCode={stationCode}
               isActualStation={isActualStation}
+              distanceFromSourceKm={distanceFromSourceKm}
+              dayNumber={dayNumber}
+              scheduledDeparture={scheduledDeparture}
+              platform={platform}
+              day={day}
             />
           ))}
         </div>
@@ -90,4 +96,3 @@ export default function CircularRotator({
     </div>
   );
 }
-

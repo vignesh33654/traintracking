@@ -8,3 +8,5 @@ alwaysApply: true
 - Ensure I'm not on main
 - Avoid useEffect unless needed
 - Avoid massive JSX blocks
+- Make sure use the latest tailwindcss v4.1
+
