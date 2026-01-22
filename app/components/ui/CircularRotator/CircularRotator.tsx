@@ -41,7 +41,7 @@ export default function CircularRotator({
     pillsPerStation
   );
 
-  useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount, containerRef: scrollRef });
+  useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount});
   useInitialStationScroll({
     scrollRef,
     stationsLength: stations.length,
@@ -52,8 +52,10 @@ export default function CircularRotator({
     totalScrollHeight,
   });
 
+  const pillsBeforeFirstStation = PILL_CONFIG.pillsBeforeFirstStation;
+
   const pills = useMemo(
-    () => generatePillData(itemCount, stations, pillsPerStation, PILL_CONFIG.pillsBeforeFirstStation),
+    () => generatePillData(itemCount, stations, pillsPerStation, pillsBeforeFirstStation),
     [itemCount, stations, pillsPerStation]
   );
 
@@ -66,7 +68,7 @@ export default function CircularRotator({
     pillsPerStation,
     gapRatio,
     scrollRange,
-    PILL_CONFIG.pillsBeforeFirstStation
+    pillsBeforeFirstStation
   );
 
   return (
@@ -96,7 +98,7 @@ export default function CircularRotator({
               scheduledDeparture={scheduledDeparture}
               platform={platform}
               day={day}
-              registerPillRef={registerPillRef}
+              registerPillRef={registerPillRef} // 
             />
           ))}
 
