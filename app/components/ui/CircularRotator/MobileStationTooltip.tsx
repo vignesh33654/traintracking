@@ -1,5 +1,5 @@
 import StationTooltip from "../StationTooltip";
-import { TRACK_PATH_CONFIG, PILL_CONFIG } from "../../../config/circular-rotator.config";
+import { PILL_CONFIG } from "../../../config/circular-rotator.config";
 import { getPositionOnPath } from "../../../utils/circular-rotator-utils";
 
 interface MobileStationTooltipProps {

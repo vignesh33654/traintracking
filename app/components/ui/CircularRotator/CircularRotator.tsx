@@ -56,7 +56,7 @@ export default function CircularRotator({
 
   const pills = useMemo(
     () => generatePillData(itemCount, stations, pillsPerStation, pillsBeforeFirstStation),
-    [itemCount, stations, pillsPerStation]
+    [itemCount, stations, pillsPerStation, pillsBeforeFirstStation]
   );
 
   const registerPillRef = usePillPositions({ gapRatio, scrollRange, scrollProgress });
