@@ -9,7 +9,7 @@ import {
   TrackingEmptyState,
   TrackingErrorState,
   TrackingLoadingState,
-} from "@/app/components/ui/tracking/TrackingStates";
+} from "@/app/components/layout/TrackingStates";
 
 const TRAIN_NUMBER = API_CONFIG.trainNumber;
 

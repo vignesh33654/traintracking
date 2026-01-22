@@ -1,4 +1,4 @@
-import { TRACK_PATH_CONFIG } from "../../../config/circular-rotator.config";
+import { TRACK_PATH_CONFIG } from "../config/circular-rotator.config";
 
 export type TooltipDirection = "left" | "right";
 

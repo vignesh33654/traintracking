@@ -104,16 +104,16 @@ export default function StationTooltip({
     flexDirection: `var(--tooltip-flex-direction, ${defaults.flexDirection})` as CSSProperties["flexDirection"],
   };
   const contentStyle: CSSProperties = {
-    alignItems: `var(--tooltip-content-align, ${defaults.contentAlign})`,
+    alignItems: `var(--tooltip-content-align, ${defaults.contentAlign})` as CSSProperties["alignItems"],
   };
   const textStyle: CSSProperties = {
     textAlign: `var(--tooltip-text-align, ${defaults.textAlign})` as CSSProperties["textAlign"],
   };
   const rowStyle: CSSProperties = {
-    justifyContent: `var(--tooltip-row-justify, ${defaults.rowJustify})`,
+    justifyContent: `var(--tooltip-row-justify, ${defaults.rowJustify})` as CSSProperties["justifyContent"],
   };
   const arrowStyle: CSSProperties = {
-    transform: `rotate(var(--tooltip-arrow-rotation, ${defaults.arrowRotation}))`,
+    transform: `rotate(var(--tooltip-arrow-rotation, ${defaults.arrowRotation}))` as CSSProperties["transform"],
   };
 
   return (

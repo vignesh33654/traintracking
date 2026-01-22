@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { calculatePillPosition } from "../utils/circular-rotator-calculations";
-import { getTooltipDirection, TOOLTIP_OFFSETS } from "../components/ui/CircularRotator/pillTooltip";
+import { getTooltipDirection, TOOLTIP_OFFSETS } from "../utils/pillTooltip";
 
 interface UsePillPositionsParams {
   gapRatio: number;
