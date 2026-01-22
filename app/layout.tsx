@@ -5,7 +5,6 @@ import "./globals.css";
 import DarkModeToggle from "./components/ui/DarkModeToggle";
 import { cn } from "./utils/utils";
 import { QueryProvider } from "./providers/QueryProvider";
-import { Agentation } from "agentation";
 
 
 const b612Mono = B612_Mono({
@@ -87,7 +86,6 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: DARK_MODE_SCRIPT }} />
         <QueryProvider>
           <DarkModeToggle />
-          <Agentation />
           {children}
         </QueryProvider>
       </body>

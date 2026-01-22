@@ -9,4 +9,4 @@ alwaysApply: true
 - Avoid useEffect unless needed
 - Avoid massive JSX blocks
 - Make sure use the latest tailwindcss v4.1
-
+- Avoid hydration suppress error in nextjs
