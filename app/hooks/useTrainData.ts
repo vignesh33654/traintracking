@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { fetchTrainData, trainQueryKeys } from '@/app/api/train.api';
-import type { TrainApiResponse, ApiError } from '@/app/types/train.types';
+import { useQuery } from "@tanstack/react-query";
+import { fetchTrainData, trainQueryKeys } from "@/app/api/train.api";
+import type { TrainApiResponse, ApiError } from "@/app/types/train.types";
 
 interface UseTrainDataOptions {
   enabled?: boolean;
@@ -25,4 +25,3 @@ export function useTrainData(trainNumber: string, options: UseTrainDataOptions =
     placeholderData: (previousData) => previousData,
   });
 }
-

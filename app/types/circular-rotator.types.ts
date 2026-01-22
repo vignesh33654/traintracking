@@ -1,16 +1,14 @@
-import type { RouteStation } from "./train.types";
+import type { LiveTrainData, RouteStation } from "./train.types";
 
 export interface CircularRotatorProps {
-  trainNumber: string;
+  stations: RouteStation[];
+  liveData: LiveTrainData | null;
   pillGap?: number;
   pillsPerStation?: number;
 }
 
 export interface TrackItemProps {
   index: number;
-  gapRatio: number;
-  scrollRange: number;
-  scrollProgress: number;
   stationName: string;
   stationCode: string;
   isActualStation: boolean;
@@ -19,6 +17,7 @@ export interface TrackItemProps {
   scheduledDeparture?: string;
   platform?: string;
   day?: number;
+  registerPillRef: (index: number, node: HTMLDivElement | null) => void;
 }
 
 export interface TimePathTextProps {
@@ -65,4 +64,3 @@ export interface PillPosition {
   rotation: number;
   isVisible: boolean;
 }
-

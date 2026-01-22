@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { U_SHAPED_TRACK_PATH, getTrackPath, getPathTotalLength, resetCache } from '../track-path';
 import { TRACK_PATH_CONFIG } from '../../config/circular-rotator.config';
 
@@ -37,7 +37,7 @@ describe('track-path', () => {
     });
 
     it('should create a valid U-shape from left to right', () => {
-      const { leftRailX, rightRailX, railTop, arcStartY, arcRadius } = TRACK_PATH_CONFIG;
+      const { leftRailX, railTop, arcStartY, arcRadius } = TRACK_PATH_CONFIG;
 
       // Parse the path components
       const parts = U_SHAPED_TRACK_PATH.split(' ');

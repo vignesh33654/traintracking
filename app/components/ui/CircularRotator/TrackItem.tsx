@@ -1,33 +1,31 @@
-import { memo, useMemo } from "react";
+import { memo, type CSSProperties } from "react";
 import PillItem from "../PillItem";
 import StationCodeIcon from "../StationCodeIcon";
 import StationTooltip from "../StationTooltip";
 import { DistanceKm } from "../DistanceKm";
 import { DayMarker } from "../DayMarker";
-import { calculatePillPosition } from "../../../utils/circular-rotator-calculations";
-import { TRACK_PATH_CONFIG } from "../../../config/circular-rotator.config";
+import { TOOLTIP_OFFSETS } from "../../../utils/pillTooltip";
 import type { TrackItemProps } from "../../../types/circular-rotator.types";
-
-type TooltipDirection = "left" | "right";
 
 const ICON_POSITION_CLASS = "absolute left-[18px] top-[19px] -translate-x-1/2 -translate-y-1/2";
 
-const getTooltipDirection = (x: number): TooltipDirection => {
-  const { leftRailX, rightRailX } = TRACK_PATH_CONFIG;
-  const midX = (leftRailX + rightRailX) / 2;
-  return x < midX ? "left" : "right";
+const pillStyle: CSSProperties = {
+  transform:
+    "translate(var(--pill-x, 0px), var(--pill-y, 0px)) translate(-50%, -50%) rotate(var(--pill-rotation, 0deg))",
+  transformOrigin: "center",
+  opacity: "var(--pill-opacity, 0)",
 };
 
-const TOOLTIP_OFFSETS = {
-  left: { x: 28, y: 20 }, 
-  right: { x: 28, y: 19 },  
+const tooltipStyle: CSSProperties = {
+  left: `var(--tooltip-offset-x, ${TOOLTIP_OFFSETS.right.x}px)`,
+  top: `var(--tooltip-offset-y, ${TOOLTIP_OFFSETS.right.y}px)`,
+  transform:
+    "translate(var(--tooltip-translate-x, 0%), -50%) rotate(var(--pill-rotation-inverse, 0deg))",
+  transformOrigin: "var(--tooltip-origin, left center)",
 };
 
 function TrackItem({
   index,
-  gapRatio,
-  scrollRange,
-  scrollProgress,
   stationName,
   stationCode,
   isActualStation,
@@ -36,23 +34,14 @@ function TrackItem({
   scheduledDeparture,
   platform,
   day,
+  registerPillRef,
 }: TrackItemProps) {
-
-  const { x, y, rotation, isVisible } = useMemo(
-    () => calculatePillPosition(index, scrollProgress, gapRatio, scrollRange),
-    [scrollProgress, index, gapRatio, scrollRange]
-  );
-
-  const transform = `translate(${x}px, ${y}px) translate(-50%, -50%) rotate(${rotation}deg)`;
-  const opacity = isVisible ? 1 : 0;
-
   return (
     <div
+      ref={(node) => registerPillRef(index, node)}
       className="group absolute left-0 top-0"
       style={{
-        transform,
-        transformOrigin: "center",
-        opacity,
+        ...pillStyle,
         zIndex: isActualStation ? 1 : 0,
       }}
     >
@@ -65,23 +54,17 @@ function TrackItem({
       )}
 
       {isActualStation && stationName && platform && (() => {
-        const direction = getTooltipDirection(x);
-        const offset = TOOLTIP_OFFSETS[direction];
         return (
           <div
+            data-station-tooltip
             className="pointer-events-none absolute z-50 opacity-0 group-hover:opacity-100 "
-            style={{
-              left: `${offset.x}px`,
-              top: `${offset.y}px`,
-              transform: `translate(${direction === 'left' ? '-100%' : '0'}, -50%) rotate(${-rotation}deg)`,
-              transformOrigin: direction === 'left' ? 'right center' : 'left center',
-            }}
+            style={tooltipStyle}
           >
             <StationTooltip
               stationName={stationName}
               scheduledDeparture={scheduledDeparture}
               platform={platform}
-              direction={direction}
+              direction="right"
               day={day ?? 1}
             />
           </div>
@@ -104,4 +87,3 @@ function TrackItem({
 }
 
 export default memo(TrackItem);
-

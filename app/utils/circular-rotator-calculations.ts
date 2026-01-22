@@ -3,7 +3,10 @@ import { calculatePillProgress } from "./train-scroll-calculator";
 import { formatTimeAmPm } from "./train-formatters";
 import type { RouteStation } from "../types/train.types";
 import type { PillPosition, PillData, TimeLabelData } from "../types/circular-rotator.types";
-import { MILESTONE_CONFIG } from "../config/circular-rotator.config";
+import { MILESTONE_CONFIG, TIME_LABEL_PILL_OFFSET } from "../config/circular-rotator.config";
+import { PILL_CONFIG } from "../config/circular-rotator.config";
+
+const DAYMARKER_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation + 2;
 
 export function calculatePillPosition(
   index: number,
@@ -33,7 +36,7 @@ export function calculateTimeLabels(
     .map((station, originalIndex) => ({ station, originalIndex }))
     .filter(({ station }) => station.sequence > 0 && station.scheduledArrival > 0)
     .map(({ station, originalIndex }) => {
-      const pillIndex = originalIndex * pillsPerStation;
+      const pillIndex = originalIndex * pillsPerStation + TIME_LABEL_PILL_OFFSET;
       const { clampedProgress, isVisible } = calculatePillProgress(
         pillIndex,
         scrollProgress,
@@ -55,12 +58,12 @@ export function calculateTimeLabels(
     });
 }
 
-function calculateMilestonePillIndices(
+function calculateDistanceKmPillIndices(
   stations: RouteStation[],
   pillsPerStation: number
 ): Map<number, number> {
-  const milestonePills = new Map<number, number>();
-  if (stations.length === 0) return milestonePills;
+  const distanceKmPills = new Map<number, number>();
+  if (stations.length === 0) return distanceKmPills;
 
   const maxDistance = stations[stations.length - 1]?.distanceFromSourceKm || 0;
   let currentMilestone = MILESTONE_CONFIG.intervalKm;
@@ -73,17 +76,17 @@ function calculateMilestonePillIndices(
     const stationDistance = stations[stationIndex].distanceFromSourceKm;
 
     while (currentMilestone <= stationDistance) {
-      const stationFirstPill = stationIndex * pillsPerStation + 1;
+      const stationFirstPill = stationIndex * pillsPerStation + PILL_CONFIG.pillsBeforeFirstStation + 1;
       const distancePillIndex = stationFirstPill - MILESTONE_CONFIG.pillOffsetBeforeStation;
 
       if (distancePillIndex > 0) {
-        milestonePills.set(distancePillIndex, currentMilestone);
+        distanceKmPills.set(distancePillIndex, currentMilestone);
       }
       currentMilestone += MILESTONE_CONFIG.intervalKm;
     }
   }
 
-  return milestonePills;
+  return distanceKmPills;
 }
 
 function calculateDayMarkerPillIndices(
@@ -99,7 +102,7 @@ function calculateDayMarkerPillIndices(
 
     if (nextDay > currentDay && nextDay >= 2) {
       const stationFirstPill = i * pillsPerStation + 1;
-      const dayMarkerPillIndex = stationFirstPill + 2;
+      const dayMarkerPillIndex = stationFirstPill + DAYMARKER_PILL_OFFSET;
       dayMarkerPills.set(dayMarkerPillIndex, nextDay);
     }
   }
@@ -110,18 +113,22 @@ function calculateDayMarkerPillIndices(
 export function generatePillData(
   itemCount: number,
   stations: RouteStation[],
-  pillsPerStation: number
+  pillsPerStation: number,
+  pillsBeforeFirstStation: number = 0
 ): PillData[] {
-  const milestonePills = calculateMilestonePillIndices(stations, pillsPerStation);
+  const distanceKmPills = calculateDistanceKmPillIndices(stations, pillsPerStation);
   const dayMarkerPills = calculateDayMarkerPillIndices(stations, pillsPerStation);
 
   return Array.from({ length: itemCount - 1 }, (_, i) => {
     const index = i + 1;
-    const stationIndex = Math.floor(index / pillsPerStation);
-    const isFirstPill = index % pillsPerStation === 1;
-    const station = stations[stationIndex];
+    const adjustedIndex = index - pillsBeforeFirstStation;
+    const stationIndex = adjustedIndex > 0
+      ? Math.floor(adjustedIndex / pillsPerStation)
+      : -1;
+    const isFirstPill = adjustedIndex > 0 && adjustedIndex % pillsPerStation === 1;
+    const station = stationIndex >= 0 ? stations[stationIndex] : undefined;
 
-    const milestoneValue = milestonePills.get(index);
+    const distanceKmValue = distanceKmPills.get(index);
     const dayNumber = dayMarkerPills.get(index);
 
     return {
@@ -129,7 +136,7 @@ export function generatePillData(
       stationName: station?.stationName || "",
       stationCode: station?.stationCode || "",
       isActualStation: isFirstPill && !!station,
-      distanceFromSourceKm: milestoneValue,
+      distanceFromSourceKm: distanceKmValue,
       dayNumber,
       scheduledDeparture:
         station && stationIndex < stations.length - 1

@@ -11,6 +11,7 @@ export const TRACK_PATH_CONFIG = {
 export const PILL_CONFIG = {
   gap: 28,
   perStation: 12,
+  pillsBeforeFirstStation: 2,
 } as const;
 
 export const MILESTONE_CONFIG = {
@@ -20,10 +21,14 @@ export const MILESTONE_CONFIG = {
 
 export const TRACK_CONTAINER_WIDTH = 360;
 
+export const TRACK_VIEWPORT_HEIGHT = 600;
+
 export const TIME_PATH_OFFSET = 28;
 
-// Vertical offset for time labels on straight rail sections
 export const TIME_LABEL_VERTICAL_OFFSET = {
-  left: 10,   // Offset on left rail (downward)
-  right: -10, // Offset on right rail (upward)
+  left: 10,
+  right: -10,
 } as const;
+
+export const TIME_LABEL_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation; // Adjust the arrival time label position manually here
+console.log(TIME_LABEL_PILL_OFFSET);

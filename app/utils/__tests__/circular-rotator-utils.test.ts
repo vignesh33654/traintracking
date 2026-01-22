@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { getPositionOnPath, getPathTotalLength } from '../circular-rotator-utils';
 import { TRACK_PATH_CONFIG } from '../../config/circular-rotator.config';
 import { resetCache } from '../track-path';

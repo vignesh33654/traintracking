@@ -1,43 +1,39 @@
 "use client";
 
-import { useRef, useMemo, useEffect } from "react";
-import { useTrainData } from "../../../hooks/useTrainData";
+import { useMemo, useRef } from "react";
 import { useTrainScroll } from "../../../hooks/useTrainScroll";
 import { useNativeScroll } from "../../../hooks/useNativeScroll";
 import { useScrollSound } from "../../../hooks/useScrollSound";
-import { generatePillData, calculateInitialScrollTop } from "../../../utils/circular-rotator-calculations";
+import { useInitialStationScroll } from "../../../hooks/useInitialStationScroll";
+import { usePillPositions } from "../../../hooks/usePillPositions";
+import { useIsMobile } from "../../../hooks/useIsMobile";
+import { useActiveStation } from "../../../hooks/useMobileActiveStation";
+import { generatePillData } from "../../../utils/circular-rotator-calculations";
 import { TRACK_CONTAINER_WIDTH, PILL_CONFIG } from "../../../config/circular-rotator.config";
 import type { CircularRotatorProps } from "../../../types/circular-rotator.types";
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
+import MobileStationTooltip from "./MobileStationTooltip";
 
 export default function CircularRotator({
-  trainNumber,
+  stations,
+  liveData,
   pillGap = PILL_CONFIG.gap,
   pillsPerStation = PILL_CONFIG.perStation,
 }: CircularRotatorProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollProgress = useNativeScroll(scrollRef);
-  const { data: trainData } = useTrainData(trainNumber);
-  const stations = useMemo(
-    () => (trainData?.route || []).filter((station) => station.isHalt > 0),
-    [trainData?.route]
-  );
 
-  const liveData = trainData?.liveData;
   const currentStationSequence = liveData?.currentLocation?.sequence;
-  const isTrainRunning = liveData?.currentLocation?.status === 'EN_ROUTE' ||
-                         liveData?.currentLocation?.status === 'ARRIVED' ||
-                         liveData?.currentLocation?.status === 'DEPARTED';
+  const isTrainRunning =
+    liveData?.currentLocation?.status === "EN_ROUTE" ||
+    liveData?.currentLocation?.status === "ARRIVED" ||
+    liveData?.currentLocation?.status === "DEPARTED";
 
-  const initialStationIndex = isTrainRunning && currentStationSequence
-    ? currentStationSequence - 1
-    : 0;
+  const initialStationIndex =
+    isTrainRunning && currentStationSequence ? currentStationSequence - 1 : 0;
 
-  const itemCount = useMemo(
-    () => stations.length * pillsPerStation,
-    [stations.length, pillsPerStation]
-  );
+  const itemCount = stations.length * pillsPerStation;
 
   const { gapRatio, scrollRange, totalScrollHeight } = useTrainScroll(
     stations.length,
@@ -45,26 +41,42 @@ export default function CircularRotator({
     pillsPerStation
   );
 
-  useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount });
+  useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount});
+  useInitialStationScroll({
+    scrollRef,
+    stationsLength: stations.length,
+    initialStationIndex,
+    pillsPerStation,
+    gapRatio,
+    scrollRange,
+    totalScrollHeight,
+  });
 
-  useEffect(() => {
-    if (scrollRef.current && stations.length > 0) {
-      const scrollTop = calculateInitialScrollTop(initialStationIndex, pillsPerStation, gapRatio, scrollRange, totalScrollHeight);
-      window.scrollTo({ top: scrollTop, behavior: 'instant' });
-    }
-  }, [stations.length, initialStationIndex, pillsPerStation, gapRatio, scrollRange, totalScrollHeight]);
+  const pillsBeforeFirstStation = PILL_CONFIG.pillsBeforeFirstStation;
 
   const pills = useMemo(
-    () => generatePillData(itemCount, stations, pillsPerStation),
+    () => generatePillData(itemCount, stations, pillsPerStation, pillsBeforeFirstStation),
     [itemCount, stations, pillsPerStation]
   );
 
+  const registerPillRef = usePillPositions({ gapRatio, scrollRange, scrollProgress });
+
+  const isMobile = useIsMobile();
+  const activeStation = useActiveStation(
+    scrollProgress,
+    stations,
+    pillsPerStation,
+    gapRatio,
+    scrollRange,
+    pillsBeforeFirstStation
+  );
+
   return (
-    <div ref={scrollRef} className="relative" style={{ height: `${totalScrollHeight}px` }}>
+    <div ref={scrollRef} className="relative" style={{ height: totalScrollHeight }}>
       <div className="sticky top-0 w-full h-dvh flex items-center justify-center">
         <div
           className="relative h-full bg-bg-0"
-          style={{ width: `${TRACK_CONTAINER_WIDTH}px` }}
+          style={{ width: TRACK_CONTAINER_WIDTH }}
         >
           <TrackRails
             stations={stations}
@@ -78,9 +90,6 @@ export default function CircularRotator({
             <TrackItem
               key={index}
               index={index}
-              gapRatio={gapRatio}
-              scrollRange={scrollRange}
-              scrollProgress={scrollProgress}
               stationName={stationName}
               stationCode={stationCode}
               isActualStation={isActualStation}
@@ -89,8 +98,20 @@ export default function CircularRotator({
               scheduledDeparture={scheduledDeparture}
               platform={platform}
               day={day}
+              registerPillRef={registerPillRef} // 
             />
           ))}
+
+          {isMobile && activeStation && (
+            <MobileStationTooltip
+              stationName={activeStation.stationName}
+              stationCode={activeStation.stationCode}
+              scheduledDeparture={activeStation.scheduledDeparture}
+              platform={activeStation.platform}
+              day={activeStation.day}
+              gapRatio={gapRatio}
+            />
+          )}
         </div>
       </div>
     </div>

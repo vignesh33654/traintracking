@@ -1,29 +1,41 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { cn } from "../../utils/utils";
 
 type Direction = "left" | "right" | "bottom";
 
-const DIRECTION_STYLES = {
+const DIRECTION_DEFAULTS: Record<
+  Direction,
+  {
+    flexDirection: CSSProperties["flexDirection"];
+    contentAlign: CSSProperties["alignItems"];
+    textAlign: CSSProperties["textAlign"];
+    rowJustify: CSSProperties["justifyContent"];
+    arrowRotation: string;
+    arrowClassName?: string;
+  }
+> = {
   left: {
-    container: "flex-row-reverse",
-    content: "items-end",
-    text: "text-right",
-    row: "justify-end",
-    arrow: "rotate-180",
+    flexDirection: "row-reverse",
+    contentAlign: "flex-end",
+    textAlign: "right",
+    rowJustify: "flex-end",
+    arrowRotation: "180deg",
   },
   right: {
-    container: "flex-row",
-    content: "items-start",
-    text: "text-left",
-    row: "justify-start",
-    arrow: "",
+    flexDirection: "row",
+    contentAlign: "flex-start",
+    textAlign: "left",
+    rowJustify: "flex-start",
+    arrowRotation: "0deg",
   },
   bottom: {
-    container: "flex-col",
-    content: "items-center",
-    text: "text-center",
-    row: "justify-center",
-    arrow: "rotate-90 self-center w-[39px] h-[39px]",
+    flexDirection: "column",
+    contentAlign: "center",
+    textAlign: "center",
+    rowJustify: "center",
+    arrowRotation: "90deg",
+    arrowClassName: "self-center w-[39px] h-[39px]",
   },
 } as const;
 
@@ -40,14 +52,21 @@ interface StationTooltipProps {
   className?: string;
 }
 
-function TooltipArrow({ direction }: { direction: Direction }) {
+function TooltipArrow({
+  style,
+  className,
+}: {
+  style?: CSSProperties;
+  className?: string;
+}) {
   return (
     <Image
       src="/tooltip arrow.svg"
       alt=""
       width={ARROW_WIDTH}
       height={ARROW_HEIGHT}
-      className={cn("shrink-0", DIRECTION_STYLES[direction].arrow)}
+      className={cn("shrink-0", className)}
+      style={style}
       aria-hidden="true"
     />
   );
@@ -79,30 +98,44 @@ export default function StationTooltip({
   day,
   className,
 }: StationTooltipProps) {
-  const styles = DIRECTION_STYLES[direction];
+  const defaults = DIRECTION_DEFAULTS[direction];
+
+  const containerStyle: CSSProperties = {
+    flexDirection: `var(--tooltip-flex-direction, ${defaults.flexDirection})` as CSSProperties["flexDirection"],
+  };
+  const contentStyle: CSSProperties = {
+    alignItems: `var(--tooltip-content-align, ${defaults.contentAlign})` as CSSProperties["alignItems"],
+  };
+  const textStyle: CSSProperties = {
+    textAlign: `var(--tooltip-text-align, ${defaults.textAlign})` as CSSProperties["textAlign"],
+  };
+  const rowStyle: CSSProperties = {
+    justifyContent: `var(--tooltip-row-justify, ${defaults.rowJustify})` as CSSProperties["justifyContent"],
+  };
+  const arrowStyle: CSSProperties = {
+    transform: `rotate(var(--tooltip-arrow-rotation, ${defaults.arrowRotation}))` as CSSProperties["transform"],
+  };
 
   return (
     <div
       className={cn(
         "flex items-center gap-pill-height max-w-[210px]",
-        styles.container,
         className
       )}
+      style={containerStyle}
       role="tooltip"
       aria-label={`${stationName}${scheduledDeparture ? `, departure ${scheduledDeparture}` : ''}, platform ${platform}`}
     >
-      <TooltipArrow direction={direction} />
+      <TooltipArrow style={arrowStyle} className={defaults.arrowClassName} />
 
-      <div className={cn("flex flex-col gap-pill-dot", styles.content)}>
+      <div className="flex flex-col gap-pill-dot" style={contentStyle}>
         <p
-          className={cn(
-            "font-b612-mono-10 leading-[14px] text-text-primary uppercase w-full text-pretty",
-            styles.text
-          )}
+          className="font-b612-mono-10 leading-[14px] text-text-primary uppercase w-full text-pretty"
+          style={textStyle}
         >
           {stationName}
         </p>
-        <div className={cn("flex gap-1 items-center", styles.row)}>
+        <div className="flex gap-1 items-center" style={rowStyle}>
           {day > 1 && <InfoItem icon="/placeholder.svg" label={`DAY:${day}`} />}
           {scheduledDeparture && <InfoItem icon="/placeholder.svg" label={`DEP:${scheduledDeparture}`} />}
           <InfoItem icon="/platform.svg" label={`P-${platform}`} />
