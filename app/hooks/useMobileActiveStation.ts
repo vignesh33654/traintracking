@@ -12,7 +12,7 @@ interface ActiveStationData {
   day: number;
 }
 
-export function useActiveStation(
+export function useMobileActiveStation(
   scrollProgress: number,
   stations: RouteStation[],
   pillsPerStation: number,

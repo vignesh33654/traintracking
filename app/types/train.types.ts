@@ -65,7 +65,7 @@ export interface CurrentLocation {
   longitude: number;
   stationCode: string;
   sequence: number;
-  status: 'ARRIVED' | 'DEPARTED' | 'EN_ROUTE' | 'NOT_STARTED' | 'COMPLETED';
+  status: "ARRIVED" | "DEPARTED" | "CANCELLED" | "AT_STATION" | "UNKNOWN";
   distanceFromOriginKm: number;
   distanceFromLastStationKm: number;
 }
@@ -105,7 +105,14 @@ export interface LiveTrainData {
 
 // Journey status
 export interface JourneyStatus {
-  status: 'UNKNOWN' | 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  status:
+    | "UNKWNON"
+    | "RUNNING"
+    | "NOT_STARTED"
+    | "COMPLETED"
+    | "CANCELLED"
+    | "NOT_RUNNING_ON_DATE"
+    | "DATA_UNAVAILABLE";
   journeyDate: string;
   canFetchLiveData: boolean;
   startTime: string;

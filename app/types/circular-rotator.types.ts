@@ -1,8 +1,9 @@
-import type { LiveTrainData, RouteStation } from "./train.types";
+import type { LiveTrainData, RouteStation, JourneyStatus } from "./train.types";
 
 export interface CircularRotatorProps {
   stations: RouteStation[];
   liveData: LiveTrainData | null;
+  journeyStatus: JourneyStatus | null;
   pillGap?: number;
   pillsPerStation?: number;
 }
