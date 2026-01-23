@@ -72,13 +72,13 @@ function TrackItem({
       })()}
 
       {distanceFromSourceKm !== undefined && (
-        <div className={ICON_POSITION_CLASS} style={{ zIndex: -10 }}>
+        <div className={`${ICON_POSITION_CLASS} -z-10`}>
           <DistanceKm distanceFromOriginKm={distanceFromSourceKm} className="w-6 h-6"/>
         </div>
       )}
 
       {dayNumber !== undefined && (
-        <div className= "absolute left-[18px] top-[19px] -translate-x-1/2 -translate-y-1/2 z-10 ">
+        <div className= "absolute left-[18px] top-[17px] -translate-x-1/2 -translate-y-1/2 z-10 ">
           <DayMarker dayNumber={dayNumber} />
         </div>
       )}
