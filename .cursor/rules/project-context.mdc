@@ -24,6 +24,7 @@ alwaysApply: true
   - `config/`: Configuration files 
   - `contexts/`: React context providers
   - `hooks/`: Custom React hooks
+  - `providers/`: React providers
   - `lib/`: Libraries and utilities
   - `stores/`: State management
   - `types/`: TypeScript type definitions

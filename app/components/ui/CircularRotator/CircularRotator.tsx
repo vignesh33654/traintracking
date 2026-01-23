@@ -7,7 +7,7 @@ import { useScrollSound } from "../../../hooks/useScrollSound";
 import { useInitialStationScroll } from "../../../hooks/useInitialStationScroll";
 import { usePillPositions } from "../../../hooks/usePillPositions";
 import { useIsMobile } from "../../../hooks/useIsMobile";
-import { useActiveStation } from "../../../hooks/useMobileActiveStation";
+import { useMobileActiveStation } from "../../../hooks/useMobileActiveStation";
 import { generatePillData } from "../../../utils/circular-rotator-calculations";
 import { TRACK_CONTAINER_WIDTH, PILL_CONFIG } from "../../../config/circular-rotator.config";
 import type { CircularRotatorProps } from "../../../types/circular-rotator.types";
@@ -26,7 +26,7 @@ export default function CircularRotator({
 
   const currentStationSequence = liveData?.currentLocation?.sequence;
   const isTrainRunning =
-    liveData?.currentLocation?.status === "EN_ROUTE" ||
+    liveData?.currentLocation?.status === "AT_STATION" ||
     liveData?.currentLocation?.status === "ARRIVED" ||
     liveData?.currentLocation?.status === "DEPARTED";
 
@@ -62,7 +62,7 @@ export default function CircularRotator({
   const registerPillRef = usePillPositions({ gapRatio, scrollRange, scrollProgress });
 
   const isMobile = useIsMobile();
-  const activeStation = useActiveStation(
+  const activeStation = useMobileActiveStation(
     scrollProgress,
     stations,
     pillsPerStation,

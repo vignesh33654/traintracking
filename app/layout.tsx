@@ -6,6 +6,7 @@ import DarkModeToggle from "./components/ui/DarkModeToggle";
 import { cn } from "./utils/utils";
 import { QueryProvider } from "./providers/QueryProvider";
 
+
 const b612Mono = B612_Mono({
   variable: "--font-b612-mono",
   subsets: ["latin"],

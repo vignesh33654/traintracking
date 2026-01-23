@@ -43,5 +43,5 @@ export default function TrainTracking() {
     return <TrackingEmptyState />;
   }
 
-  return <CircularRotator stations={stations} liveData={data?.liveData ?? null} />;
+  return <CircularRotator stations={stations} liveData={data?.liveData ?? null} journeyStatus={data?.metadata?.journeyStatus ?? null}  />;
 }
