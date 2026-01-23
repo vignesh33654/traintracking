@@ -1,23 +1,11 @@
 import { cn } from "@/app/utils/utils";
+import { isToday } from "@/app/utils/todaydate";
 
 export interface StatusDotProps {
   journeyDate?: string | null;
   distanceFromOriginKm?: number | null;
   size?: "sm" | "md";
   className?: string;
-}
-
-function isToday(dateString: string): boolean {
-  // Get today's date in YYYY-MM-DD format
-  const today = new Date();
-  const todayStr = today.getFullYear() + '-' +
-    String(today.getMonth() + 1).padStart(2, '0') + '-' +
-    String(today.getDate()).padStart(2, '0');
-
-  // Compare just the date part (YYYY-MM-DD)
-  const journeyDateStr = dateString.split('T')[0]; // Remove time part if present
-
-  return todayStr === journeyDateStr;
 }
 
 function getStatusColor(
@@ -33,6 +21,7 @@ function getStatusColor(
 
   // If journey is today
   if (isTodayDate) {
+    
     // Train is running (distance > 0) = green with animation
     if (distanceFromOriginKm && distanceFromOriginKm > 0) {
       return { color: "bg-green", animate: true };
@@ -42,7 +31,7 @@ function getStatusColor(
   }
 
   // Future journey = gray
-  return { color: "bg-bg-1", animate: false };
+  return { color: "bg-red", animate: false };
 }
 
 export function StatusDot({
@@ -55,16 +44,26 @@ export function StatusDot({
   const sizeClass = size === "sm" ? "size-[6px]" : "size-[8px]";
 
   return (
-    <div
-      className={cn(
-        "rounded-full",
-        sizeClass,
-        color,
-        animate && "animate-pulse-scale",
-        className
-      )}
+    <span
+      className={cn("relative flex", sizeClass, className)}
       role="status"
       aria-label={`Status: ${journeyDate ? (isToday(journeyDate) ? "today" : "future") : "unknown"}`}
-    />
+    >
+      {animate && (
+        <span
+          className={cn(
+            "absolute inline-flex h-full w-full animate-ping rounded-full opacity-75",
+            color
+          )}
+        />
+      )}
+      <span
+        className={cn(
+          "relative inline-flex rounded-full border border-white dark:border-bg-0",
+          sizeClass,
+          color
+        )}
+      />
+    </span>
   );
 }

@@ -39,7 +39,7 @@ function TrackItem({
   return (
     <div
       ref={(node) => registerPillRef(index, node)}
-      className="group absolute left-0 top-0"
+      className="group absolute left-0 top-0 cursor-default"
       style={{
         ...pillStyle,
         zIndex: isActualStation ? 1 : 0,
@@ -57,7 +57,7 @@ function TrackItem({
         return (
           <div
             data-station-tooltip
-            className="pointer-events-none absolute z-50 opacity-0 group-hover:opacity-100 "
+            className="pointer-events-none absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-0 group-hover:delay-400 group-hover:duration-150"
             style={tooltipStyle}
           >
             <StationTooltip

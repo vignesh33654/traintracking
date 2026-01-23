@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { cn } from "@/app/utils/utils";
 import { StatusDot } from "./StatusDot";
 
@@ -17,13 +16,20 @@ export function TrainIcon({
 }: TrainIconProps) {
   return (
     <div className={cn("relative size-[30px]", className)}>
-      <div className="flex items-center justify-center size-full rounded-full border border-divider">
-        <Image
-          src="/Train icon.svg"
-          alt="Train"
-          width={16}
-          height={16}
-          className="size-[16px]"
+      <div className="flex items-center justify-center size-full rounded-full border border-bg-1">
+        <div
+          className="size-[16px] bg-text-primary"
+          style={{
+            maskImage: 'url("/Train icon.svg")',
+            maskSize: 'contain',
+            maskRepeat: 'no-repeat',
+            maskPosition: 'center',
+            WebkitMaskImage: 'url("/Train icon.svg")',
+            WebkitMaskSize: 'contain',
+            WebkitMaskRepeat: 'no-repeat',
+            WebkitMaskPosition: 'center',
+          }}
+          aria-label="Train"
         />
       </div>
       {showStatusDot && (
@@ -31,7 +37,7 @@ export function TrainIcon({
           journeyDate={journeyDate}
           distanceFromOriginKm={distanceFromOriginKm}
           size="sm"
-          className="absolute top-[7px] right-[8px]"
+          className="absolute top-[7px] right-[7px]"
         />
       )}
     </div>

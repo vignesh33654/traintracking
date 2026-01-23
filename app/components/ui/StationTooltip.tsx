@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import { cn } from "../../utils/utils";
 
-type Direction = "left" | "right" | "bottom";
+type Direction = "left" | "right";
 
 const DIRECTION_DEFAULTS: Record<
   Direction,
@@ -28,14 +28,6 @@ const DIRECTION_DEFAULTS: Record<
     textAlign: "left",
     rowJustify: "flex-start",
     arrowRotation: "0deg",
-  },
-  bottom: {
-    flexDirection: "column",
-    contentAlign: "center",
-    textAlign: "center",
-    rowJustify: "center",
-    arrowRotation: "90deg",
-    arrowClassName: "self-center w-[39px] h-[39px]",
   },
 } as const;
 
