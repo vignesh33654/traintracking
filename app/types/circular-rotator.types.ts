@@ -1,9 +1,11 @@
-import type { LiveTrainData, RouteStation, JourneyStatus } from "./train.types";
+import type { RouteStation, CurrentLocation } from "./train.types";
 
 export interface CircularRotatorProps {
   stations: RouteStation[];
-  liveData: LiveTrainData | null;
-  journeyStatus: JourneyStatus | null;
+  journeyDate: string | null;
+  distanceFromOriginKm: number | null;
+  currentLocationStatus: CurrentLocation["status"] | null;
+  currentStationSequence: number | null;
   pillGap?: number;
   pillsPerStation?: number;
 }

@@ -153,3 +153,16 @@
 .focus-ring:focus-visible {
   @apply ring-2 ring-orange ring-offset-2;
 }
+
+@keyframes pulse-scale {
+  0%, 100% {
+    transform: scale(0.6);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
+
+.animate-pulse-scale {
+  animation: pulse-scale 2s linear infinite;
+}
