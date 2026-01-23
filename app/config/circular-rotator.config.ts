@@ -31,4 +31,3 @@ export const TIME_LABEL_VERTICAL_OFFSET = {
 } as const;
 
 export const TIME_LABEL_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation; // Adjust the arrival time label position manually here
-console.log(TIME_LABEL_PILL_OFFSET);
