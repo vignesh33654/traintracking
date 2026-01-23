@@ -46,7 +46,7 @@ const ARROW_HEIGHT = 6;
 interface StationTooltipProps {
   stationName: string;
   scheduledDeparture?: string;
-  platform: string;
+  platform?: string;
   direction: Direction;
   day: number;
   className?: string;
@@ -124,7 +124,7 @@ export default function StationTooltip({
       )}
       style={containerStyle}
       role="tooltip"
-      aria-label={`${stationName}${scheduledDeparture ? `, departure ${scheduledDeparture}` : ''}, platform ${platform}`}
+      aria-label={`${stationName}${scheduledDeparture ? `, departure ${scheduledDeparture}` : ""}${platform ? `, platform ${platform}` : ""}`}
     >
       <TooltipArrow style={arrowStyle} className={defaults.arrowClassName} />
 
@@ -138,7 +138,7 @@ export default function StationTooltip({
         <div className="flex gap-1 items-center" style={rowStyle}>
           {day > 1 && <InfoItem icon="/placeholder.svg" label={`DAY:${day}`} />}
           {scheduledDeparture && <InfoItem icon="/placeholder.svg" label={`DEP:${scheduledDeparture}`} />}
-          <InfoItem icon="/platform.svg" label={`P-${platform}`} />
+          {platform && <InfoItem icon="/platform.svg" label={`P-${platform}`} />}
         </div>
       </div>
     </div>

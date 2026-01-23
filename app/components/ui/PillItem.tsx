@@ -23,7 +23,6 @@ export default function PillItem({
     <div
       className={cn(
         "relative h-pill-height w-pill-width rounded-full bg-bg-1 z-10",
-        isActualStation && "pointer-events-none",
         className
       )}
     >

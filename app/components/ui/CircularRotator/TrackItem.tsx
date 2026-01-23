@@ -53,7 +53,7 @@ function TrackItem({
         </div>
       )}
 
-      {isActualStation && stationName && platform && (() => {
+      {isActualStation && stationName && (() => {
         return (
           <div
             data-station-tooltip

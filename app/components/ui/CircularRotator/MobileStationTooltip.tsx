@@ -6,7 +6,7 @@ interface MobileStationTooltipProps {
   stationName: string;
   stationCode: string;
   scheduledDeparture?: string;
-  platform: string;
+  platform?: string;
   day: number;
   gapRatio: number;
 }
