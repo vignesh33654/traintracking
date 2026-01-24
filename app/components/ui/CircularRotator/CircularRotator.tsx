@@ -9,7 +9,9 @@ import { usePillPositions } from "../../../hooks/usePillPositions";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import { useMobileActiveStation } from "../../../hooks/useMobileActiveStation";
 import { useTrainIconPosition } from "../../../hooks/useTrainIconPosition";
+import { usePhaseScroll } from "../../../hooks/usePhaseScroll";
 import { generatePillData } from "../../../utils/circular-rotator-calculations";
+import { calculatePillProgress } from "../../../utils/train-scroll-calculator";
 import { TRACK_CONTAINER_WIDTH, PILL_CONFIG } from "../../../config/circular-rotator.config";
 import type { CircularRotatorProps } from "../../../types/circular-rotator.types";
 import {
@@ -17,6 +19,7 @@ import {
   getInitialStationIndex,
   isTrainRunningStatus,
 } from "../../../utils/train-auto-scroll";
+import { calculateTrainPillIndex } from "../../../utils/train-position-utils";
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
 import MobileStationTooltip from "./MobileStationTooltip";
@@ -90,6 +93,51 @@ export default function CircularRotator({
     scrollProgress,
     journeyDate,
     pillsBeforeFirstStation,
+  });
+
+  const trainPillProgress = useMemo(() => {
+    if (distanceFromOriginKm === null || stations.length === 0) return null;
+    const { absolutePillIndex, isValid } = calculateTrainPillIndex(
+      distanceFromOriginKm,
+      stations,
+      pillsPerStation,
+      journeyDate,
+      pillsBeforeFirstStation
+    );
+    if (!isValid) return null;
+    return {
+      absolutePillIndex,
+      ...calculatePillProgress(
+        absolutePillIndex,
+        scrollProgress,
+        gapRatio,
+        scrollRange
+      ),
+    };
+  }, [
+    distanceFromOriginKm,
+    stations,
+    pillsPerStation,
+    journeyDate,
+    pillsBeforeFirstStation,
+    scrollProgress,
+    gapRatio,
+    scrollRange,
+  ]);
+
+  // 3-Phase scroll behavior:
+  // Phase 1: Train icon moves 0% → 50% (track stays still)
+  // Phase 2: Track scrolls to keep train at 50% (until lastStation - 2)
+  // Phase 3: Train icon moves 50% → 100% (track stays still)
+  usePhaseScroll({
+    trainPillProgress,
+    totalStations: stations.length,
+    pillsPerStation,
+    pillsBeforeFirstStation,
+    gapRatio,
+    scrollRange,
+    totalScrollHeight,
+    isTrainRunning,
   });
 
   const performAutoScroll = useCallback(() => {
