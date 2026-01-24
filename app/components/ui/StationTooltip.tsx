@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import { cn } from "../../utils/utils";
 
-type Direction = "left" | "right" | "bottom";
+type Direction = "left" | "right";
 
 const DIRECTION_DEFAULTS: Record<
   Direction,
@@ -29,14 +29,6 @@ const DIRECTION_DEFAULTS: Record<
     rowJustify: "flex-start",
     arrowRotation: "0deg",
   },
-  bottom: {
-    flexDirection: "column",
-    contentAlign: "center",
-    textAlign: "center",
-    rowJustify: "center",
-    arrowRotation: "90deg",
-    arrowClassName: "self-center w-[39px] h-[39px]",
-  },
 } as const;
 
 const ICON_SIZE = 14;
@@ -46,7 +38,7 @@ const ARROW_HEIGHT = 6;
 interface StationTooltipProps {
   stationName: string;
   scheduledDeparture?: string;
-  platform: string;
+  platform?: string;
   direction: Direction;
   day: number;
   className?: string;
@@ -124,7 +116,7 @@ export default function StationTooltip({
       )}
       style={containerStyle}
       role="tooltip"
-      aria-label={`${stationName}${scheduledDeparture ? `, departure ${scheduledDeparture}` : ''}, platform ${platform}`}
+      aria-label={`${stationName}${scheduledDeparture ? `, departure ${scheduledDeparture}` : ""}${platform ? `, platform ${platform}` : ""}`}
     >
       <TooltipArrow style={arrowStyle} className={defaults.arrowClassName} />
 
@@ -138,7 +130,7 @@ export default function StationTooltip({
         <div className="flex gap-1 items-center" style={rowStyle}>
           {day > 1 && <InfoItem icon="/placeholder.svg" label={`DAY:${day}`} />}
           {scheduledDeparture && <InfoItem icon="/placeholder.svg" label={`DEP:${scheduledDeparture}`} />}
-          <InfoItem icon="/platform.svg" label={`P-${platform}`} />
+          {platform && <InfoItem icon="/platform.svg" label={`P-${platform}`} />}
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ interface ActiveStationData {
   stationName: string;
   stationCode: string;
   scheduledDeparture?: string;
-  platform: string;
+  platform?: string;
   day: number;
 }
 
@@ -45,7 +45,7 @@ export function useMobileActiveStation(
       scheduledDeparture: stationIndex < stations.length - 1
         ? formatTimeAmPm(station.scheduledDeparture)
         : undefined,
-      platform: station.platform || "",
+      platform: station.platform || undefined,
       day: station.day,
     };
   }, [scrollProgress, stations, pillsPerStation, gapRatio, scrollRange, pillsBeforeFirstStation]);

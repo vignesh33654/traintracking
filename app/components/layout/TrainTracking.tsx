@@ -43,5 +43,18 @@ export default function TrainTracking() {
     return <TrackingEmptyState />;
   }
 
-  return <CircularRotator stations={stations} liveData={data?.liveData ?? null} journeyStatus={data?.metadata?.journeyStatus ?? null}  />;
+  const journeyDate = data?.liveData?.journeyDate ?? null;
+  const distanceFromOriginKm = data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
+  const currentLocationStatus = data?.liveData?.currentLocation?.status ?? null;
+  const currentStationSequence = data?.liveData?.currentLocation?.sequence ?? null;
+
+  return (
+    <CircularRotator
+      stations={stations}
+      journeyDate={journeyDate}
+      distanceFromOriginKm={distanceFromOriginKm}
+      currentLocationStatus={currentLocationStatus}
+      currentStationSequence={currentStationSequence}
+    />
+  );
 }

@@ -14,21 +14,24 @@ import type { CircularRotatorProps } from "../../../types/circular-rotator.types
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
 import MobileStationTooltip from "./MobileStationTooltip";
+import { TrainIcon } from "../TrainIcon";
 
 export default function CircularRotator({
   stations,
-  liveData,
+  journeyDate,
+  distanceFromOriginKm,
+  currentLocationStatus,
+  currentStationSequence,
   pillGap = PILL_CONFIG.gap,
   pillsPerStation = PILL_CONFIG.perStation,
 }: CircularRotatorProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollProgress = useNativeScroll(scrollRef);
 
-  const currentStationSequence = liveData?.currentLocation?.sequence;
   const isTrainRunning =
-    liveData?.currentLocation?.status === "AT_STATION" ||
-    liveData?.currentLocation?.status === "ARRIVED" ||
-    liveData?.currentLocation?.status === "DEPARTED";
+    currentLocationStatus === "AT_STATION" ||
+    currentLocationStatus === "ARRIVED" ||
+    currentLocationStatus === "DEPARTED";
 
   const initialStationIndex =
     isTrainRunning && currentStationSequence ? currentStationSequence - 1 : 0;
@@ -41,7 +44,7 @@ export default function CircularRotator({
     pillsPerStation
   );
 
-  useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount});
+  useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount });
   useInitialStationScroll({
     scrollRef,
     stationsLength: stations.length,
@@ -70,6 +73,7 @@ export default function CircularRotator({
     scrollRange,
     pillsBeforeFirstStation
   );
+  
 
   return (
     <div ref={scrollRef} className="relative" style={{ height: totalScrollHeight }}>
@@ -98,7 +102,7 @@ export default function CircularRotator({
               scheduledDeparture={scheduledDeparture}
               platform={platform}
               day={day}
-              registerPillRef={registerPillRef} // 
+              registerPillRef={registerPillRef}
             />
           ))}
 
@@ -113,7 +117,11 @@ export default function CircularRotator({
             />
           )}
         </div>
-      </div>
+        <TrainIcon
+          journeyDate={journeyDate}
+          distanceFromOriginKm={distanceFromOriginKm}
+        />
+      </div>      
     </div>
   );
 }

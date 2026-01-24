@@ -39,7 +39,7 @@ function TrackItem({
   return (
     <div
       ref={(node) => registerPillRef(index, node)}
-      className="group absolute left-0 top-0"
+      className="group absolute left-0 top-0 cursor-default"
       style={{
         ...pillStyle,
         zIndex: isActualStation ? 1 : 0,
@@ -53,11 +53,11 @@ function TrackItem({
         </div>
       )}
 
-      {isActualStation && stationName && platform && (() => {
+      {isActualStation && stationName && (() => {
         return (
           <div
             data-station-tooltip
-            className="pointer-events-none absolute z-50 opacity-0 group-hover:opacity-100 "
+            className="pointer-events-none absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-0 group-hover:delay-400 group-hover:duration-150"
             style={tooltipStyle}
           >
             <StationTooltip
@@ -72,13 +72,13 @@ function TrackItem({
       })()}
 
       {distanceFromSourceKm !== undefined && (
-        <div className={ICON_POSITION_CLASS} style={{ zIndex: -10 }}>
+        <div className={`${ICON_POSITION_CLASS} -z-10`}>
           <DistanceKm distanceFromOriginKm={distanceFromSourceKm} className="w-6 h-6"/>
         </div>
       )}
 
       {dayNumber !== undefined && (
-        <div className= "absolute left-[18px] top-[19px] -translate-x-1/2 -translate-y-1/2 z-10 ">
+        <div className= "absolute left-[18px] top-[17px] -translate-x-1/2 -translate-y-1/2 z-10 ">
           <DayMarker dayNumber={dayNumber} />
         </div>
       )}
