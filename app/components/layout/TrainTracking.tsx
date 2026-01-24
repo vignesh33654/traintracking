@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useIsRestoring } from "@tanstack/react-query";
 import { API_CONFIG } from "@/app/config/api.config";
 import { useTrainData } from "@/app/hooks/useTrainData";
@@ -18,12 +18,16 @@ const TRAIN_NUMBER = API_CONFIG.trainNumber;
 // - "2026-01-24" = specific date (today)
 // - "2026-01-25" = tomorrow
 // - "2026-01-26" = day after tomorrow
-const JOURNEY_DATE = undefined; // Change this to test different dates
+const JOURNEY_DATE = undefined; // 
 
 export default function TrainTracking() {
-  const { data, isLoading, isError, error, refetch } = useTrainData(TRAIN_NUMBER, {
+  const { data, isLoading, isError, error, refetch, isFetching } = useTrainData(TRAIN_NUMBER, {
     journeyDate: JOURNEY_DATE,
   });
+
+  const handleRefresh = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
   const isRestoring = useIsRestoring();
 
   const stations = useMemo(
@@ -65,6 +69,8 @@ export default function TrainTracking() {
       distanceFromOriginKm={distanceFromOriginKm}
       currentLocationStatus={currentLocationStatus}
       currentStationSequence={currentStationSequence}
+      onRefresh={handleRefresh}
+      isRefreshing={isFetching}
     />
   );
 }

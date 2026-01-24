@@ -31,3 +31,7 @@ export const TIME_LABEL_VERTICAL_OFFSET = {
 } as const;
 
 export const TIME_LABEL_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation; // Adjust the arrival time label position manually here
+
+export const AUTO_SCROLL_CONFIG = {
+  targetViewportPercentFromBottom: 0.5, // 0.5 = 50% from bottom = middle of viewport
+} as const;
