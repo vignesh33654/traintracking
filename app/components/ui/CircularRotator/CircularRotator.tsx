@@ -8,6 +8,7 @@ import { useInitialStationScroll } from "../../../hooks/useInitialStationScroll"
 import { usePillPositions } from "../../../hooks/usePillPositions";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import { useMobileActiveStation } from "../../../hooks/useMobileActiveStation";
+import { useTrainIconPosition } from "../../../hooks/useTrainIconPosition";
 import { generatePillData } from "../../../utils/circular-rotator-calculations";
 import { TRACK_CONTAINER_WIDTH, PILL_CONFIG } from "../../../config/circular-rotator.config";
 import type { CircularRotatorProps } from "../../../types/circular-rotator.types";
@@ -73,7 +74,17 @@ export default function CircularRotator({
     scrollRange,
     pillsBeforeFirstStation
   );
-  
+
+  const trainIconPosition = useTrainIconPosition({
+    distanceFromOriginKm,
+    stations,
+    pillsPerStation,
+    gapRatio,
+    scrollRange,
+    scrollProgress,
+    journeyDate,
+    pillsBeforeFirstStation,
+  });
 
   return (
     <div ref={scrollRef} className="relative" style={{ height: totalScrollHeight }}>
@@ -116,12 +127,20 @@ export default function CircularRotator({
               gapRatio={gapRatio}
             />
           )}
+
+          {trainIconPosition.isVisible && (
+            <TrainIcon
+              journeyDate={journeyDate}
+              distanceFromOriginKm={distanceFromOriginKm}
+              x={trainIconPosition.x}
+              y={trainIconPosition.y}
+              rotation={trainIconPosition.rotation}
+              counterRotation={trainIconPosition.counterRotation}
+              isOnTrack={true}
+            />
+          )}
         </div>
-        <TrainIcon
-          journeyDate={journeyDate}
-          distanceFromOriginKm={distanceFromOriginKm}
-        />
-      </div>      
+      </div>
     </div>
   );
 }

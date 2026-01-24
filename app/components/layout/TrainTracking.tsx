@@ -13,8 +13,17 @@ import {
 
 const TRAIN_NUMBER = API_CONFIG.trainNumber;
 
+// Set journey date here:
+// - undefined = API decides (default behavior)
+// - "2026-01-24" = specific date (today)
+// - "2026-01-25" = tomorrow
+// - "2026-01-26" = day after tomorrow
+const JOURNEY_DATE = undefined; // Change this to test different dates
+
 export default function TrainTracking() {
-  const { data, isLoading, isError, error, refetch } = useTrainData(TRAIN_NUMBER);
+  const { data, isLoading, isError, error, refetch } = useTrainData(TRAIN_NUMBER, {
+    journeyDate: JOURNEY_DATE,
+  });
   const isRestoring = useIsRestoring();
 
   const stations = useMemo(
@@ -43,6 +52,7 @@ export default function TrainTracking() {
     return <TrackingEmptyState />;
   }
 
+  // Extract live train data
   const journeyDate = data?.liveData?.journeyDate ?? null;
   const distanceFromOriginKm = data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
   const currentLocationStatus = data?.liveData?.currentLocation?.status ?? null;
