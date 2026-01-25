@@ -1,5 +1,3 @@
-import TrainTracking from "./components/layout/TrainTracking";
+import Home from "@/app/components/layout/Home";
 
-export default function Home() {
-  return <TrainTracking />;
-}
+export default Home;

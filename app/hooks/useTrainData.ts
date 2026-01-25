@@ -8,7 +8,7 @@ interface UseTrainDataOptions {
   journeyDate?: string;
 }
 
-const DEFAULT_REFETCH_INTERVAL = 86400000; // 24 hrs
+const DEFAULT_REFETCH_INTERVAL = 60000; // 1 minute
 
 export function useTrainData(trainNumber: string, options: UseTrainDataOptions = {}) {
   const {
