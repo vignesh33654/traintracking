@@ -3,8 +3,9 @@ alwaysApply: true
 ---
 
 - Don't create a readme file unless I ask
-- Don’t add comments everywhere. Add comments only for calculations or complex parts. Keep the explanation very simple and easy to understand
-- Add one single line description for any complex calculation or function
+- Don't add comments everywhere. Add comments only for calculations or complex parts. Keep the explanation very simple and easy to understand
+- Add one single line description for any complex calculation or function (inputs → outputs)
+- **ALWAYS UPDATE DOCS**: When modifying calculations or architecture, update docs/ARCHITECTURE.md
 - Ensure I'm not on main
 - Avoid useEffect unless needed
 - Avoid massive JSX blocks

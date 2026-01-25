@@ -35,11 +35,14 @@ export function calculateTrainPillIndex(
     return { absolutePillIndex: finalPillIndex, isValid: true };
   }
 
-  // If train is at origin (km = 0) and journey is not today, check if journey passed
+  // If train is at origin (km = 0) and journey date is in past, assume completed
   if (distanceFromOriginKm === 0 && journeyDate) {
-    const isJourneyPassed = isDateInPast(journeyDate);
-    if (isJourneyPassed) {
-      // Journey date passed but train shows km=0 -> assume completed
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const journey = new Date(journeyDate);
+    journey.setHours(0, 0, 0, 0);
+
+    if (journey < today) {
       const finalPillIndex = (stations.length - 1) * pillsPerStation + pillsBeforeFirstStation;
       return { absolutePillIndex: finalPillIndex, isValid: true };
     }
@@ -71,17 +74,4 @@ export function calculateTrainPillIndex(
   const absolutePillIndex = (prevStationIndex * pillsPerStation) + pillsInSection + pillsBeforeFirstStation;
 
   return { absolutePillIndex, isValid: true };
-}
-
-/**
- * Checks if a journey date (YYYY-MM-DD) is in the past compared to today.
- */
-function isDateInPast(journeyDate: string): boolean {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const journey = new Date(journeyDate);
-  journey.setHours(0, 0, 0, 0);
-
-  return journey < today;
 }

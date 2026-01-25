@@ -42,3 +42,8 @@ export const PHASE_SCROLL_CONFIG = {
   scrollThreshold: 0.5, // Minimum pill movement before triggering scroll update
   scrollDebounceMs: 300, // Debounce time for scroll animations
 } as const;
+
+export const TOOLTIP_OFFSETS = {
+  left: { x: 28, y: 20 },
+  right: { x: 28, y: 19 },
+} as const;
