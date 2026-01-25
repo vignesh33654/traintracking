@@ -153,3 +153,31 @@
 .focus-ring:focus-visible {
   @apply ring-2 ring-orange ring-offset-2;
 }
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.marquee-content {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee-scroll linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-content {
+    animation: none;
+  }
+}
