@@ -8,8 +8,6 @@ export interface CircularRotatorProps {
   currentStationSequence: number | null;
   pillGap?: number;
   pillsPerStation?: number;
-  onRefresh?: () => Promise<void>;
-  isRefreshing?: boolean;
 }
 
 export interface TrackItemProps {
