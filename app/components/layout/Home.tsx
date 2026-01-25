@@ -65,6 +65,10 @@ export default function Home() {
   const distanceFromOriginKm = data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
   const currentLocationStatus = data?.liveData?.currentLocation?.status ?? null;
   const currentStationSequence = data?.liveData?.currentLocation?.sequence ?? null;
+  const distanceFromLastStationKm = data?.liveData?.currentLocation?.distanceFromLastStationKm ?? null;
+  const currentStationCode = data?.liveData?.currentLocation?.stationCode ?? null;
+  const lastUpdatedAt = data?.liveData?.lastUpdatedAt ?? null;
+  const destinationStationCode = data?.train?.destinationStationCode;
 
   // Main content
   return (
@@ -74,6 +78,11 @@ export default function Home() {
       distanceFromOriginKm={distanceFromOriginKm}
       currentLocationStatus={currentLocationStatus}
       currentStationSequence={currentStationSequence}
+      distanceFromLastStationKm={distanceFromLastStationKm}
+      currentStationCode={currentStationCode}
+      lastUpdatedAt={lastUpdatedAt}
+      destinationStationCode={destinationStationCode}
+      route={data?.route}
       onRefresh={handleRefresh}
       isRefreshing={isFetching}
     />

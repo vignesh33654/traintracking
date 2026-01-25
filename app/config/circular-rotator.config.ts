@@ -47,3 +47,5 @@ export const TOOLTIP_OFFSETS = {
   left: { x: 28, y: 20 },
   right: { x: 28, y: 19 },
 } as const;
+
+export const DEFAULT_REFETCH_INTERVAL = 60000; // 1 minute

@@ -3,12 +3,13 @@ import { generatePillData } from "../../../utils/circular-rotator-calculations";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import { useMobileActiveStation } from "../../../hooks/useMobileActiveStation";
 import { TRACK_CONTAINER_WIDTH } from "../../../config/circular-rotator.config";
-import type { RouteStation } from "../../../types/train.types";
+import type { RouteStation, CurrentLocation } from "../../../types/train.types";
 import type { PillData } from "../../../types/circular-rotator.types";
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
 import MobileStationTooltip from "./MobileStationTooltip";
 import { TrainIcon } from "../TrainIcon";
+import { TrainStatus } from "../TrainStatus";
 
 interface TrainIconPositionData {
   x: number;
@@ -29,6 +30,13 @@ interface TrackContainerProps {
   scrollRange: number;
   trainIconPosition: TrainIconPositionData;
   registerPillRef: (index: number, node: HTMLDivElement | null) => void;
+  distanceFromLastStationKm?: number | null;
+  currentStationCode?: string | null;
+  lastUpdatedAt?: string | null;
+  destinationStationCode?: string;
+  currentLocationStatus?: CurrentLocation["status"] | null;
+  currentSequence?: number | null;
+  route?: RouteStation[];
 }
 
 export default function TrackContainer({
@@ -42,6 +50,13 @@ export default function TrackContainer({
   scrollRange,
   trainIconPosition,
   registerPillRef,
+  distanceFromLastStationKm,
+  currentStationCode,
+  lastUpdatedAt,
+  destinationStationCode,
+  currentLocationStatus,
+  currentSequence,
+  route,
 }: TrackContainerProps) {
   const itemCount = stations.length * pillsPerStation;
   const isMobile = useIsMobile();
@@ -111,6 +126,17 @@ export default function TrackContainer({
           isOnTrack={true}
         />
       )}
+
+      <TrainStatus
+        lastUpdatedAt={lastUpdatedAt}
+        currentLocationStatus={currentLocationStatus}
+        distanceFromLastStationKm={distanceFromLastStationKm}
+        distanceFromOriginKm={distanceFromOriginKm}
+        currentStationCode={currentStationCode}
+        currentSequence={currentSequence}
+        route={route}
+        destinationStationCode={destinationStationCode}
+      />
     </div>
   );
 }

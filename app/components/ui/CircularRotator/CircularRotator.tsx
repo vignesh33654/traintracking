@@ -16,6 +16,11 @@ export default function CircularRotator({
   distanceFromOriginKm,
   currentLocationStatus,
   currentStationSequence,
+  distanceFromLastStationKm,
+  currentStationCode,
+  lastUpdatedAt,
+  destinationStationCode,
+  route,
   pillGap = PILL_CONFIG.gap,
   pillsPerStation = PILL_CONFIG.perStation,
   onRefresh,
@@ -86,6 +91,13 @@ export default function CircularRotator({
           scrollRange={scrollRange}
           trainIconPosition={trainIconPosition}
           registerPillRef={registerPillRef}
+          distanceFromLastStationKm={distanceFromLastStationKm}
+          currentStationCode={currentStationCode}
+          lastUpdatedAt={lastUpdatedAt}
+          destinationStationCode={destinationStationCode}
+          currentLocationStatus={currentLocationStatus}
+          currentSequence={currentStationSequence}
+          route={route}
         />
       </div>
 
