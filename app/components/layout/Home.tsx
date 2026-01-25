@@ -1,20 +1,29 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useIsRestoring } from "@tanstack/react-query";
 import { API_CONFIG } from "@/app/config/api.config";
 import { useTrainData } from "@/app/hooks/useTrainData";
 import CircularRotator from "@/app/components/ui/CircularRotator/CircularRotator";
-import {
-  TrackingEmptyState,
-  TrackingErrorState,
-  TrackingLoadingState,
-} from "@/app/components/layout/TrackingStates";
+import LoadingState from "@/app/components/layout/LoadingState";
+import EmptyState from "@/app/components/layout/EmptyState";
+import ErrorState from "@/app/components/layout/ErrorState";
 
 const TRAIN_NUMBER = API_CONFIG.trainNumber;
 
-export default function TrainTracking() {
-  const { data, isLoading, isError, error, refetch } = useTrainData(TRAIN_NUMBER);
+// Set journey date here:
+// - undefined = API decides (default behavior)
+// - "2026-01-24" = specific date (today)
+// - "2026-01-25" = tomorrow
+// - "2026-01-26" = day after tomorrow
+const JOURNEY_DATE = undefined;
+
+export default function Home() {
+  const { data, isLoading, isError, error, refetch, isFetching } = useTrainData(
+    TRAIN_NUMBER,
+    { journeyDate: JOURNEY_DATE }
+  );
+
   const isRestoring = useIsRestoring();
 
   const stations = useMemo(
@@ -22,32 +31,42 @@ export default function TrainTracking() {
     [data?.route]
   );
 
+  const handleRefresh = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
+
+  // Show nothing while restoring
   if (isRestoring && !data) {
     return null;
   }
 
+  // Show loading state
   if (isLoading && !data) {
-    return <TrackingLoadingState />;
+    return <LoadingState />;
   }
 
+  // Show error state
   if (isError && !data) {
     return (
-      <TrackingErrorState
+      <ErrorState
         message={error?.message || "Error loading train data"}
         onRetry={refetch}
       />
     );
   }
 
+  // Show empty state
   if (stations.length === 0) {
-    return <TrackingEmptyState />;
+    return <EmptyState />;
   }
 
+  // Extract live train data
   const journeyDate = data?.liveData?.journeyDate ?? null;
   const distanceFromOriginKm = data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
   const currentLocationStatus = data?.liveData?.currentLocation?.status ?? null;
   const currentStationSequence = data?.liveData?.currentLocation?.sequence ?? null;
 
+  // Main content
   return (
     <CircularRotator
       stations={stations}
@@ -55,6 +74,8 @@ export default function TrainTracking() {
       distanceFromOriginKm={distanceFromOriginKm}
       currentLocationStatus={currentLocationStatus}
       currentStationSequence={currentStationSequence}
+      onRefresh={handleRefresh}
+      isRefreshing={isFetching}
     />
   );
 }

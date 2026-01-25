@@ -11,7 +11,7 @@ export const TRACK_PATH_CONFIG = {
 export const PILL_CONFIG = {
   gap: 28,
   perStation: 12,
-  pillsBeforeFirstStation: 2,
+  pillsBeforeFirstStation: 4,
 } as const;
 
 export const MILESTONE_CONFIG = {
@@ -23,7 +23,7 @@ export const TRACK_CONTAINER_WIDTH = 360;
 
 export const TRACK_VIEWPORT_HEIGHT = 600;
 
-export const TIME_PATH_OFFSET = 28;
+export const TIME_PATH_OFFSET = 29;
 
 export const TIME_LABEL_VERTICAL_OFFSET = {
   left: 10,
@@ -31,3 +31,19 @@ export const TIME_LABEL_VERTICAL_OFFSET = {
 } as const;
 
 export const TIME_LABEL_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation; // Adjust the arrival time label position manually here
+
+export const AUTO_SCROLL_CONFIG = {
+  targetViewportPercentFromBottom: 0.5, // 0.5 = 50% from bottom = middle of viewport
+} as const;
+
+export const PHASE_SCROLL_CONFIG = {
+  iconLockPosition: 0.5, // Keep train icon at 50% of viewport during Phase 2
+  phase2EndStationsFromLast: 2, // Stop Phase 2 at lastStation - 2
+  scrollThreshold: 0.5, // Minimum pill movement before triggering scroll update
+  scrollDebounceMs: 300, // Debounce time for scroll animations
+} as const;
+
+export const TOOLTIP_OFFSETS = {
+  left: { x: 28, y: 20 },
+  right: { x: 28, y: 19 },
+} as const;
