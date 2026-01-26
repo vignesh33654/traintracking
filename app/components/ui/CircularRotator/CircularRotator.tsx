@@ -60,6 +60,8 @@ export default function CircularRotator({
     scrollProgress,
     journeyDate,
     pillsBeforeFirstStation,
+    currentLocationStatus,
+    currentStationCode,
   });
 
   // Audio feedback during scroll
@@ -78,8 +80,8 @@ export default function CircularRotator({
   }, [onRefresh, performAutoScroll]);
 
   return (
-    <div ref={scrollRef} className="relative" style={{ height: totalScrollHeight }}>
-      <div className="sticky top-0 w-full h-dvh flex items-center justify-center">
+    <div ref={scrollRef} className="relative overflow-x-clip" style={{ height: totalScrollHeight }}>
+      <div className="sticky top-0 w-full h-dvh flex items-center justify-center overflow-x-hidden">
         <TrackContainer
           stations={stations}
           journeyDate={journeyDate}
