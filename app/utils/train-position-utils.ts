@@ -1,4 +1,4 @@
-import type { RouteStation } from "../types/train.types";
+import type { RouteStation, CurrentLocation } from "../types/train.types";
 
 export interface TrainPillPosition {
   absolutePillIndex: number;
@@ -14,6 +14,8 @@ export interface TrainPillPosition {
  * @param pillsPerStation - Number of pills between each station
  * @param journeyDate - Optional journey date (YYYY-MM-DD) to detect past journeys
  * @param pillsBeforeFirstStation - Offset pills before first station (default: 0)
+ * @param currentLocationStatus - Optional current location status (ARRIVED, AT_STATION, etc.)
+ * @param currentStationCode - Optional current station code when at a station
  * @returns Object with absolutePillIndex and isValid flag
  */
 export function calculateTrainPillIndex(
@@ -21,8 +23,29 @@ export function calculateTrainPillIndex(
   stations: RouteStation[],
   pillsPerStation: number,
   journeyDate?: string | null,
-  pillsBeforeFirstStation: number = 0
+  pillsBeforeFirstStation: number = 0,
+  currentLocationStatus?: CurrentLocation["status"] | null,
+  currentStationCode?: string | null
 ): TrainPillPosition {
+  // DEFENSIVE: If at destination station, lock to final position (prevents resets)
+  if (currentStationCode && stations.length > 0) {
+    const lastStation = stations[stations.length - 1];
+    if (currentStationCode === lastStation.stationCode &&
+        (currentLocationStatus === "ARRIVED" || currentLocationStatus === "AT_STATION")) {
+      const finalPillIndex = (stations.length - 1) * pillsPerStation + pillsBeforeFirstStation;
+      return { absolutePillIndex: finalPillIndex, isValid: true };
+    }
+  }
+
+  // If train has arrived at a station, snap to that station's position
+  if ((currentLocationStatus === "ARRIVED" || currentLocationStatus === "AT_STATION") && currentStationCode) {
+    const stationIndex = stations.findIndex(s => s.stationCode === currentStationCode);
+    if (stationIndex !== -1) {
+      const absolutePillIndex = stationIndex * pillsPerStation + pillsBeforeFirstStation;
+      return { absolutePillIndex, isValid: true };
+    }
+  }
+
   if (distanceFromOriginKm === null || stations.length < 2) {
     return { absolutePillIndex: 0, isValid: false };
   }

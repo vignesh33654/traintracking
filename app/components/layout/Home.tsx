@@ -4,19 +4,14 @@ import { useMemo, useCallback } from "react";
 import { useIsRestoring } from "@tanstack/react-query";
 import { API_CONFIG } from "@/app/config/api.config";
 import { useTrainData } from "@/app/hooks/useTrainData";
+import { getTodayDate } from "@/app/utils/todaydate";
 import CircularRotator from "@/app/components/ui/CircularRotator/CircularRotator";
 import LoadingState from "@/app/components/layout/LoadingState";
 import EmptyState from "@/app/components/layout/EmptyState";
 import ErrorState from "@/app/components/layout/ErrorState";
 
 const TRAIN_NUMBER = API_CONFIG.trainNumber;
-
-// Set journey date here:
-// - undefined = API decides (default behavior)
-// - "2026-01-24" = specific date (today)
-// - "2026-01-25" = tomorrow
-// - "2026-01-26" = day after tomorrow
-const JOURNEY_DATE = undefined;
+const JOURNEY_DATE = getTodayDate();
 
 export default function Home() {
   const { data, isLoading, isError, error, refetch, isFetching } = useTrainData(

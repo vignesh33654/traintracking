@@ -1,5 +1,6 @@
 import { cn } from "@/app/utils/utils";
 import type { RouteStation } from "@/app/types/train.types";
+import { formatRelativeTime, getNextStationSummary, getStationName } from "@/app/utils/train-status.utils";
 
 export interface TrainStatusProps {
   className?: string;
@@ -13,35 +14,18 @@ export interface TrainStatusProps {
   destinationStationCode?: string;
 }
 
-function formatRelativeTime(lastUpdatedAt: string | null | undefined): string {
-  if (!lastUpdatedAt) return "JUST NOW";
-  const diffMinutes = Math.floor((Date.now() - new Date(lastUpdatedAt).getTime()) / 60000);
-  if (diffMinutes < 1) return "JUST NOW";
-  if (diffMinutes === 1) return "1 MIN AGO";
-  return `${diffMinutes} MINS AGO`;
-}
-
-function getStationName(code: string | null | undefined, route?: RouteStation[]): string {
-  if (!code || !route) return "";
-  return route.find((s) => s.stationCode === code)?.stationName ?? "";
-}
-
-function getNextStationName(sequence: number | null | undefined, route?: RouteStation[]): string {
-  if (sequence == null || !route) return "";
-  return route.find((s) => s.sequence === sequence + 1)?.stationName ?? "";
-}
-
 function getStatusMessage(props: TrainStatusProps): string {
   const {
     currentLocationStatus,
     distanceFromLastStationKm,
+    distanceFromOriginKm,
     currentStationCode,
     currentSequence,
     route,
     destinationStationCode,
   } = props;
 
-  if (currentStationCode && currentStationCode  === destinationStationCode) {
+  if (currentStationCode && currentStationCode === destinationStationCode) {
     return "REACHED YOUR DESTINATION";
   }
 
@@ -50,10 +34,23 @@ function getStatusMessage(props: TrainStatusProps): string {
     return `ARRIVED AT ${name}`;
   }
 
+  const { nextStationName, distanceToNextKm } = getNextStationSummary(
+    currentSequence,
+    currentStationCode,
+    distanceFromOriginKm,
+    route
+  );
+
+  if (currentLocationStatus === "DEPARTED" && distanceFromLastStationKm != null) {
+    if (distanceToNextKm != null && nextStationName) {
+      return `${Math.round(distanceToNextKm)} KM TO ${nextStationName}`;
+    }
+  }
+
   if (distanceFromLastStationKm != null && distanceFromLastStationKm > 0) {
-    const nextName = getNextStationName(currentSequence, route);
-    const dist = Math.round(distanceFromLastStationKm);
-    return `${dist} KM TO ${nextName}`;
+    if (distanceToNextKm != null && nextStationName) {
+      return `${Math.round(distanceToNextKm)} KM TO ${nextStationName}`;
+    }
   }
 
   return "NOT STARTED YET";

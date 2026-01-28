@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { getPositionOnPath, type PathPosition } from "../utils/circular-rotator-utils";
 import { calculatePillProgress } from "../utils/train-scroll-calculator";
 import { calculateTrainPillIndex } from "../utils/train-position-utils";
-import type { RouteStation } from "../types/train.types";
+import type { RouteStation, CurrentLocation } from "../types/train.types";
 
 export interface TrainIconPosition extends PathPosition {
   counterRotation: number;
@@ -20,6 +20,8 @@ export interface UseTrainIconPositionParams {
   scrollProgress: number;
   journeyDate?: string | null;
   pillsBeforeFirstStation?: number;
+  currentLocationStatus?: CurrentLocation["status"] | null;
+  currentStationCode?: string | null;
 }
 
 export function useTrainIconPosition({
@@ -31,15 +33,19 @@ export function useTrainIconPosition({
   scrollProgress,
   journeyDate,
   pillsBeforeFirstStation = 0,
+  currentLocationStatus,
+  currentStationCode,
 }: UseTrainIconPositionParams): TrainIconPosition {
   return useMemo(() => {
-    // Calculate which pill the train is at based on distance
+    // Calculate which pill the train is at based on distance (or station if arrived)
     const { absolutePillIndex, isValid } = calculateTrainPillIndex(
       distanceFromOriginKm,
       stations,
       pillsPerStation,
       journeyDate,
-      pillsBeforeFirstStation
+      pillsBeforeFirstStation,
+      currentLocationStatus,
+      currentStationCode
     );
 
     if (!isValid) {
@@ -63,5 +69,5 @@ export function useTrainIconPosition({
       counterRotation: -position.rotation,
       isVisible,
     };
-  }, [distanceFromOriginKm, stations, pillsPerStation, gapRatio, scrollRange, scrollProgress, journeyDate, pillsBeforeFirstStation]);
+  }, [distanceFromOriginKm, stations, pillsPerStation, gapRatio, scrollRange, scrollProgress, journeyDate, pillsBeforeFirstStation, currentLocationStatus, currentStationCode]);
 }
