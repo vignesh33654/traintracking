@@ -74,14 +74,7 @@ export function calculateStationLabels(
         scrollRange
       );
 
-      const parts = [station.stationName.toUpperCase()];
-      if (station.platform) {
-        parts.push(`P-${station.platform}`);
-      }
-      if (station.scheduledDeparture > 0) {
-        parts.push(formatTimeAmPm(station.scheduledDeparture));
-      }
-      const label = parts.join(' • ');
+      const label = station.stationName.toUpperCase();
 
       return {
         id: station.id,
