@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 const STORAGE_KEY = "darkMode";
 
-export function useDark() {
-  const [isDark, setIsDark] = useState(false);
+function getInitialDarkMode(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.classList.contains("dark");
+}
 
-  useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    setIsDark(isDarkMode);
-  }, []);
+export function useDark() {
+  const [isDark, setIsDark] = useState(getInitialDarkMode);
 
   const toggleDarkMode = useCallback(() => {
     setIsDark((prev) => {

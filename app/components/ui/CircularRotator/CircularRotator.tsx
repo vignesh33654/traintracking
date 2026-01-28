@@ -35,9 +35,7 @@ export default function CircularRotator({
     gapRatio,
     scrollRange,
     totalScrollHeight,
-    trainPillProgress,
     performAutoScroll,
-    isTrainRunning,
   } = useScrollManager({
     scrollRef,
     stations,

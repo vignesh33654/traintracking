@@ -5,7 +5,6 @@ import { cn } from "@/app/utils/utils";
 export interface FooterProps {
   trainNumber: string;
   trainName: string;
-  trainNameHindi: string;
   speed?: number; // Animation speed in pixels/second (default: 30)
   className?: string;
 }
@@ -13,7 +12,6 @@ export interface FooterProps {
 export function Footer({
   trainNumber,
   trainName,
-  trainNameHindi,
   speed = 60,
   className,
 }: FooterProps) {

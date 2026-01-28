@@ -1,8 +1,7 @@
-import {
-  MS_PER_MINUTE,
-  MINUTES_PER_HOUR,
-  HOURS_PER_DAY,
-} from "@/app/config/circular-rotator.config";
+// Time constants
+const MS_PER_MINUTE = 60000;
+const MINUTES_PER_HOUR = 60;
+const HOURS_PER_DAY = 24;
 
 /** Formats delay time in minutes to human-readable string */
 export function formatDelay(minutes: number | null | undefined): string {
