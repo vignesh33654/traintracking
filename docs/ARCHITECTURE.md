@@ -287,6 +287,12 @@ scrollDebounceMs: 300                // Debounce time
 | `clamp01` | circular-rotator-utils | Keep value between 0-1 |
 | `detectTrainPhase` | train-phase-utils | Determine current phase (1, 2, or 3) |
 | `calculateScrollTopForTrainPosition` | train-auto-scroll | Position pill at viewport location |
+| `formatRelativeTime` | time-formatters | Timestamp → relative time ("2h 15m AGO") |
+| `formatDelay` | time-formatters | Delay minutes → readable string |
+| `formatTime` | time-formatters | Minutes since midnight → HH:MM |
+| `formatTimeAmPm` | time-formatters | Minutes since midnight → 12hr AM/PM |
+| `getTodayDate` | todaydate | Returns today's date as YYYY-MM-DD |
+| `isToday` | todaydate | Check if date string is today |
 
 ---
 
@@ -302,6 +308,9 @@ scrollDebounceMs: 300                // Debounce time
 | `AUTO_SCROLL_CONFIG` | targetViewportPercent: 0.5 | Train positioning on scroll |
 | `PHASE_SCROLL_CONFIG` | Phase thresholds, debounce | 3-phase scrolling behavior |
 | `TOOLTIP_OFFSETS` | left/right offsets | Tooltip positioning |
+| `MS_PER_MINUTE` | 60000 | Milliseconds in one minute |
+| `MINUTES_PER_HOUR` | 60 | Minutes in one hour |
+| `HOURS_PER_DAY` | 24 | Hours in one day |
 
 ---
 
@@ -343,4 +352,4 @@ scrollDebounceMs: 300                // Debounce time
 
 ---
 
-*Last updated: January 2025*
+*Last updated: January 2026*

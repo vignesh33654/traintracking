@@ -1,6 +1,6 @@
 import { getPositionOnPath, getPositionOnInnerPath } from "./circular-rotator-utils";
 import { calculatePillProgress } from "./train-scroll-calculator";
-import { formatTimeAmPm } from "./train-formatters";
+import { formatTimeAmPm } from "./time-formatters";
 import type { RouteStation } from "../types/train.types";
 import type { PillPosition, PillData, TimeLabelData } from "../types/circular-rotator.types";
 import { MILESTONE_CONFIG, TIME_LABEL_PILL_OFFSET } from "../config/circular-rotator.config";

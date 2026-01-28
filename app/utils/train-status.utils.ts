@@ -1,15 +1,5 @@
 import type { RouteStation } from "@/app/types/train.types";
 
-// Format last updated timestamp to relative minutes text
-export function formatRelativeTime(lastUpdatedAt: string | null | undefined): string {
-  if (!lastUpdatedAt) return "JUST NOW";
-
-  const diffMinutes = Math.floor((Date.now() - new Date(lastUpdatedAt).getTime()) / 60000);
-  if (diffMinutes < 1) return "JUST NOW";
-
-  return `${diffMinutes} MINS AGO`;
-}
-
 export function getStationName(code: string | null | undefined, route?: RouteStation[]): string {
   if (!code || !route) return "";
   return route.find((s) => s.stationCode === code)?.stationName ?? "";

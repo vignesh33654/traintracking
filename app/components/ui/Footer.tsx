@@ -2,7 +2,7 @@
 
 import { cn } from "@/app/utils/utils";
 
-export interface FooterMarqueeProps {
+export interface FooterProps {
   trainNumber: string;
   trainName: string;
   trainNameHindi: string;
@@ -10,13 +10,13 @@ export interface FooterMarqueeProps {
   className?: string;
 }
 
-export function FooterMarquee({
+export function Footer({
   trainNumber,
   trainName,
   trainNameHindi,
   speed = 60,
   className,
-}: FooterMarqueeProps) {
+}: FooterProps) {
   // Format the text with bullet separators and spacing
   const formattedText = `${trainNumber} • ${trainName}`;
   const separator = "   •   "; // Spacing between repeats

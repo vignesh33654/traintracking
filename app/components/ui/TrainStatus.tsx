@@ -1,6 +1,7 @@
 import { cn } from "@/app/utils/utils";
 import type { RouteStation } from "@/app/types/train.types";
-import { formatRelativeTime, getNextStationSummary, getStationName } from "@/app/utils/train-status.utils";
+import { getNextStationSummary, getStationName } from "@/app/utils/train-status.utils";
+import { formatRelativeTime } from "@/app/utils/time-formatters";
 
 export interface TrainStatusProps {
   className?: string;
@@ -29,7 +30,9 @@ function getStatusMessage(props: TrainStatusProps): string {
     return "REACHED YOUR DESTINATION";
   }
 
-  if (currentLocationStatus === "AT_STATION" || currentLocationStatus === "ARRIVED") {
+  // Only show "ARRIVED" if train has actually started (moved from origin)
+  if ((currentLocationStatus === "AT_STATION" || currentLocationStatus === "ARRIVED") &&
+      distanceFromOriginKm != null && distanceFromOriginKm > 0) {
     const name = getStationName(currentStationCode, route);
     return `ARRIVED AT ${name}`;
   }

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import type { RouteStation } from "../types/train.types";
-import { formatTimeAmPm } from "../utils/train-formatters";
+import { formatTimeAmPm } from "../utils/time-formatters";
 
 interface ActiveStationData {
   stationName: string;
