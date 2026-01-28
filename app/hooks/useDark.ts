@@ -1,27 +1,33 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "darkMode";
 
-function getInitialDarkMode(): boolean {
-  if (typeof document === "undefined") return false;
+function subscribe(callback: () => void) {
+  const observer = new MutationObserver(callback);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+  return () => observer.disconnect();
+}
+
+function getSnapshot() {
   return document.documentElement.classList.contains("dark");
 }
 
+function getServerSnapshot() {
+  return false;
+}
+
 export function useDark() {
-  const [isDark, setIsDark] = useState(getInitialDarkMode);
+  const isDark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const toggleDarkMode = useCallback(() => {
-    setIsDark((prev) => {
-      const newValue = !prev;
-    const html = document.documentElement;
-      
-      html.classList.toggle("dark", newValue);
-      localStorage.setItem(STORAGE_KEY, String(newValue));
-      
-      return newValue;
-    });
+    const newValue = !document.documentElement.classList.contains("dark");
+    document.documentElement.classList.toggle("dark", newValue);
+    localStorage.setItem(STORAGE_KEY, String(newValue));
   }, []);
 
   return { isDark, toggleDarkMode };
