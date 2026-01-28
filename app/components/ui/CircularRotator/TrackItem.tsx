@@ -45,7 +45,7 @@ function TrackItem({
         zIndex: isActualStation ? 1 : 0,
       }}
     >
-      <PillItem isActualStation={isActualStation} />
+      <PillItem />
 
       {isActualStation && stationCode && (
         <div className={ICON_POSITION_CLASS} style={{ zIndex: 10 }}>

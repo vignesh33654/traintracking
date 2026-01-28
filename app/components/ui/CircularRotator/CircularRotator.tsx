@@ -16,6 +16,11 @@ export default function CircularRotator({
   distanceFromOriginKm,
   currentLocationStatus,
   currentStationSequence,
+  distanceFromLastStationKm,
+  currentStationCode,
+  lastUpdatedAt,
+  destinationStationCode,
+  route,
   pillGap = PILL_CONFIG.gap,
   pillsPerStation = PILL_CONFIG.perStation,
   onRefresh,
@@ -30,9 +35,7 @@ export default function CircularRotator({
     gapRatio,
     scrollRange,
     totalScrollHeight,
-    trainPillProgress,
     performAutoScroll,
-    isTrainRunning,
   } = useScrollManager({
     scrollRef,
     stations,
@@ -55,6 +58,8 @@ export default function CircularRotator({
     scrollProgress,
     journeyDate,
     pillsBeforeFirstStation,
+    currentLocationStatus,
+    currentStationCode,
   });
 
   // Audio feedback during scroll
@@ -73,8 +78,8 @@ export default function CircularRotator({
   }, [onRefresh, performAutoScroll]);
 
   return (
-    <div ref={scrollRef} className="relative" style={{ height: totalScrollHeight }}>
-      <div className="sticky top-0 w-full h-dvh flex items-center justify-center">
+    <div ref={scrollRef} className="relative overflow-x-clip" style={{ height: totalScrollHeight }}>
+      <div className="sticky top-0 w-full h-dvh flex items-center justify-center overflow-x-hidden">
         <TrackContainer
           stations={stations}
           journeyDate={journeyDate}
@@ -86,6 +91,13 @@ export default function CircularRotator({
           scrollRange={scrollRange}
           trainIconPosition={trainIconPosition}
           registerPillRef={registerPillRef}
+          distanceFromLastStationKm={distanceFromLastStationKm}
+          currentStationCode={currentStationCode}
+          lastUpdatedAt={lastUpdatedAt}
+          destinationStationCode={destinationStationCode}
+          currentLocationStatus={currentLocationStatus}
+          currentSequence={currentStationSequence}
+          route={route}
         />
       </div>
 

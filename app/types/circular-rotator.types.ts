@@ -6,6 +6,11 @@ export interface CircularRotatorProps {
   distanceFromOriginKm: number | null;
   currentLocationStatus: CurrentLocation["status"] | null;
   currentStationSequence: number | null;
+  distanceFromLastStationKm?: number | null;
+  currentStationCode?: string | null;
+  lastUpdatedAt?: string | null;
+  destinationStationCode?: string;
+  route?: RouteStation[];
   pillGap?: number;
   pillsPerStation?: number;
   onRefresh?: () => Promise<void>;

@@ -2,7 +2,6 @@ import { cn } from "../../utils/utils";
 
 interface PillItemProps {
   className?: string;
-  isActualStation?: boolean;
 }
 
 function PillDot({ position }: { position: 'left' | 'right' }) {
@@ -17,7 +16,6 @@ function PillDot({ position }: { position: 'left' | 'right' }) {
 }
 export default function PillItem({
   className,
-  isActualStation = false,
 }: PillItemProps) {
   return (
     <div
