@@ -1,9 +1,9 @@
-import { getPositionOnPath, getPositionOnInnerPath } from "./circular-rotator-utils";
+import { getPositionOnPath } from "./circular-rotator-utils";
 import { calculatePillProgress } from "./train-scroll-calculator";
 import { formatTimeAmPm } from "./time-formatters";
 import type { RouteStation } from "../types/train.types";
-import type { PillPosition, PillData, TimeLabelData } from "../types/circular-rotator.types";
-import { MILESTONE_CONFIG, TIME_LABEL_PILL_OFFSET } from "../config/circular-rotator.config";
+import type { PillPosition, PillData, TimeLabelData, StationLabelData } from "../types/circular-rotator.types";
+import { MILESTONE_CONFIG, TIME_LABEL_PILL_OFFSET, STATION_LABEL_PILL_OFFSET } from "../config/circular-rotator.config";
 import { PILL_CONFIG } from "../config/circular-rotator.config";
 
 const DAYMARKER_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation + 2;
@@ -44,15 +44,49 @@ export function calculateTimeLabels(
         scrollRange
       );
 
-      const position = getPositionOnInnerPath(clampedProgress);
       const time = formatTimeAmPm(station.scheduledArrival);
 
       return {
         id: station.id,
         time,
-        x: position.x,
-        y: position.y,
-        rotation: position.rotation,
+        startOffsetPercent: clampedProgress * 100,
+        isVisible,
+      };
+    });
+}
+
+export function calculateStationLabels(
+  stations: RouteStation[],
+  scrollProgress: number,
+  gapRatio: number,
+  scrollRange: number,
+  pillsPerStation: number
+): StationLabelData[] {
+  return stations
+    .map((station, originalIndex) => ({ station, originalIndex }))
+    .filter(({ station }) => station.sequence > 0)
+    .map(({ station, originalIndex }) => {
+      const pillIndex = originalIndex * pillsPerStation + STATION_LABEL_PILL_OFFSET;
+      const { clampedProgress, isVisible } = calculatePillProgress(
+        pillIndex,
+        scrollProgress,
+        gapRatio,
+        scrollRange
+      );
+
+      const parts = [station.stationName.toUpperCase()];
+      if (station.platform) {
+        parts.push(`P-${station.platform}`);
+      }
+      if (station.scheduledDeparture > 0) {
+        parts.push(formatTimeAmPm(station.scheduledDeparture));
+      }
+      const label = parts.join(' • ');
+
+      return {
+        id: station.id,
+        label,
+        startOffsetPercent: clampedProgress * 100,
         isVisible,
       };
     });

@@ -62,9 +62,22 @@ export interface PillData {
 export interface TimeLabelData {
   id: number;
   time: string;
-  x: number;
-  y: number;
-  rotation: number;
+  startOffsetPercent: number;
+  isVisible: boolean;
+}
+
+export interface StationPathTextProps {
+  stations: RouteStation[];
+  scrollProgress: number;
+  gapRatio: number;
+  scrollRange: number;
+  pillsPerStation: number;
+}
+
+export interface StationLabelData {
+  id: number;
+  label: string;
+  startOffsetPercent: number;
   isVisible: boolean;
 }
 

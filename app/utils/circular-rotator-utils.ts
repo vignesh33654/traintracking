@@ -1,8 +1,10 @@
-import { getTrackPath, getPathTotalLength } from "./track-path";
+import { getTrackPath, getPathTotalLength, getOuterTrackPath } from "./track-path";
 import {
   TRACK_PATH_CONFIG,
   TIME_PATH_OFFSET,
   TIME_LABEL_VERTICAL_OFFSET,
+  STATION_PATH_OFFSET,
+  STATION_LABEL_VERTICAL_OFFSET,
 } from "../config/circular-rotator.config";
 
 export interface PathPosition {
@@ -43,6 +45,13 @@ const FALLBACK_PATH_CONFIG: PathConfig = {
 const INNER_PATH_CONFIG: PathConfig = {
   xOffset: TIME_PATH_OFFSET,
   yOffsets: TIME_LABEL_VERTICAL_OFFSET,
+  rotations: { left: 90, right: -90 },
+  arcRotation: (t) => 90 - t * 180,
+};
+
+const OUTER_PATH_CONFIG: PathConfig = {
+  xOffset: -STATION_PATH_OFFSET,
+  yOffsets: STATION_LABEL_VERTICAL_OFFSET,
   rotations: { left: 90, right: -90 },
   arcRotation: (t) => 90 - t * 180,
 };
@@ -90,6 +99,30 @@ function getPositionOnPathFallback(progress: number): PathPosition {
 
 export function getPositionOnInnerPath(progress: number): PathPosition {
   return calculatePathPosition(progress, INNER_PATH_CONFIG);
+}
+
+export function getPositionOnOuterPath(progress: number): PathPosition {
+  const path = getOuterTrackPath();
+
+  if (!path || typeof path.getPointAtLength !== "function") {
+    return calculatePathPosition(progress, OUTER_PATH_CONFIG);
+  }
+
+  try {
+    const totalLength = path.getTotalLength();
+    const distance = Math.max(0, Math.min(progress, 1)) * totalLength;
+    const point = path.getPointAtLength(distance);
+
+    const delta = 1;
+    const nextPoint = path.getPointAtLength(Math.min(distance + delta, totalLength));
+    const dx = nextPoint.x - point.x;
+    const dy = nextPoint.y - point.y;
+    const rotation = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+
+    return { x: point.x, y: point.y, rotation };
+  } catch {
+    return calculatePathPosition(progress, OUTER_PATH_CONFIG);
+  }
 }
 
 export function getPositionOnPath(progress: number): PathPosition {

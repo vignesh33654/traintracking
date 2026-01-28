@@ -1,4 +1,5 @@
 import TimePathText from "./TimePathText";
+import StationPathText from "./StationPathText";
 import type { TrackRailsProps } from "../../../types/circular-rotator.types";
 
 const TRACK_RAILS = [
@@ -24,6 +25,13 @@ export default function TrackRails({
         />
       ))}
       <TimePathText
+        stations={stations}
+        scrollProgress={scrollProgress}
+        gapRatio={gapRatio}
+        scrollRange={scrollRange}
+        pillsPerStation={pillsPerStation}
+      />
+      <StationPathText
         stations={stations}
         scrollProgress={scrollProgress}
         gapRatio={gapRatio}

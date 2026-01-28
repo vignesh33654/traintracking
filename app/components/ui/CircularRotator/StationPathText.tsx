@@ -1,26 +1,26 @@
 import { useId, useMemo } from "react";
-import { calculateTimeLabels } from "../../../utils/circular-rotator-calculations";
+import { calculateStationLabels } from "../../../utils/circular-rotator-calculations";
 import {
-  TIME_PATH_OFFSET,
+  STATION_PATH_OFFSET,
   TRACK_CONTAINER_WIDTH,
   TRACK_VIEWPORT_HEIGHT,
 } from "../../../config/circular-rotator.config";
-import { generateInnerPath } from "../../../utils/track-path";
-import type { TimePathTextProps } from "../../../types/circular-rotator.types";
+import { generateOuterPath } from "../../../utils/track-path";
+import type { StationPathTextProps } from "../../../types/circular-rotator.types";
 
-export default function TimePathText({
+export default function StationPathText({
   stations,
   scrollProgress,
   gapRatio,
   scrollRange,
   pillsPerStation,
-}: TimePathTextProps) {
-  const timeLabels = useMemo(
-    () => calculateTimeLabels(stations, scrollProgress, gapRatio, scrollRange, pillsPerStation),
+}: StationPathTextProps) {
+  const stationLabels = useMemo(
+    () => calculateStationLabels(stations, scrollProgress, gapRatio, scrollRange, pillsPerStation),
     [stations, scrollProgress, gapRatio, scrollRange, pillsPerStation]
   );
-  const timePath = useMemo(() => generateInnerPath(TIME_PATH_OFFSET), []);
-  const timePathId = useId();
+  const stationPath = useMemo(() => generateOuterPath(STATION_PATH_OFFSET), []);
+  const stationPathId = useId();
 
   return (
     <svg
@@ -31,10 +31,10 @@ export default function TimePathText({
       aria-hidden
     >
       <defs>
-        <path id={timePathId} d={timePath} />
+        <path id={stationPathId} d={stationPath} />
       </defs>
 
-      {timeLabels.map(({ id, time, startOffsetPercent, isVisible }) => (
+      {stationLabels.map(({ id, label, startOffsetPercent, isVisible }) => (
         <text
           key={id}
           className="text-label"
@@ -43,8 +43,8 @@ export default function TimePathText({
           textAnchor="middle"
           dominantBaseline="middle"
         >
-          <textPath href={`#${timePathId}`} startOffset={`${startOffsetPercent}%`}>
-            {time}
+          <textPath href={`#${stationPathId}`} startOffset={`${startOffsetPercent}%`}>
+            {label}
           </textPath>
         </text>
       ))}
