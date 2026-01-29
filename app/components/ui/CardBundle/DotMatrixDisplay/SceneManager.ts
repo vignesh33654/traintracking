@@ -7,13 +7,9 @@ import type { Train } from '@/app/types/train.types';
 import useColorTheme from '../useColorTheme';
 import { MatrixFrameContext, MatrixRenderer, Palette } from './MatrixRenderer';
 import {
-  ImpactGameScene,
-  MenuScene,
-  PongGameScene,
   Scene,
   SceneContext,
   SceneName,
-  SnakeScene,
   StatusScene,
 } from './scenes';
 import TransitionRenderer from './TransitionRenderer';
@@ -44,10 +40,6 @@ export class SceneManager {
   public init() {
     this.scenes = {
       status: new StatusScene(this.context),
-      menu: new MenuScene(this.context),
-      snake: new SnakeScene(this.context),
-      pong: new PongGameScene(this.context),
-      impact: new ImpactGameScene(this.context),
     };
 
     this.activeSceneName = 'status';
@@ -78,7 +70,7 @@ export class SceneManager {
 
     const prevScene = currentScene;
 
-    const transitionDirection = nextScene instanceof MenuScene ? 'up' : 'down';
+    const transitionDirection = 'down';
 
     this.isTransitioning = true;
     this.transitionRenderer
@@ -129,24 +121,12 @@ interface UseSceneManagerParams {
   train: Train | null;
   dotMatrixDisplayRef: React.RefObject<{ getFrameContext: () => MatrixFrameContext } | null>;
   containerRef: React.RefObject<HTMLDivElement | null>;
-  onScoreChange: (score: { player1: number; player2?: number }) => void;
-  onGameEnd: () => void;
-  onGameSelect: (manager: SceneManager, game: 'snake' | 'pong' | 'impact') => void;
-  onReset?: () => void;
-  analytics: {
-    track: (event: string, data?: any) => void;
-  };
 }
 
 export const useSceneManager = ({
   train,
   dotMatrixDisplayRef,
   containerRef,
-  onScoreChange,
-  onGameEnd,
-  onReset,
-  onGameSelect,
-  analytics,
 }: UseSceneManagerParams) => {
   const { colorTheme } = useColorTheme();
   const { resolvedTheme } = useTheme();
@@ -160,16 +140,6 @@ export const useSceneManager = ({
       containerRef,
       palette: getPalette({ resolvedTheme }),
       train,
-      onScoreChange,
-      onGameEnd: () => {
-        sceneManagerRef.current?.switchTo('menu');
-        onGameEnd();
-      },
-      onGameSelect: (game) => {
-        sceneManagerRef.current?.switchTo(game);
-        onGameSelect(sceneManagerRef.current!, game);
-      },
-      analytics,
     };
 
     const instance = new SceneManager(context, (newActiveRenderer) => {
@@ -179,38 +149,15 @@ export const useSceneManager = ({
     instance.init();
     sceneManagerRef.current = instance;
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        const scene = sceneManagerRef.current?.getActiveScene();
-        if (scene instanceof StatusScene) {
-          return;
-        }
-        if (scene instanceof MenuScene) {
-          sceneManagerRef.current?.switchTo('status');
-          onReset?.();
-        } else {
-          sceneManagerRef.current?.switchTo('menu');
-          onGameEnd();
-        }
-      }
-    };
-
     const container = containerRef.current;
 
-    container?.addEventListener('keydown', handleKeyDown);
-
     return () => {
-      container?.removeEventListener('keydown', handleKeyDown);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    onScoreChange,
-    onGameEnd,
-    onGameSelect,
     train,
     dotMatrixDisplayRef,
     containerRef,
-    analytics,
   ]);
 
   useEffect(() => {
