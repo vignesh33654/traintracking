@@ -9,7 +9,7 @@ import CircularRotator from "@/app/components/ui/CircularRotator/CircularRotator
 import LoadingState from "@/app/components/layout/LoadingState";
 import EmptyState from "@/app/components/layout/EmptyState";
 import ErrorState from "@/app/components/layout/ErrorState";
-import { Footer } from "@/app/components/ui/Footer";
+import Card from "@/app/components/ui/CardBundle/Card";
 
 const TRAIN_NUMBER = API_CONFIG.trainNumber;
 const JOURNEY_DATE = getTodayDate();
@@ -83,6 +83,9 @@ export default function Home() {
       onRefresh={handleRefresh}
       isRefreshing={isFetching}
     />
+    <Card>
+      <p>Hello</p>
+    </Card>
     </>
   );
 }
