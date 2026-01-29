@@ -10,7 +10,7 @@ export const TRACK_PATH_CONFIG = {
 
 export const PILL_CONFIG = {
   gap: 28,
-  perStation: 16,
+  perStation: 12,
   pillsBeforeFirstStation: 4,
 } as const;
 
@@ -30,7 +30,7 @@ export const TIME_LABEL_VERTICAL_OFFSET = {
   right: -10,
 } as const;
 
-export const TIME_LABEL_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation; // Adjust the arrival time label position manually here
+export const TIME_LABEL_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation + 0.5; // Adjust the arrival time label position manually here
 
 export const STATION_PATH_OFFSET = -29;
 
@@ -39,7 +39,7 @@ export const STATION_LABEL_VERTICAL_OFFSET = {
   right: -10,
 } as const;
 
-export const STATION_LABEL_PILL_OFFSET = 5;
+export const STATION_LABEL_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation + 0.5;
 
 export const AUTO_SCROLL_CONFIG = {
   targetViewportPercentFromBottom: 0.5, // 0.5 = 50% from bottom = middle of viewport

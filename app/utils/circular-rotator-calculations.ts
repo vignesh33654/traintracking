@@ -1,12 +1,52 @@
-import { getPositionOnPath } from "./circular-rotator-utils";
+import { getPositionOnPath, getPathTotalLength } from "./circular-rotator-utils";
 import { calculatePillProgress } from "./train-scroll-calculator";
 import { formatTimeAmPm } from "./time-formatters";
 import type { RouteStation } from "../types/train.types";
 import type { PillPosition, PillData, TimeLabelData, StationLabelData } from "../types/circular-rotator.types";
-import { MILESTONE_CONFIG, TIME_LABEL_PILL_OFFSET, STATION_LABEL_PILL_OFFSET } from "../config/circular-rotator.config";
+import {
+  MILESTONE_CONFIG,
+  TIME_LABEL_PILL_OFFSET,
+  STATION_LABEL_PILL_OFFSET,
+  TIME_PATH_OFFSET,
+  STATION_PATH_OFFSET,
+  TRACK_PATH_CONFIG,
+} from "../config/circular-rotator.config";
 import { PILL_CONFIG } from "../config/circular-rotator.config";
 
 const DAYMARKER_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation + 2;
+const BASE_PATH_LENGTH = getPathTotalLength();
+const STRAIGHT_LENGTH = TRACK_PATH_CONFIG.arcStartY - TRACK_PATH_CONFIG.railTop;
+const BASE_ARC_LENGTH = Math.PI * TRACK_PATH_CONFIG.arcRadius;
+const TIME_ARC_LENGTH = Math.PI * (TRACK_PATH_CONFIG.arcRadius - TIME_PATH_OFFSET);
+const STATION_ARC_LENGTH = Math.PI * (TRACK_PATH_CONFIG.arcRadius + STATION_PATH_OFFSET);
+const TIME_TOTAL_LENGTH = 2 * STRAIGHT_LENGTH + TIME_ARC_LENGTH;
+const STATION_TOTAL_LENGTH = 2 * STRAIGHT_LENGTH + STATION_ARC_LENGTH;
+
+function mapBaseDistanceToPathPercent(
+  distanceAlongBase: number,
+  targetArcLength: number,
+  targetTotalLength: number
+): number {
+  if (distanceAlongBase <= 0) return 0;
+
+  const afterLeftStraight = distanceAlongBase - STRAIGHT_LENGTH;
+  if (afterLeftStraight <= 0) {
+    return (distanceAlongBase / targetTotalLength) * 100;
+  }
+
+  const afterArc = afterLeftStraight - BASE_ARC_LENGTH;
+  if (afterArc <= 0) {
+    // In the arc: keep the same angle by matching arc progress, not absolute distance
+    const arcProgress = afterLeftStraight / BASE_ARC_LENGTH; // 0..1 over the base arc
+    const targetDistance = STRAIGHT_LENGTH + targetArcLength * arcProgress;
+    return (targetDistance / targetTotalLength) * 100;
+  }
+
+  // Right straight: lengths are the same, so add the remainder directly
+  const targetDistance = STRAIGHT_LENGTH + targetArcLength + afterArc;
+  const percent = (targetDistance / targetTotalLength) * 100;
+  return Math.max(0, Math.min(100, percent));
+}
 
 export function calculatePillPosition(
   index: number,
@@ -45,11 +85,16 @@ export function calculateTimeLabels(
       );
 
       const time = formatTimeAmPm(station.scheduledArrival);
+      const distanceAlongBase = clampedProgress * BASE_PATH_LENGTH;
 
       return {
         id: station.id,
         time,
-        startOffsetPercent: clampedProgress * 100,
+        startOffsetPercent: mapBaseDistanceToPathPercent(
+          distanceAlongBase,
+          TIME_ARC_LENGTH,
+          TIME_TOTAL_LENGTH
+        ),
         isVisible,
       };
     });
@@ -75,11 +120,16 @@ export function calculateStationLabels(
       );
 
       const label = station.stationName.toUpperCase();
+      const distanceAlongBase = clampedProgress * BASE_PATH_LENGTH;
 
       return {
         id: station.id,
         label,
-        startOffsetPercent: clampedProgress * 100,
+        startOffsetPercent: mapBaseDistanceToPathPercent(
+          distanceAlongBase,
+          STATION_ARC_LENGTH,
+          STATION_TOTAL_LENGTH
+        ),
         isVisible,
       };
     });
