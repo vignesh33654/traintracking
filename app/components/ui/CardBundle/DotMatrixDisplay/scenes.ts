@@ -1,4 +1,4 @@
-import { SystemMetrics } from '../models';
+import type { Train } from '@/app/types/train.types';
 import { remap } from '../math';
 
 import ImpactGameRenderer from './ImpactGameRenderer/ImpactGameRenderer';
@@ -16,7 +16,7 @@ export interface SceneContext {
   dotMatrixDisplayRef: React.RefObject<{ getFrameContext: () => MatrixFrameContext } | null>;
   containerRef: React.RefObject<HTMLDivElement | null>;
   palette: Palette;
-  metrics: SystemMetrics;
+  train: Train | null;
   onScoreChange: (score: { player1: number; player2?: number }) => void;
   onGameEnd: () => void;
   onGameSelect: (game: 'snake' | 'pong' | 'impact') => void;
@@ -38,10 +38,9 @@ export abstract class Scene {
 
 export class StatusScene extends Scene {
   constructor(context: SceneContext) {
-    const memoryMB = Math.round(context.metrics.memory.usedBytes / 1024 / 1024);
-    const memoryText =
-      context.metrics.memory.usedPct === 0 ? `${memoryMB}MB` : `${context.metrics.memory.usedPct}%`;
-    const text = ` CPU:${context.metrics.cpu.percent}% • MEMORY:${memoryText} • STATUS:${context.metrics.status.toUpperCase()} •`;
+    const trainNumber = context.train?.trainNumber?.trim() || 'TRAIN';
+    const trainName = context.train?.trainName?.trim() || 'UNKNOWN';
+    const text = ` ${trainNumber} • ${trainName} `;
 
     const renderer = new TextRenderer({
       text: text,

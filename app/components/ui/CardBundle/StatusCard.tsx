@@ -1,10 +1,8 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import CardTitle from './CardTitle';
-import { SystemMetrics } from './models';
+import type { Train } from '@/app/types/train.types';
 import { track } from './event';
 import { cn } from './util';
 
@@ -14,22 +12,15 @@ import DotMatrixDisplay, {
   SceneManager,
   useSceneManager,
 } from './DotMatrixDisplay';
-import KonamiCode, { konamiCodeToString } from './KonamiCode';
-import ScoreCounter from './ScoreCounter';
+import { konamiCodeToString } from './KonamiCode';
 
 const getKonamiCodeInstructions = () => {
   return `Enter Konami Code: ${konamiCodeToString()}`;
 };
 
-const infoSlideProps = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 },
-};
-
 const analytics = { track };
 
-export default function StatusCard({ metrics }: { metrics: SystemMetrics }) {
+export default function StatusCard({ train }: { train: Train | null }) {
   const [scoreVisible, setScoreVisible] = useState(false);
   const [score, setScore] = useState<{ player1: number; player2?: number }>({
     player1: 0,
@@ -68,7 +59,7 @@ export default function StatusCard({ metrics }: { metrics: SystemMetrics }) {
   const [instructions, setInstructions] = useState(getKonamiCodeInstructions());
 
   const { sceneManager, activeRenderer } = useSceneManager({
-    metrics,
+    train,
     dotMatrixDisplayRef,
     containerRef,
     onScoreChange: setScore,
@@ -121,8 +112,8 @@ export default function StatusCard({ metrics }: { metrics: SystemMetrics }) {
 
   return (
     <Card className="">
-      <div className="flex flex-col justify-between gap-5">
-        <CardTitle variant="mono" className="flex items-center justify-between gap-2">
+      <div className=" absolute top-0 left-1/2 -translate-x-1/2 flex flex-col w-80 justify-between gap-5">
+        {/* <CardTitle variant="mono" className="flex items-center justify-between gap-2">
           System Monitor{' '}
           <AnimatePresence mode="popLayout">
             {scoreVisible ? (
@@ -135,7 +126,7 @@ export default function StatusCard({ metrics }: { metrics: SystemMetrics }) {
               </motion.div>
             )}
           </AnimatePresence>
-        </CardTitle>
+        </CardTitle> */}
 
         <div
           className="border-panel-border focus-visible:outline-theme-1/20 rounded-lg border bg-black p-1 focus-visible:outline-[0.5px] focus-visible:outline-none"

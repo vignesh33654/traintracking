@@ -10,6 +10,7 @@ import LoadingState from "@/app/components/layout/LoadingState";
 import EmptyState from "@/app/components/layout/EmptyState";
 import ErrorState from "@/app/components/layout/ErrorState";
 import Card from "@/app/components/ui/CardBundle/Card";
+import { StatusCard } from "../ui/CardBundle";
 
 const TRAIN_NUMBER = API_CONFIG.trainNumber;
 const JOURNEY_DATE = getTodayDate();
@@ -83,9 +84,7 @@ export default function Home() {
       onRefresh={handleRefresh}
       isRefreshing={isFetching}
     />
-    <Card>
-      <p>Hello</p>
-    </Card>
+   <StatusCard train={data?.train ?? null} />
     </>
   );
 }

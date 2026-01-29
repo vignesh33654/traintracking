@@ -6,4 +6,3 @@ export {
   useSceneManager,
   type MatrixFrameContext,
 } from './DotMatrixDisplay';
-export type { SystemMetrics } from './models';

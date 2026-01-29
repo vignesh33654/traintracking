@@ -3,9 +3,8 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useRef, useState } from 'react';
 
-import { SystemMetrics } from '../models';
-
-import useColorTheme from '../../useColorTheme';
+import type { Train } from '@/app/types/train.types';
+import useColorTheme from '../useColorTheme';
 import { MatrixFrameContext, MatrixRenderer, Palette } from './MatrixRenderer';
 import {
   ImpactGameScene,
@@ -127,7 +126,7 @@ export class SceneManager {
 }
 
 interface UseSceneManagerParams {
-  metrics: SystemMetrics;
+  train: Train | null;
   dotMatrixDisplayRef: React.RefObject<{ getFrameContext: () => MatrixFrameContext } | null>;
   containerRef: React.RefObject<HTMLDivElement | null>;
   onScoreChange: (score: { player1: number; player2?: number }) => void;
@@ -140,7 +139,7 @@ interface UseSceneManagerParams {
 }
 
 export const useSceneManager = ({
-  metrics,
+  train,
   dotMatrixDisplayRef,
   containerRef,
   onScoreChange,
@@ -160,7 +159,7 @@ export const useSceneManager = ({
       dotMatrixDisplayRef,
       containerRef,
       palette: getPalette({ resolvedTheme }),
-      metrics,
+      train,
       onScoreChange,
       onGameEnd: () => {
         sceneManagerRef.current?.switchTo('menu');
@@ -208,7 +207,7 @@ export const useSceneManager = ({
     onScoreChange,
     onGameEnd,
     onGameSelect,
-    metrics,
+    train,
     dotMatrixDisplayRef,
     containerRef,
     analytics,
