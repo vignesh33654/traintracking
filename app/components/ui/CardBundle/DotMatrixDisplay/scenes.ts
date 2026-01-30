@@ -28,7 +28,20 @@ export class StatusScene extends Scene {
   constructor(context: SceneContext) {
     const trainNumber = context.train?.trainNumber?.trim() || 'TRAIN';
     const trainName = context.train?.trainName?.trim() || 'UNKNOWN';
-    const text = ` ${trainNumber} • ${trainName} `;
+    const rawText = ` ${trainNumber} • ${trainName} `;
+    const normalizedText = rawText
+      .toUpperCase()
+      // replace different dash variants with a space
+      .replace(/[–—-]/g, ' ')
+      // strip parentheses that the bitmap font cannot render
+      .replace(/[()]/g, ' ')
+      // keep only characters the bitmap font supports
+      .replace(/[^A-Z0-9 !%.:?_•]/g, ' ')
+      // collapse multiple spaces
+      .replace(/\s+/g, ' ')
+      .trim();
+    const text = ` ${normalizedText} `;
+
  
     const renderer = new TextRenderer({
       text: text,
