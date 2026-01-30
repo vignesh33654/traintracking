@@ -27,7 +27,7 @@ const Card = forwardRef<HTMLDivElement, Props>(function Card(
   return (
     <Component
       className={cn(
-        'flex justify-center items-center fixed top-4 left-1/2 -translate-x-1/2  rounded-[10px] w-[calc(100%-32px)] max-w-[360px] p-px md:left-[16px] md:translate-x-0 md:w-auto md:max-w-none',
+        'flex justify-center items-center fixed bottom-[4px] left-1/2 -translate-x-1/2  rounded-[10px] w-[calc(100%-32px)] max-w-[360px] p-px md:left-[16px] md:translate-x-0 md:w-auto md:max-w-none',
         containerClassName,
       )}
       id={id}
