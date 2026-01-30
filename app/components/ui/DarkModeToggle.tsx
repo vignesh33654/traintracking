@@ -68,7 +68,7 @@ export default function DarkModeToggle() {
       role="switch"
       aria-checked={isDark}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className=" hover:cursor-pointer fixed right-4 top-4 z-50 flex rounded-full bg-bg-0 border border-bg-1 p-1 text-text-primary focus-ring"
+      className="hover:cursor-pointer fixed top-4 right-4 z-50 flex rounded-full border border-bg-1 bg-bg-0 p-1 text-text-primary focus-ring max-[450px]:bottom-4 max-[450px]:left-4 max-[450px]:top-auto max-[450px]:right-auto"
     >
       <span
         className={`flex size-9 items-center justify-center rounded-full transition-colors ${isDark ? "bg-bg-1 " : "bg-transparent"}`}

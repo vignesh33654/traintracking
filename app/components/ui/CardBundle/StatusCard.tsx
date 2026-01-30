@@ -57,7 +57,7 @@ export default function StatusCard({ train }: { train: Train | null }) {
   );
 
   return (
-    <Card className="flex w-72 justify-center items-center p-2 rounded-[12px] bg-bg-0 border border-bg-1 overflow-hidden">
+    <Card className="flex w-78 justify-center items-center p-2 rounded-[12px] bg-bg-0 border border-bg-1 overflow-hidden">
       <div className="flex flex-col w-full justify-between gap-1">
         <p className= 'text-label text-text-secondary'>TRAIN DETAILS</p>
         <div
