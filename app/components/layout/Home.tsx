@@ -9,6 +9,7 @@ import CircularRotator from "@/app/components/ui/CircularRotator/CircularRotator
 import LoadingState from "@/app/components/layout/LoadingState";
 import EmptyState from "@/app/components/layout/EmptyState";
 import ErrorState from "@/app/components/layout/ErrorState";
+import { StatusCard } from "../ui/FooterDottedCard";
 
 const TRAIN_NUMBER = API_CONFIG.trainNumber;
 const JOURNEY_DATE = getTodayDate();
@@ -67,6 +68,7 @@ export default function Home() {
 
   // Main content
   return (
+    <>
     <CircularRotator
       stations={stations}
       journeyDate={journeyDate}
@@ -81,5 +83,7 @@ export default function Home() {
       onRefresh={handleRefresh}
       isRefreshing={isFetching}
     />
+   <StatusCard train={data?.train ?? null} />
+    </>
   );
 }

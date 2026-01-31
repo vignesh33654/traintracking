@@ -1,13 +1,10 @@
 import { useMemo } from "react";
 import { generatePillData } from "../../../utils/circular-rotator-calculations";
-import { useIsMobile } from "../../../hooks/useIsMobile";
-import { useMobileActiveStation } from "../../../hooks/useMobileActiveStation";
 import { TRACK_CONTAINER_WIDTH } from "../../../config/circular-rotator.config";
 import type { RouteStation, CurrentLocation } from "../../../types/train.types";
 import type { PillData } from "../../../types/circular-rotator.types";
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
-import MobileStationTooltip from "./MobileStationTooltip";
 import { TrainIcon } from "../TrainIcon";
 import { TrainStatus } from "../TrainStatus";
 
@@ -59,20 +56,10 @@ export default function TrackContainer({
   route,
 }: TrackContainerProps) {
   const itemCount = stations.length * pillsPerStation;
-  const isMobile = useIsMobile();
 
   const pills = useMemo(
     () => generatePillData(itemCount, stations, pillsPerStation, pillsBeforeFirstStation),
     [itemCount, stations, pillsPerStation, pillsBeforeFirstStation]
-  );
-
-  const activeStation = useMobileActiveStation(
-    scrollProgress,
-    stations,
-    pillsPerStation,
-    gapRatio,
-    scrollRange,
-    pillsBeforeFirstStation
   );
 
   return (
@@ -103,17 +90,6 @@ export default function TrackContainer({
           registerPillRef={registerPillRef}
         />
       ))}
-
-      {isMobile && activeStation && (
-        <MobileStationTooltip
-          stationName={activeStation.stationName}
-          stationCode={activeStation.stationCode}
-          scheduledDeparture={activeStation.scheduledDeparture}
-          platform={activeStation.platform}
-          day={activeStation.day}
-          gapRatio={gapRatio}
-        />
-      )}
 
       {trainIconPosition.isVisible && (
         <TrainIcon

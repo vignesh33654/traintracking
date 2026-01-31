@@ -10,12 +10,12 @@ export const TRACK_PATH_CONFIG = {
 
 export const PILL_CONFIG = {
   gap: 28,
-  perStation: 12,
+  perStation: 18,
   pillsBeforeFirstStation: 4,
 } as const;
 
 export const MILESTONE_CONFIG = {
-  intervalKm: 150,
+  intervalKm: 300,
   pillOffsetBeforeStation: 4,
 } as const;
 
@@ -58,3 +58,10 @@ export const TOOLTIP_OFFSETS = {
 } as const;
 
 export const DEFAULT_REFETCH_INTERVAL = 60000; // 1 minute
+
+export const TRAIN_PROGRESS_CONFIG = {
+  svgSize: 24,
+  innerRadius: 8,
+  strokeWidth: 1,
+  center: 12,
+} as const;

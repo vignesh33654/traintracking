@@ -2,6 +2,7 @@ import { cn } from "@/app/utils/utils";
 import type { RouteStation } from "@/app/types/train.types";
 import { getNextStationSummary, getStationName } from "@/app/utils/train-status.utils";
 import { formatRelativeTime } from "@/app/utils/time-formatters";
+import { TrainProgress } from "./TrainProgress";
 
 export interface TrainStatusProps {
   className?: string;
@@ -60,7 +61,13 @@ function getStatusMessage(props: TrainStatusProps): string {
 }
 
 export function TrainStatus(props: TrainStatusProps) {
-  const { className, lastUpdatedAt } = props;
+  const {
+    className,
+    lastUpdatedAt,
+    distanceFromOriginKm,
+    currentStationCode,
+    destinationStationCode,
+  } = props;
 
   return (
     <div
@@ -73,9 +80,12 @@ export function TrainStatus(props: TrainStatusProps) {
         className
       )}
     >
-      <div
-        className="shrink-0 size-[34px] rounded-full border border-bg-1 "
-        aria-hidden="true"
+      <TrainProgress
+        distanceFromOriginKm={distanceFromOriginKm}
+        route={props.route}
+        currentStationCode={currentStationCode}
+        destinationStationCode={destinationStationCode}
+        size={34}
       />
       <div className="flex flex-col gap-pill-dot justify-center min-w-0 shrink-0">
         <p className="font-b612-mono-9 text-text-secondary uppercase tracking-[-0.4px] leading-[12px] whitespace-nowrap">

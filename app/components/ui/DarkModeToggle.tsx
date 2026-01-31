@@ -12,13 +12,27 @@ function SunIcon() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <path
-        d="M10 3V1M10 19V17M17 10H19M1 10H3M15.657 4.343L17.071 2.929M2.929 17.071L4.343 15.657M15.657 15.657L17.071 17.071M2.929 2.929L4.343 4.343M14 10C14 12.2091 12.2091 14 10 14C7.79086 14 6 12.2091 6 10C6 7.79086 7.79086 6 10 6C12.2091 6 14 7.79086 14 10Z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <g clipPath="url(#clip0_light_mode)">
+        <path
+          d="M9.99998 14.1666C12.3012 14.1666 14.1666 12.3012 14.1666 9.99998C14.1666 7.69879 12.3012 5.83331 9.99998 5.83331C7.69879 5.83331 5.83331 7.69879 5.83331 9.99998C5.83331 12.3012 7.69879 14.1666 9.99998 14.1666Z"
+          stroke="currentColor"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M9.99998 0.833313V2.49998M9.99998 17.5V19.1666M3.51665 3.51665L4.69998 4.69998M15.3 15.3L16.4833 16.4833M0.833313 9.99998H2.49998M17.5 9.99998H19.1666M3.51665 16.4833L4.69998 15.3M15.3 4.69998L16.4833 3.51665"
+          stroke="currentColor"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_light_mode">
+          <rect width="20" height="20" fill="white" />
+        </clipPath>
+      </defs>
     </svg>
   );
 }
@@ -34,8 +48,11 @@ function MoonIcon() {
       aria-hidden="true"
     >
       <path
-        d="M17 10.5C16.8 14.9 13.2 18.5 8.8 18.5C5.1 18.5 2 15.8 1.5 12.3C1.4 11.6 2 11 2.7 11.1C3.2 11.2 3.7 11.2 4.3 11.2C8.7 11.2 12.3 7.6 12.3 3.2C12.3 2.6 12.2 2.1 12.1 1.6C12 0.9 12.6 0.3 13.3 0.4C16.3 1 18.5 3.6 18.5 6.7C18.5 8 18.1 9.3 17 10.5Z"
-        fill="currentColor"
+        d="M17.5 10.6583C17.3689 12.0768 16.8365 13.4287 15.9652 14.5557C15.0938 15.6826 13.9196 16.5382 12.5797 17.0221C11.2399 17.5061 9.78997 17.5984 8.39956 17.2884C7.00916 16.9784 5.73581 16.2788 4.7285 15.2715C3.72119 14.2642 3.0216 12.9908 2.71157 11.6004C2.40154 10.21 2.49391 8.76007 2.97786 7.42025C3.46182 6.08042 4.31734 4.90614 5.44432 4.03479C6.57131 3.16345 7.92314 2.63109 9.34165 2.5C8.51116 3.62356 8.11152 5.00787 8.21542 6.40118C8.31932 7.79448 8.91986 9.10422 9.90781 10.0922C10.8958 11.0801 12.2055 11.6807 13.5988 11.7846C14.9921 11.8885 16.3764 11.4888 17.5 10.6583Z"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -46,12 +63,25 @@ export default function DarkModeToggle() {
 
   return (
     <button
+      type="button"
       onClick={toggleDarkMode}
-      className="fixed right-4 top-4 z-50 flex items-center gap-2 rounded-lg bg-bg-1 px-4 py-2 text-text-primary transition-none hover:bg-bg-2 focus-ring"
+      role="switch"
+      aria-checked={isDark}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className="hover:cursor-pointer fixed top-4 right-4 z-50 flex rounded-full border border-bg-1 bg-bg-0 p-1 text-text-primary focus-ring max-md:left-1/2 max-md:right-auto max-md:-translate-x-1/2"
     >
-      {isDark ? <SunIcon /> : <MoonIcon />}
-      <span className="text-sm font-medium">{isDark ? "Light" : "Dark"}</span>
+      <span
+        className={`flex size-9 items-center justify-center rounded-full transition-colors ${isDark ? "bg-bg-1 " : "bg-transparent"}`}
+        aria-hidden
+      >
+        <MoonIcon />
+      </span>
+      <span
+        className={`flex size-9 items-center justify-center rounded-full transition-colors ${!isDark ? "bg-bg-1" : "bg-transparent"}`}
+        aria-hidden
+      >
+        <SunIcon />
+      </span>
     </button>
   );
 }

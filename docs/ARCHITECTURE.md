@@ -46,6 +46,9 @@
 | **TrackContainer** | Generates pill data, renders track elements |
 | **TrackItem** | Individual pill/station marker with positioning |
 | **TrainIcon** | Animated train position indicator |
+| **TrainProgress** | Circular progress indicator showing journey completion |
+| **TrainStatus** | Status display with progress indicator and current location |
+| **FooterDottedCard** | Dot matrix display card showing train details |
 
 ---
 
@@ -287,6 +290,9 @@ scrollDebounceMs: 300                // Debounce time
 | `clamp01` | circular-rotator-utils | Keep value between 0-1 |
 | `detectTrainPhase` | train-phase-utils | Determine current phase (1, 2, or 3) |
 | `calculateScrollTopForTrainPosition` | train-auto-scroll | Position pill at viewport location |
+| `getProgressState` | train-progress-utils | Determine journey state (not-started, in-progress, complete) |
+| `calculatePercentage` | train-progress-utils | Calculate journey completion percentage (0-100%) |
+| `generateProgressArcPath` | train-progress-utils | Generate SVG path for circular progress arc |
 | `formatRelativeTime` | time-formatters | Timestamp → relative time ("2h 15m AGO") |
 | `formatDelay` | time-formatters | Delay minutes → readable string |
 | `formatTime` | time-formatters | Minutes since midnight → HH:MM |
