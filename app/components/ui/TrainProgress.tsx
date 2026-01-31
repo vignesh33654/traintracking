@@ -5,6 +5,7 @@ import {
   calculatePercentage,
   generateProgressArcPath,
 } from "@/app/utils/train-progress-utils";
+import { TRAIN_PROGRESS_CONFIG } from "@/app/config/circular-rotator.config";
 
 export interface TrainProgressProps {
   distanceFromOriginKm?: number | null;
@@ -40,11 +41,7 @@ export function TrainProgress({
     totalDistanceKm
   );
 
-  // Fixed sizes based on Figma design
-  const svgSize = 24; // Outer ring is 24px
-  const innerRadius = 8; // Inner filled segment is 16px diameter (8px radius)
-  const strokeWidth = 1;
-  const center = svgSize / 2;
+  const { svgSize, innerRadius, strokeWidth, center } = TRAIN_PROGRESS_CONFIG;
 
   const isActive = state === "in-progress" || state === "complete";
   const isComplete = state === "complete";
