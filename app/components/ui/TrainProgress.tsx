@@ -1,96 +1,33 @@
 import { cn } from "@/app/utils/utils";
+import type { RouteStation } from "@/app/types/train.types";
+import {
+  getProgressState,
+  calculatePercentage,
+  generateProgressArcPath,
+} from "@/app/utils/train-progress-utils";
 
 export interface TrainProgressProps {
   distanceFromOriginKm?: number | null;
-  totalDistanceKm: number;
+  route?: RouteStation[];
   currentStationCode?: string | null;
   destinationStationCode?: string;
   size?: number;
   className?: string;
 }
 
-type ProgressState = "not-started" | "in-progress" | "complete";
-
-function getProgressState(
-  distanceFromOriginKm: number | null | undefined,
-  currentStationCode: string | null | undefined,
-  destinationStationCode: string | undefined
-): ProgressState {
-  // Check if reached destination first
-  if (
-    currentStationCode &&
-    destinationStationCode &&
-    currentStationCode === destinationStationCode
-  ) {
-    return "complete";
-  }
-
-  // Check if train has started
-  if (distanceFromOriginKm != null && distanceFromOriginKm > 0) {
-    return "in-progress";
-  }
-
-  return "not-started";
-}
-
-function calculatePercentage(
-  state: ProgressState,
-  distanceFromOriginKm: number | null | undefined,
-  totalDistanceKm: number
-): number {
-  if (state === "complete") {
-    return 100;
-  }
-
-  if (state === "not-started" || totalDistanceKm <= 0) {
-    return 0;
-  }
-
-  const percentage = ((distanceFromOriginKm ?? 0) / totalDistanceKm) * 100;
-  return Math.min(100, Math.max(0, percentage));
-}
-
-// Generate SVG arc path for pie segment
-function describeArc(
-  cx: number,
-  cy: number,
-  radius: number,
-  startAngle: number,
-  endAngle: number
-): string {
-  const start = polarToCartesian(cx, cy, radius, endAngle);
-  const end = polarToCartesian(cx, cy, radius, startAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-  return [
-    "M", cx, cy,
-    "L", start.x, start.y,
-    "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y,
-    "Z"
-  ].join(" ");
-}
-
-function polarToCartesian(
-  cx: number,
-  cy: number,
-  radius: number,
-  angleInDegrees: number
-) {
-  const angleInRadians = ((angleInDegrees + 90) * Math.PI) / 180;
-  return {
-    x: cx + radius * Math.cos(angleInRadians),
-    y: cy + radius * Math.sin(angleInRadians),
-  };
-}
-
 export function TrainProgress({
   distanceFromOriginKm,
-  totalDistanceKm,
+  route,
   currentStationCode,
   destinationStationCode,
   size = 34,
   className,
 }: TrainProgressProps) {
+  // Calculate total distance from route
+  const totalDistanceKm = route && route.length > 0
+    ? route[route.length - 1].distanceFromSourceKm
+    : 0;
+
   const state = getProgressState(
     distanceFromOriginKm,
     currentStationCode,
@@ -156,7 +93,7 @@ export function TrainProgress({
         {state === "in-progress" && percentage > 0 && (
           // Pie segment for in-progress state
           <path
-            d={describeArc(center, center, innerRadius, -90, arcAngle - 90)}
+            d={generateProgressArcPath(center, center, innerRadius, -90, arcAngle - 90)}
             fill="currentColor"
             className="text-green transition-none "
           />

@@ -57,17 +57,6 @@ export default function TrackContainer({
 }: TrackContainerProps) {
   const itemCount = stations.length * pillsPerStation;
 
-  // Calculate total distance for progress indicator
-  const totalDistanceKm = useMemo(() => {
-    if (route && route.length > 0) {
-      return route[route.length - 1].distanceFromSourceKm;
-    }
-    if (stations.length > 0) {
-      return stations[stations.length - 1].distanceFromSourceKm;
-    }
-    return 0;
-  }, [route, stations]);
-
   const pills = useMemo(
     () => generatePillData(itemCount, stations, pillsPerStation, pillsBeforeFirstStation),
     [itemCount, stations, pillsPerStation, pillsBeforeFirstStation]
@@ -123,7 +112,6 @@ export default function TrackContainer({
         currentSequence={currentSequence}
         route={route}
         destinationStationCode={destinationStationCode}
-        totalDistanceKm={totalDistanceKm}
       />
     </div>
   );

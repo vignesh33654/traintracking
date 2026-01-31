@@ -14,7 +14,6 @@ export interface TrainStatusProps {
   currentSequence?: number | null;
   route?: RouteStation[];
   destinationStationCode?: string;
-  totalDistanceKm?: number;
 }
 
 function getStatusMessage(props: TrainStatusProps): string {
@@ -68,7 +67,6 @@ export function TrainStatus(props: TrainStatusProps) {
     distanceFromOriginKm,
     currentStationCode,
     destinationStationCode,
-    totalDistanceKm,
   } = props;
 
   return (
@@ -84,7 +82,7 @@ export function TrainStatus(props: TrainStatusProps) {
     >
       <TrainProgress
         distanceFromOriginKm={distanceFromOriginKm}
-        totalDistanceKm={totalDistanceKm ?? 0}
+        route={props.route}
         currentStationCode={currentStationCode}
         destinationStationCode={destinationStationCode}
         size={34}

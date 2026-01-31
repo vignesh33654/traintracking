@@ -2,8 +2,8 @@
 
 import { forwardRef, ReactNode, useRef } from 'react';
 
-import { relativeMouseClassname } from './MousePositionVarsSetter';
-import { cn } from './util';
+import { relativeMouseClassname } from '../FooterDottedCard/MousePositionVarsSetter';
+import { cn } from '../FooterDottedCard/util';
 
 import './Card.css';
 
