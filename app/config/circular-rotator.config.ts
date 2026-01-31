@@ -16,7 +16,7 @@ export const PILL_CONFIG = {
 
 export const MILESTONE_CONFIG = {
   intervalKm: 300,
-  pillOffsetBeforeStation: 4,
+  pillOffsetBeforeStation: 2,
 } as const;
 
 export const TRACK_CONTAINER_WIDTH = 360;

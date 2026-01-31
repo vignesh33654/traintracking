@@ -12,6 +12,45 @@ interface UseScrollSoundParams {
   itemCount: number;
 }
 
+/**
+ * Calculate the pill index at a given target position using direct math.
+ * This is O(1) instead of O(N) loop
+ */
+function findPillAtPosition(
+  targetPosition: number,
+  threshold: number,
+  scrollProgress: number,
+  gapRatio: number,
+  scrollRange: number,
+  itemCount: number
+): number {
+  if (gapRatio === 0 || itemCount === 0) return -1;
+
+  const targetProgress = 1 - targetPosition;
+
+  // Calculate the approximate pill index
+  const offset = scrollProgress * scrollRange;
+  const approximateIndex = (targetProgress - offset) / gapRatio;
+  const centerIndex = Math.round(approximateIndex);
+
+  // Check the center and adjacent pills (handles threshold)
+  for (let delta = 0; delta <= 2; delta++) {
+    for (const sign of [0, 1, -1]) {
+      const index = centerIndex + sign * delta;
+      if (index < 0 || index >= itemCount) continue;
+
+      const { clampedProgress } = calculatePillProgress(index, scrollProgress, gapRatio, scrollRange);
+      const pillPosition = 1 - clampedProgress;
+
+      if (pillPosition >= targetPosition - threshold && pillPosition <= targetPosition + threshold) {
+        return index;
+      }
+    }
+  }
+
+  return -1;
+}
+
 export function useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount }: UseScrollSoundParams) {
   const lastPillAtTrigger = useRef<number>(-1);
   const isInitialized = useRef(false);
@@ -24,17 +63,15 @@ export function useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCoun
     const triggerPosition = AUDIO_CONFIG.PILL_TRIGGER_POSITION;
     const threshold = AUDIO_CONFIG.TRIGGER_THRESHOLD;
 
-    // Find which pill is currently at the trigger position
-    let currentPillAtTrigger = -1;
-    for (let i = 0; i < itemCount; i++) {
-      const { clampedProgress } = calculatePillProgress(i, scrollProgress, gapRatio, scrollRange);
-      const pillPosition = 1 - clampedProgress;
-
-      if (pillPosition >= triggerPosition - threshold && pillPosition <= triggerPosition + threshold) {
-        currentPillAtTrigger = i;
-        break;
-      }
-    }
+    // Find which pill is at trigger position - O(1) instead of O(N)
+    const currentPillAtTrigger = findPillAtPosition(
+      triggerPosition,
+      threshold,
+      scrollProgress,
+      gapRatio,
+      scrollRange,
+      itemCount
+    );
 
     // Skip first render to avoid playing sound on initial load
     if (!isInitialized.current) {

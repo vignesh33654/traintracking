@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { generatePillData } from "../../../utils/circular-rotator-calculations";
+import { calculateVisibleRange } from "../../../utils/train-scroll-calculator";
 import { TRACK_CONTAINER_WIDTH } from "../../../config/circular-rotator.config";
 import type { RouteStation, CurrentLocation } from "../../../types/train.types";
 import type { PillData } from "../../../types/circular-rotator.types";
@@ -62,6 +63,20 @@ export default function TrackContainer({
     [itemCount, stations, pillsPerStation, pillsBeforeFirstStation]
   );
 
+  // Only render pills in the visible range (virtualization)
+  const { startIndex, endIndex } = calculateVisibleRange(
+    scrollProgress,
+    gapRatio,
+    scrollRange,
+    itemCount,
+    15 // buffer zone
+  );
+
+  const visiblePills = useMemo(
+    () => pills.filter((pill: PillData) => pill.index >= startIndex && pill.index <= endIndex),
+    [pills, startIndex, endIndex]
+  );
+
   return (
     <div
       className="relative h-full bg-bg-0"
@@ -75,7 +90,7 @@ export default function TrackContainer({
         pillsPerStation={pillsPerStation}
       />
 
-      {pills.map((pill: PillData) => (
+      {visiblePills.map((pill: PillData) => (
         <TrackItem
           key={pill.index}
           index={pill.index}

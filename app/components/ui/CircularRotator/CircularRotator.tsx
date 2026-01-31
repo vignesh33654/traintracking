@@ -66,8 +66,8 @@ export default function CircularRotator({
   const itemCount = stations.length * pillsPerStation;
   useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount });
 
-  // Pill position tracking for animations
-  const registerPillRef = usePillPositions({ gapRatio, scrollRange, scrollProgress });
+  // Pill position tracking for animations (virtualized - only updates visible pills)
+  const registerPillRef = usePillPositions({ gapRatio, scrollRange, scrollProgress, totalItems: itemCount });
 
   // Refresh handler
   const handleRefresh = useCallback(async () => {
