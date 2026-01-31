@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState } from "react";
 import { useIsRestoring } from "@tanstack/react-query";
 import { API_CONFIG } from "@/app/config/api.config";
 import { useTrainData } from "@/app/hooks/useTrainData";
@@ -10,13 +10,20 @@ import LoadingState from "@/app/components/layout/LoadingState";
 import EmptyState from "@/app/components/layout/EmptyState";
 import ErrorState from "@/app/components/layout/ErrorState";
 import { StatusCard } from "../ui/FooterDottedCard";
+import SearchTrain from "@/app/components/ui/SearchTrain";
+import MobileHeader from "@/app/components/ui/MobileHeader";
 
-const TRAIN_NUMBER = API_CONFIG.trainNumber;
 const JOURNEY_DATE = getTodayDate();
 
 export default function Home() {
+  const [selectedTrain, setSelectedTrain] = useState<string>(API_CONFIG.trainNumber);
+
+  const handleTrainSelect = useCallback((trainNumber: string) => {
+    setSelectedTrain(trainNumber);
+  }, []);
+
   const { data, isLoading, isError, error, refetch, isFetching } = useTrainData(
-    TRAIN_NUMBER,
+    selectedTrain,
     { journeyDate: JOURNEY_DATE }
   );
 
@@ -69,21 +76,30 @@ export default function Home() {
   // Main content
   return (
     <>
-    <CircularRotator
-      stations={stations}
-      journeyDate={journeyDate}
-      distanceFromOriginKm={distanceFromOriginKm}
-      currentLocationStatus={currentLocationStatus}
-      currentStationSequence={currentStationSequence}
-      distanceFromLastStationKm={distanceFromLastStationKm}
-      currentStationCode={currentStationCode}
-      lastUpdatedAt={lastUpdatedAt}
-      destinationStationCode={destinationStationCode}
-      route={data?.route}
-      onRefresh={handleRefresh}
-      isRefreshing={isFetching}
-    />
-   <StatusCard train={data?.train ?? null} />
+      {/* Desktop: Fixed search */}
+      <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={selectedTrain} variant="fixed" />
+
+      {/* Mobile: Header with search and dark mode toggle */}
+      <MobileHeader>
+        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={selectedTrain} variant="inline" />
+      </MobileHeader>
+
+      <CircularRotator
+        stations={stations}
+        journeyDate={journeyDate}
+        distanceFromOriginKm={distanceFromOriginKm}
+        currentLocationStatus={currentLocationStatus}
+        currentStationSequence={currentStationSequence}
+        distanceFromLastStationKm={distanceFromLastStationKm}
+        currentStationCode={currentStationCode}
+        lastUpdatedAt={lastUpdatedAt}
+        destinationStationCode={destinationStationCode}
+        route={data?.route}
+        onRefresh={handleRefresh}
+        isRefreshing={isFetching}
+      />
+
+      <StatusCard train={data?.train ?? null} />
     </>
   );
 }
