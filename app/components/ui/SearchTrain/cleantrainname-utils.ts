@@ -14,7 +14,6 @@ export const saveStoredTrain = (trainNumber: string) => {
   try {
     localStorage.setItem(SELECTED_TRAIN_KEY, trainNumber);
   } catch {
-    // Silently fail
   }
 };
 
@@ -49,3 +48,4 @@ export function cleanTrainName(trainName: string): string {
 
   return cleaned;
 }
+

@@ -1,118 +1,28 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import { useTrainSearch } from "@/app/hooks/useTrainSearch";
 import { SearchIcon } from "./SearchIcon";
-import { cleanTrainName, saveStoredTrain } from "./utils";
-import type { SearchTrainProps, TrainSearchResult } from "./types";
+import { cleanTrainName } from "./cleantrainname-utils";
+import { useSearchTrainLogic } from "./useSearchTrainLogic";
+import type { SearchTrainProps } from "./types";
 
 const LISTBOX_ID = "train-search-listbox";
 
 export default function SearchTrain({ onSelectTrain, defaultValue = "", variant = "fixed" }: SearchTrainProps) {
-  const [inputValue, setInputValue] = useState(defaultValue);
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const listboxRef = useRef<HTMLUListElement>(null);
-  const hasUserTyped = useRef(false);
-
-  const { data: results = [], isLoading } = useTrainSearch(debouncedQuery);
-
-  const { data: defaultTrainData } = useTrainSearch(defaultValue, {
-    enabled: !!defaultValue && defaultValue.length >= 2
-  });
-
-  // Update input value when defaultTrainData loads
-  useEffect(() => {
-    if (defaultTrainData && defaultTrainData.length > 0 && !hasUserTyped.current) {
-      const train = defaultTrainData[0];
-      setInputValue(`${train.trainNumber} - ${cleanTrainName(train.trainName)}`);
-    }
-  }, [defaultTrainData]);
-
-  // Scroll highlighted item into view
-  useEffect(() => {
-    if (highlightedIndex >= 0 && listboxRef.current) {
-      const item = listboxRef.current.children[highlightedIndex] as HTMLElement;
-      item?.scrollIntoView({ block: "nearest" });
-    }
-  }, [highlightedIndex]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(inputValue);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [inputValue]);
-
-  useEffect(() => {
-    if (hasUserTyped.current && results.length > 0 && debouncedQuery.length >= 2) {
-      setIsOpen(true);
-    }
-  }, [results, debouncedQuery]);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleSelect = useCallback((result: TrainSearchResult) => {
-    setInputValue(`${result.trainNumber} - ${cleanTrainName(result.trainName)}`);
-    setIsOpen(false);
-    setHighlightedIndex(-1);
-    onSelectTrain(result.trainNumber);
-    saveStoredTrain(result.trainNumber);
-  }, [onSelectTrain]);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (!isOpen || results.length === 0) {
-      if (e.key === "ArrowDown" && results.length > 0) {
-        setIsOpen(true);
-      }
-      return;
-    }
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setHighlightedIndex((prev) =>
-          prev < results.length - 1 ? prev + 1 : prev
-        );
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : prev));
-        break;
-      case "Enter":
-        e.preventDefault();
-        if (highlightedIndex >= 0 && highlightedIndex < results.length) {
-          handleSelect(results[highlightedIndex]);
-        }
-        break;
-      case "Escape":
-        setIsOpen(false);
-        setHighlightedIndex(-1);
-        break;
-    }
-  }, [isOpen, results, highlightedIndex, handleSelect]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    hasUserTyped.current = true;
-    const newValue = e.target.value;
-    setInputValue(newValue);
-    setHighlightedIndex(-1);
-    if (newValue.length < 2) {
-      setIsOpen(false);
-    }
-  };
+  const {
+    inputValue,
+    isOpen,
+    highlightedIndex,
+    results,
+    isLoading,
+    containerRef,
+    inputRef,
+    listboxRef,
+    handleSelect,
+    handleKeyDown,
+    handleInputChange,
+    handleFocus,
+    setHighlightedIndex,
+  } = useSearchTrainLogic({ defaultValue, onSelectTrain });
 
   const containerClasses = variant === "fixed"
     ? "fixed top-4 right-26 z-50 max-md:hidden"
@@ -134,11 +44,7 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => {
-            if (results.length > 0 && debouncedQuery.length >= 2) {
-              setIsOpen(true);
-            }
-          }}
+          onFocus={handleFocus}
           placeholder="Train number or name"
           className="min-w-0 flex-1 bg-transparent font-b612-mono-10 text-text-primary placeholder:text-text-secondary focus:outline-none  overflow-hidden"
           style={{ WebkitUserSelect: "text" }}

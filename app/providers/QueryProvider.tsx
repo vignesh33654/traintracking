@@ -9,7 +9,7 @@ interface QueryProviderProps {
   children: ReactNode;
 }
 
-const STALE_TIME = 30 * 1000; // 30 seconds
+const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 const RETRY_COUNT = 2;
 const CACHE_MAX_AGE = 24 * 60 * 60 * 1000; // 24 hours
 

@@ -64,13 +64,12 @@ export default function TrackContainer({
     [itemCount, stations, pillsPerStation, pillsBeforeFirstStation]
   );
 
-  // Only render pills in the visible range (virtualization)
   const { startIndex, endIndex } = calculateVisibleRange(
     scrollProgress,
     gapRatio,
     scrollRange,
     itemCount,
-    15 // buffer zone
+    15 // extra items just before and after the screen so scrolling feels smoother
   );
 
   const visiblePills = useMemo(
