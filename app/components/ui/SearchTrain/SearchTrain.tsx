@@ -2,42 +2,11 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useTrainSearch } from "@/app/hooks/useTrainSearch";
-import type { TrainSearchResult } from "@/app/types/search.types";
-import { StatusDot } from "./StatusDot";
+import { SearchIcon } from "./SearchIcon";
+import { cleanTrainName, saveStoredTrain } from "./utils";
+import type { SearchTrainProps, TrainSearchResult } from "./types";
 
-function SearchIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M14 14L11.1 11.1"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-interface SearchTrainProps {
-  onSelectTrain: (trainNumber: string) => void;
-  defaultValue?: string;
-  variant?: "fixed" | "inline";
-}
+const LISTBOX_ID = "train-search-listbox";
 
 export default function SearchTrain({ onSelectTrain, defaultValue = "", variant = "fixed" }: SearchTrainProps) {
   const [inputValue, setInputValue] = useState(defaultValue);
@@ -47,10 +16,31 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const listboxRef = useRef<HTMLUListElement>(null);
+  const hasUserTyped = useRef(false);
 
   const { data: results = [], isLoading } = useTrainSearch(debouncedQuery);
 
-  // Debounce input
+  const { data: defaultTrainData } = useTrainSearch(defaultValue, {
+    enabled: !!defaultValue && defaultValue.length >= 2
+  });
+
+  // Update input value when defaultTrainData loads
+  useEffect(() => {
+    if (defaultTrainData && defaultTrainData.length > 0 && !hasUserTyped.current) {
+      const train = defaultTrainData[0];
+      setInputValue(`${train.trainNumber} - ${cleanTrainName(train.trainName)}`);
+    }
+  }, [defaultTrainData]);
+
+  // Scroll highlighted item into view
+  useEffect(() => {
+    if (highlightedIndex >= 0 && listboxRef.current) {
+      const item = listboxRef.current.children[highlightedIndex] as HTMLElement;
+      item?.scrollIntoView({ block: "nearest" });
+    }
+  }, [highlightedIndex]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(inputValue);
@@ -58,14 +48,12 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
     return () => clearTimeout(timer);
   }, [inputValue]);
 
-  // Open dropdown when results are available
   useEffect(() => {
-    if (results.length > 0 && debouncedQuery.length >= 2) {
+    if (hasUserTyped.current && results.length > 0 && debouncedQuery.length >= 2) {
       setIsOpen(true);
     }
   }, [results, debouncedQuery]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -77,10 +65,11 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
   }, []);
 
   const handleSelect = useCallback((result: TrainSearchResult) => {
-    setInputValue(result.trainNumber);
+    setInputValue(`${result.trainNumber} - ${cleanTrainName(result.trainName)}`);
     setIsOpen(false);
     setHighlightedIndex(-1);
     onSelectTrain(result.trainNumber);
+    saveStoredTrain(result.trainNumber);
   }, [onSelectTrain]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -116,20 +105,22 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
   }, [isOpen, results, highlightedIndex, handleSelect]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    hasUserTyped.current = true;
+    const newValue = e.target.value;
+    setInputValue(newValue);
     setHighlightedIndex(-1);
-    if (e.target.value.length < 2) {
+    if (newValue.length < 2) {
       setIsOpen(false);
     }
   };
 
   const containerClasses = variant === "fixed"
-    ? "fixed top-4 right-24 z-50 max-md:hidden"
+    ? "fixed top-4 right-26 z-50 max-md:hidden"
     : "relative flex-1";
 
   const inputContainerClasses = variant === "fixed"
-    ? "flex h-[38px] w-[240px] items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:ring-2 focus-within:ring-orange focus-within:ring-offset-2"
-    : "flex h-[38px] w-full items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:ring-2 focus-within:ring-orange focus-within:ring-offset-2";
+    ? "flex h-[46px] w-[240px] items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange"
+    : "flex h-[38px] w-full items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange";
 
   return (
     <div ref={containerRef} className={containerClasses}>
@@ -148,48 +139,56 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
               setIsOpen(true);
             }
           }}
-          placeholder="Search by train number or name"
-          className="min-w-0 flex-1 bg-transparent text-xs leading-4 text-text-primary placeholder:text-text-secondary focus:outline-none"
+          placeholder="Train number or name"
+          className="min-w-0 flex-1 bg-transparent font-b612-mono-10 text-text-primary placeholder:text-text-secondary focus:outline-none  overflow-hidden"
+          style={{ WebkitUserSelect: "text" }}
           aria-label="Search trains"
           aria-expanded={isOpen}
           aria-autocomplete="list"
+          aria-controls={isOpen ? LISTBOX_ID : undefined}
+          aria-activedescendant={highlightedIndex >= 0 ? `train-option-${results[highlightedIndex]?.trainNumber}` : undefined}
           role="combobox"
         />
       </div>
 
       {isOpen && (
-        <div className={`absolute top-full z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-0.5 ${variant === "fixed" ? "w-[240px]" : "w-full"}`}>
+        <div className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-[320px]" : "w-full"}`}>
           {isLoading ? (
-            <div className="px-2 py-1.5 text-xs text-text-secondary">
+            <div className="px-2 py-1.5 text-label text-text-secondary">
               Searching...
             </div>
           ) : results.length === 0 ? (
-            <div className="px-2 py-1.5 text-xs text-text-secondary">
+            <div className="px-2 py-1.5 text-label text-text-secondary">
               No trains found
             </div>
           ) : (
             <ul
+              ref={listboxRef}
+              id={LISTBOX_ID}
               role="listbox"
-              className="flex max-h-[300px] flex-col gap-0.5 overflow-y-auto"
+              aria-label="Search results"
+              className="flex max-h-[240px] flex-col gap-0.5 overflow-y-auto"
             >
               {results.map((result, index) => (
                 <li
+                  id={`train-option-${result.trainNumber}`}
                   key={result.trainNumber}
                   role="option"
                   aria-selected={highlightedIndex === index}
                   onClick={() => handleSelect(result)}
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1.5 ${
+                  className={`flex cursor-pointer items-center rounded-lg px-2 py-1.5 ${
                     highlightedIndex === index ? "bg-bg-0" : "hover:bg-bg-0"
                   }`}
                 >
-                  <StatusDot
-                    size="sm"
-                    journeyDate={new Date().toISOString().split('T')[0]}
-                    distanceFromOriginKm={1}
-                  />
-                  <span className="text-xs text-text-primary">
-                    {result.trainNumber} - {result.sourceStationCode} to {result.destinationStationCode}
+                  <span className="font-b612-mono-11 text-text-primary shrink-0">
+                    {result.trainNumber}
+                  </span>
+                  <span className="font-b612-mono-11 text-text-secondary shrink-0 px-1">
+                    -
+                  </span>
+                  <span className="font-b612-mono-11 text-text-primary truncate">
+                    {cleanTrainName(result.trainName)}
                   </span>
                 </li>
               ))}

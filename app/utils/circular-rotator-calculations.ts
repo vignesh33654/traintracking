@@ -55,7 +55,9 @@ export function calculatePillPosition(
   scrollRange: number
 ): PillPosition {
   const pillProgress = calculatePillProgress(index, scrollProgress, gapRatio, scrollRange);
-  const position = getPositionOnPath(pillProgress.clampedProgress);
+  // Use unclamped progress so pills smoothly exit the viewport
+  // instead of sticking at edges
+  const position = getPositionOnPath(pillProgress.unclampedProgress);
 
   return {
     x: position.x,

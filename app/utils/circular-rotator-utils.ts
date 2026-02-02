@@ -62,11 +62,11 @@ function calculatePathPosition(progress: number, config: PathConfig): PathPositi
   const { straightLength, leftThreshold, rightThreshold } = trackThresholds;
   const { xOffset, yOffsets, rotations, arcRotation } = config;
 
-  const clampedProgress = Math.max(0, Math.min(1, progress));
   const radius = arcRadius - xOffset;
 
-  if (clampedProgress < leftThreshold) {
-    const t = clampedProgress / leftThreshold;
+  // Handle progress < 0: extend upward from the left rail (off-screen above)
+  if (progress < 0) {
+    const t = progress / leftThreshold; // t will be negative
     return {
       x: leftRailX + xOffset,
       y: railTop + straightLength * t + yOffsets.left,
@@ -74,8 +74,28 @@ function calculatePathPosition(progress: number, config: PathConfig): PathPositi
     };
   }
 
-  if (clampedProgress < rightThreshold) {
-    const t = (clampedProgress - leftThreshold) / (rightThreshold - leftThreshold);
+  // Handle progress > 1: extend upward from the right rail (off-screen above)
+  if (progress > 1) {
+    const t = (progress - rightThreshold) / (1 - rightThreshold); // t will be > 1
+    return {
+      x: rightRailX - xOffset,
+      y: arcStartY - straightLength * t + yOffsets.right,
+      rotation: rotations.right,
+    };
+  }
+
+  // Normal case: progress is within [0, 1]
+  if (progress < leftThreshold) {
+    const t = progress / leftThreshold;
+    return {
+      x: leftRailX + xOffset,
+      y: railTop + straightLength * t + yOffsets.left,
+      rotation: rotations.left,
+    };
+  }
+
+  if (progress < rightThreshold) {
+    const t = (progress - leftThreshold) / (rightThreshold - leftThreshold);
     const angle = 180 - t * 180;
     const angleRad = (angle * Math.PI) / 180;
     return {
@@ -85,7 +105,7 @@ function calculatePathPosition(progress: number, config: PathConfig): PathPositi
     };
   }
 
-  const t = (clampedProgress - rightThreshold) / (1 - rightThreshold);
+  const t = (progress - rightThreshold) / (1 - rightThreshold);
   return {
     x: rightRailX - xOffset,
     y: arcStartY - straightLength * t + yOffsets.right,
@@ -126,6 +146,11 @@ export function getPositionOnOuterPath(progress: number): PathPosition {
 }
 
 export function getPositionOnPath(progress: number): PathPosition {
+  // For progress outside [0, 1], use the fallback which extends the path
+  if (progress < 0 || progress > 1) {
+    return getPositionOnPathFallback(progress);
+  }
+
   const path = getTrackPath();
 
   if (!path || typeof path.getPointAtLength !== "function") {
@@ -134,7 +159,7 @@ export function getPositionOnPath(progress: number): PathPosition {
 
   try {
     const totalLength = getPathTotalLength();
-    const distance = Math.max(0, Math.min(progress, 1)) * totalLength;
+    const distance = progress * totalLength;
     const point = path.getPointAtLength(distance);
 
     const delta = 1;

@@ -10,7 +10,7 @@ export const TRACK_PATH_CONFIG = {
 
 export const PILL_CONFIG = {
   gap: 28,
-  perStation: 18,
+  perStation: 12,
   pillsBeforeFirstStation: 4,
 } as const;
 

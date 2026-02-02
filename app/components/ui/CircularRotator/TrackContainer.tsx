@@ -6,7 +6,7 @@ import type { RouteStation, CurrentLocation } from "../../../types/train.types";
 import type { PillData } from "../../../types/circular-rotator.types";
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
-import { TrainIcon } from "../TrainIcon";
+import { SegmentedTrain } from "../SegmentedTrain";
 import { TrainStatus } from "../TrainStatus";
 
 interface TrainIconPositionData {
@@ -14,6 +14,7 @@ interface TrainIconPositionData {
   y: number;
   rotation: number;
   counterRotation: number;
+  progress: number;
   isVisible: boolean;
 }
 
@@ -107,14 +108,11 @@ export default function TrackContainer({
       ))}
 
       {trainIconPosition.isVisible && (
-        <TrainIcon
+        <SegmentedTrain
+          engineProgress={trainIconPosition.progress}
+          isVisible={trainIconPosition.isVisible}
           journeyDate={journeyDate}
           distanceFromOriginKm={distanceFromOriginKm}
-          x={trainIconPosition.x}
-          y={trainIconPosition.y}
-          rotation={trainIconPosition.rotation}
-          counterRotation={trainIconPosition.counterRotation}
-          isOnTrack={true}
         />
       )}
 
