@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { useTrainSearch } from "@/app/hooks/useTrainSearch";
+import { useTrainSearch } from "@/app/providers/SearchQueryProvider";
 import { cleanTrainName, saveStoredTrain } from "./cleantrainname-utils";
 import type { TrainSearchResult } from "./types";
 
@@ -9,7 +9,7 @@ interface UseSearchTrainLogicProps {
 }
 
 export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSearchTrainLogicProps) {
-  const [inputValue, setInputValue] = useState(defaultValue);
+  const [userInputValue, setUserInputValue] = useState<string | null>(null);
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -17,7 +17,6 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxRef = useRef<HTMLUListElement>(null);
-  const hasUserTyped = useRef(false);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   const { data: results = [], isLoading } = useTrainSearch(debouncedQuery);
@@ -26,21 +25,17 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
     enabled: !!defaultValue && defaultValue.length >= 2
   });
 
-  // Initialize input value from defaultTrainData only once
-  const initializedValue = useMemo(() => {
-    if (defaultTrainData && defaultTrainData.length > 0 && !hasUserTyped.current) {
+  // Derive input value: user input takes precedence, otherwise show default train data
+  const inputValue = useMemo(() => {
+    if (userInputValue !== null) {
+      return userInputValue;
+    }
+    if (defaultTrainData && defaultTrainData.length > 0) {
       const train = defaultTrainData[0];
       return `${train.trainNumber} - ${cleanTrainName(train.trainName)}`;
     }
-    return inputValue;
-  }, [defaultTrainData, inputValue]);
-
-  // Update input value only when initialized value changes and user hasn't typed
-  useEffect(() => {
-    if (!hasUserTyped.current && initializedValue !== inputValue) {
-      setInputValue(initializedValue);
-    }
-  }, [initializedValue, inputValue]);
+    return defaultValue;
+  }, [userInputValue, defaultTrainData, defaultValue]);
 
   // Scroll highlighted item into view
   useEffect(() => {
@@ -62,7 +57,7 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
   }, []);
 
   const handleSelect = (result: TrainSearchResult) => {
-    setInputValue(`${result.trainNumber} - ${cleanTrainName(result.trainName)}`);
+    setUserInputValue(`${result.trainNumber} - ${cleanTrainName(result.trainName)}`);
     setIsOpen(false);
     setHighlightedIndex(-1);
     onSelectTrain(result.trainNumber);
@@ -102,9 +97,8 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    hasUserTyped.current = true;
     const newValue = e.target.value;
-    setInputValue(newValue);
+    setUserInputValue(newValue);
     setHighlightedIndex(-1);
 
     // Clear existing timer
@@ -117,7 +111,7 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
       debounceTimer.current = setTimeout(() => {
         setDebouncedQuery(newValue);
         setIsOpen(true);
-      }, 800);
+      }, 300);
     } else {
       setIsOpen(false);
       setDebouncedQuery("");

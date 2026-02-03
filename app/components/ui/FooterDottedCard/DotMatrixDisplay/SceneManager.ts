@@ -149,10 +149,7 @@ export const useSceneManager = ({
     instance.init();
     sceneManagerRef.current = instance;
 
-    const container = containerRef.current;
-
-    return () => {
-    };
+    return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     train,

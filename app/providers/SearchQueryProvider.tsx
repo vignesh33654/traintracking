@@ -13,6 +13,6 @@ export function useTrainSearch(query: string, options: UseTrainSearchOptions = {
     queryKey: searchQueryKeys.trains(query),
     queryFn: () => searchTrains(query),
     enabled: enabled && query.length >= 2,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 }
