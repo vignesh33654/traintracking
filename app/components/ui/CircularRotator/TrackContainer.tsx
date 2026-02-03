@@ -112,6 +112,8 @@ export default function TrackContainer({
           isVisible={trainIconPosition.isVisible}
           journeyDate={journeyDate}
           distanceFromOriginKm={distanceFromOriginKm}
+          currentStationCode={currentStationCode}
+          destinationStationCode={destinationStationCode}
         />
       )}
 

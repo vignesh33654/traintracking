@@ -5,6 +5,8 @@ export interface SegmentedTrainProps {
   journeyDate?: string | null;
   distanceFromOriginKm?: number | null;
   showStatusDot?: boolean;
+  currentStationCode?: string | null;
+  destinationStationCode?: string;
 }
 
 export interface SegmentPosition {
