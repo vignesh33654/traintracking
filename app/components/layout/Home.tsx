@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useState } from "react";
+import { useMemo, useCallback, useState, useEffect } from "react";
 import { useIsRestoring } from "@tanstack/react-query";
 import { API_CONFIG } from "@/app/config/api.config";
 import { useTrainData } from "@/app/hooks/useTrainData";
@@ -12,11 +12,25 @@ import ErrorState from "@/app/components/layout/ErrorState";
 import { StatusCard } from "../ui/FooterDottedCard";
 import SearchTrain from "@/app/components/ui/SearchTrain";
 import MobileHeader from "@/app/components/ui/MobileHeader";
+import { getStoredTrain } from "@/app/components/ui/SearchTrain/cleantrainname-utils";
 
 const JOURNEY_DATE = getTodayDate();
 
 export default function Home() {
-  const [selectedTrain, setSelectedTrain] = useState<string>(API_CONFIG.trainNumber);
+  const [selectedTrain, setSelectedTrain] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return getStoredTrain() || API_CONFIG.trainNumber;
+    }
+    return API_CONFIG.trainNumber;
+  });
+
+  // Sync with localStorage on mount (handles SSR hydration)
+  useEffect(() => {
+    const stored = getStoredTrain();
+    if (stored && stored !== selectedTrain) {
+      setSelectedTrain(stored);
+    }
+  }, []);
 
   const handleTrainSelect = useCallback((trainNumber: string) => {
     setSelectedTrain(trainNumber);
@@ -43,24 +57,46 @@ export default function Home() {
     return null;
   }
 
-  // Show loading state
+  // Show loading state (but keep search visible)
   if (isLoading && !data) {
-    return <LoadingState />;
-  }
-
-  // Show error state
-  if (isError && !data) {
     return (
-      <ErrorState
-        message={error?.message || "Error loading train data"}
-        onRetry={refetch}
-      />
+      <>
+        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={selectedTrain} variant="fixed" />
+        <MobileHeader>
+          <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={selectedTrain} variant="inline" />
+        </MobileHeader>
+        <LoadingState />
+      </>
     );
   }
 
-  // Show empty state
+  // Show error state (but keep search visible)
+  if (isError && !data) {
+    return (
+      <>
+        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={selectedTrain} variant="fixed" />
+        <MobileHeader>
+          <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={selectedTrain} variant="inline" />
+        </MobileHeader>
+        <ErrorState
+          message={error?.message || "Error loading train data"}
+          onRetry={refetch}
+        />
+      </>
+    );
+  }
+
+  // Show empty state (but keep search visible)
   if (stations.length === 0) {
-    return <EmptyState />;
+    return (
+      <>
+        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={selectedTrain} variant="fixed" />
+        <MobileHeader>
+          <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={selectedTrain} variant="inline" />
+        </MobileHeader>
+        <EmptyState />
+      </>
+    );
   }
 
   // Extract live train data

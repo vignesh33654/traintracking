@@ -3,6 +3,32 @@ import { useTrainSearch } from "@/app/providers/SearchQueryProvider";
 import { cleanTrainName, saveStoredTrain } from "./cleantrainname-utils";
 import type { TrainSearchResult } from "./types";
 
+// Filter out invalid trains (special, poster, memu, toy, etc.)
+const filterInvalidTrains = (trains: TrainSearchResult[]) => {
+  const invalidPatterns = ['SPL', 'SPECIAL', 'POSTER', 'MEMU', 'TOY'];
+  return trains.filter(train => {
+    const name = train.trainName.toUpperCase();
+    if (invalidPatterns.some(pattern => name.includes(pattern))) {
+      return false;
+    }
+    if (train.trainNumber.startsWith('0')) {
+      return false;
+    }
+    return true;
+  });
+};
+
+// Sort trains - prefix matches first
+const sortByRelevance = (trains: TrainSearchResult[], query: string) => {
+  return [...trains].sort((a, b) => {
+    const aStartsWith = a.trainNumber.startsWith(query);
+    const bStartsWith = b.trainNumber.startsWith(query);
+    if (aStartsWith && !bStartsWith) return -1;
+    if (!aStartsWith && bStartsWith) return 1;
+    return 0;
+  });
+};
+
 interface UseSearchTrainLogicProps {
   defaultValue?: string;
   onSelectTrain: (trainNumber: string) => void;
@@ -19,7 +45,13 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
   const listboxRef = useRef<HTMLUListElement>(null);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const { data: results = [], isLoading } = useTrainSearch(debouncedQuery);
+  const { data: rawResults = [], isLoading } = useTrainSearch(debouncedQuery);
+
+  // Filter and sort results
+  const results = useMemo(() => {
+    const filtered = filterInvalidTrains(rawResults);
+    return debouncedQuery ? sortByRelevance(filtered, debouncedQuery) : filtered;
+  }, [rawResults, debouncedQuery]);
 
   const { data: defaultTrainData } = useTrainSearch(defaultValue, {
     enabled: !!defaultValue && defaultValue.length >= 2
@@ -62,6 +94,14 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
     setHighlightedIndex(-1);
     onSelectTrain(result.trainNumber);
     saveStoredTrain(result.trainNumber);
+  };
+
+  const handleClear = () => {
+    setUserInputValue("");
+    setDebouncedQuery("");
+    setIsOpen(false);
+    setHighlightedIndex(-1);
+    inputRef.current?.focus();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -125,7 +165,6 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
   };
 
   return {
-
     inputValue,
     isOpen,
     highlightedIndex,
@@ -139,6 +178,7 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
     handleKeyDown,
     handleInputChange,
     handleFocus,
+    handleClear,
     setHighlightedIndex,
   };
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchIcon } from "./SearchIcon";
+import { SearchIcon, CrossIcon } from "./Icons";
 import { cleanTrainName } from "./cleantrainname-utils";
 import { useSearchTrainLogic } from "./useSearchTrainLogic";
 import type { SearchTrainProps } from "./types";
@@ -21,8 +21,11 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
     handleKeyDown,
     handleInputChange,
     handleFocus,
+    handleClear,
     setHighlightedIndex,
   } = useSearchTrainLogic({ defaultValue, onSelectTrain });
+
+  const showClearIcon = inputValue && inputValue.length > 0;
 
   const containerClasses = variant === "fixed"
     ? "fixed top-4 right-26 z-50 max-md:hidden"
@@ -55,10 +58,20 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
           aria-activedescendant={highlightedIndex >= 0 ? `train-option-${results[highlightedIndex]?.trainNumber}` : undefined}
           role="combobox"
         />
+        {showClearIcon && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="shrink-0 text-text-secondary hover:text-text-primary cursor-pointer"
+            aria-label="Clear search"
+          >
+            <CrossIcon />
+          </button>
+        )}
       </div>
 
       {isOpen && (
-        <div className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-[320px]" : "w-full"}`}>
+        <div className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-[328px]" : "w-full"}`}>
           {isLoading ? (
             <div className="px-2 py-1.5 text-label text-text-secondary">
               Searching...
