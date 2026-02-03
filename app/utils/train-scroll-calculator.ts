@@ -57,3 +57,31 @@ export function calculatePillProgress(
     isVisible,
   };
 }
+
+export interface VisibleRange {
+  startIndex: number;
+  endIndex: number;
+}
+
+/**
+ * Calculate which pills are visible based on scroll progress.
+ */
+export function calculateVisibleRange(
+  scrollProgress: number,
+  gapRatio: number,
+  scrollRange: number,
+  totalItems: number,
+  buffer: number = 15
+): VisibleRange {
+  if (gapRatio === 0 || totalItems === 0) {
+    return { startIndex: 0, endIndex: 0 };
+  }
+
+  const offset = scrollProgress * scrollRange;
+  const minVisible = Math.floor(-offset / gapRatio);
+  const maxVisible = Math.ceil((1 - offset) / gapRatio);
+  const startIndex = Math.max(0, minVisible - buffer);
+  const endIndex = Math.min(totalItems - 1, maxVisible + buffer);
+
+  return { startIndex, endIndex };
+}

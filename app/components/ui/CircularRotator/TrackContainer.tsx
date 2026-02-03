@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 import { generatePillData } from "../../../utils/circular-rotator-calculations";
+import { calculateVisibleRange } from "../../../utils/train-scroll-calculator";
 import { TRACK_CONTAINER_WIDTH } from "../../../config/circular-rotator.config";
 import type { RouteStation, CurrentLocation } from "../../../types/train.types";
 import type { PillData } from "../../../types/circular-rotator.types";
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
-import { TrainIcon } from "../TrainIcon";
+import { SegmentedTrain } from "../SegmentedTrain";
 import { TrainStatus } from "../TrainStatus";
 
 interface TrainIconPositionData {
@@ -13,6 +14,7 @@ interface TrainIconPositionData {
   y: number;
   rotation: number;
   counterRotation: number;
+  progress: number;
   isVisible: boolean;
 }
 
@@ -62,6 +64,19 @@ export default function TrackContainer({
     [itemCount, stations, pillsPerStation, pillsBeforeFirstStation]
   );
 
+  const { startIndex, endIndex } = calculateVisibleRange(
+    scrollProgress,
+    gapRatio,
+    scrollRange,
+    itemCount,
+    15 // extra items just before and after the screen so scrolling feels smoother
+  );
+
+  const visiblePills = useMemo(
+    () => pills.filter((pill: PillData) => pill.index >= startIndex && pill.index <= endIndex),
+    [pills, startIndex, endIndex]
+  );
+
   return (
     <div
       className="relative h-full bg-bg-0"
@@ -75,7 +90,7 @@ export default function TrackContainer({
         pillsPerStation={pillsPerStation}
       />
 
-      {pills.map((pill: PillData) => (
+      {visiblePills.map((pill: PillData) => (
         <TrackItem
           key={pill.index}
           index={pill.index}
@@ -92,14 +107,11 @@ export default function TrackContainer({
       ))}
 
       {trainIconPosition.isVisible && (
-        <TrainIcon
+        <SegmentedTrain
+          engineProgress={trainIconPosition.progress}
+          isVisible={trainIconPosition.isVisible}
           journeyDate={journeyDate}
           distanceFromOriginKm={distanceFromOriginKm}
-          x={trainIconPosition.x}
-          y={trainIconPosition.y}
-          rotation={trainIconPosition.rotation}
-          counterRotation={trainIconPosition.counterRotation}
-          isOnTrack={true}
         />
       )}
 

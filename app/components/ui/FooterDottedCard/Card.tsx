@@ -22,10 +22,10 @@ const Card = forwardRef<HTMLDivElement, Props>(function Card(
   const Component = as;
 
   const borderRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
   return (
     <Component
+      ref={ref}
       className={cn(
         'flex justify-center items-center fixed bottom-[10px] left-[16px] rounded-[10px]',
         containerClassName,
@@ -37,7 +37,6 @@ const Card = forwardRef<HTMLDivElement, Props>(function Card(
           'card bg-panel-background relative z-1 flex h-full flex-col rounded-[9px] p- [&>*:first-child]:flex-1',
           className,
         )}
-        ref={contentRef}
       >
         {children}
       </div>

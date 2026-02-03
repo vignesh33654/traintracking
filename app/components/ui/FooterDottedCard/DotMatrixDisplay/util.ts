@@ -23,7 +23,6 @@ const themeColors = {
 };
 
 export function getPalette({
-  resolvedTheme,
   colorTheme,
 }: {
   resolvedTheme?: string;

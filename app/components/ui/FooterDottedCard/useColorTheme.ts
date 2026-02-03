@@ -12,7 +12,9 @@ function getMainEl() {
 const defaultThemes = ['theme-light', 'theme-dark'];
 
 function getThemeClassnames() {
-  return Array.from(getMainEl()?.classList.values()! || []).filter(
+  const mainEl = getMainEl();
+  if (!mainEl) return [];
+  return Array.from(mainEl.classList.values()).filter(
     (c) => c.startsWith('theme-') && !defaultThemes.includes(c),
   );
 }

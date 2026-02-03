@@ -8,6 +8,7 @@ import type { RouteStation, CurrentLocation } from "../types/train.types";
 
 export interface TrainIconPosition extends PathPosition {
   counterRotation: number;
+  progress: number;
   isVisible: boolean;
 }
 
@@ -51,7 +52,7 @@ export function useTrainIconPosition({
     if (!isValid) {
       // Fallback: position at start of track (top-left)
       const position = getPositionOnPath(0);
-      return { ...position, counterRotation: -position.rotation, isVisible: true };
+      return { ...position, counterRotation: -position.rotation, progress: 0, isVisible: true };
     }
 
     // Use the same formula as pills to position the train icon
@@ -67,6 +68,7 @@ export function useTrainIconPosition({
     return {
       ...position,
       counterRotation: -position.rotation,
+      progress: clampedProgress,
       isVisible,
     };
   }, [distanceFromOriginKm, stations, pillsPerStation, gapRatio, scrollRange, scrollProgress, journeyDate, pillsBeforeFirstStation, currentLocationStatus, currentStationCode]);

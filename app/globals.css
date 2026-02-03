@@ -8,7 +8,7 @@
   --color-bg-0: #ffffff;
   --color-bg-1: #dbdbdb;
   --color-bg-2: #555353;
-  --color-divider: #f4f4f4;
+  --color-divider:#dcdcdc;
 
   --color-text-primary: #0b0b0b;
   --color-text-secondary: #5d5d5d;
@@ -41,12 +41,12 @@
 
   .dark {
     --color-bg-0: #131313;
-    --color-bg-1: #1c1c1c;
-    --color-bg-2: #555353;
-    --color-divider: #232323;
+    --color-bg-1: #262626;
+    --color-bg-2: #7e7e7e;
+    --color-divider: #4c4c4c;
 
     --color-text-primary: #ffffff;
-    --color-text-secondary: #5d5d5d;
+    --color-text-secondary: #8b8b8b;
 
     --color-orange: #ff5801;
     --color-red: #ff4646;

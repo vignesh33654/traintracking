@@ -58,8 +58,17 @@ function MoonIcon() {
   );
 }
 
-export default function DarkModeToggle() {
+interface DarkModeToggleProps {
+  variant?: "fixed" | "inline";
+}
+
+export default function DarkModeToggle({ variant = "fixed" }: DarkModeToggleProps) {
   const { isDark, toggleDarkMode } = useDark();
+
+  const baseClasses = "hover:cursor-pointer flex rounded-full border border-divider bg-bg-0 p-1 text-text-primary focus-ring";
+  const variantClasses = variant === "fixed"
+    ? "fixed top-4 right-4 z-50 max-md:hidden"
+    : "shrink-0";
 
   return (
     <button
@@ -68,16 +77,16 @@ export default function DarkModeToggle() {
       role="switch"
       aria-checked={isDark}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="hover:cursor-pointer fixed top-4 right-4 z-50 flex rounded-full border border-bg-1 bg-bg-0 p-1 text-text-primary focus-ring max-md:left-1/2 max-md:right-auto max-md:-translate-x-1/2"
+      className={`${baseClasses} ${variantClasses}`}
     >
       <span
-        className={`flex size-9 items-center justify-center rounded-full transition-colors ${isDark ? "bg-bg-1 " : "bg-transparent"}`}
+        className={`flex items-center justify-center rounded-full transition-colors ${variant === "inline" ? "size-[30px]" : "size-9"} ${isDark ? "bg-bg-1 " : "bg-transparent"}`}
         aria-hidden
       >
         <MoonIcon />
       </span>
       <span
-        className={`flex size-9 items-center justify-center rounded-full transition-colors ${!isDark ? "bg-bg-1" : "bg-transparent"}`}
+        className={`flex items-center justify-center rounded-full transition-colors ${variant === "inline" ? "size-[30px]" : "size-9"} ${!isDark ? "bg-bg-1" : "bg-transparent"}`}
         aria-hidden
       >
         <SunIcon />

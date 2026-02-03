@@ -3,22 +3,26 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { calculatePillPosition } from "../utils/circular-rotator-calculations";
 import { getTooltipDirection, TOOLTIP_OFFSETS } from "../utils/pillTooltip";
+import { calculateVisibleRange } from "../utils/train-scroll-calculator";
 
 interface UsePillPositionsParams {
   gapRatio: number;
   scrollRange: number;
   scrollProgress: number;
+  totalItems: number;
 }
 
-export function usePillPositions({ gapRatio, scrollRange, scrollProgress }: UsePillPositionsParams) {
+export function usePillPositions({ gapRatio, scrollRange, scrollProgress, totalItems }: UsePillPositionsParams) {
   const pillRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const latestScrollProgress = useRef(0);
+  const latestTotalItems = useRef(0);
   const scheduleUpdateRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     latestScrollProgress.current = scrollProgress;
+    latestTotalItems.current = totalItems;
     scheduleUpdateRef.current();
-  }, [scrollProgress]);
+  }, [scrollProgress, totalItems]);
 
   useLayoutEffect(() => {
     let frameId: number | null = null;
@@ -26,9 +30,21 @@ export function usePillPositions({ gapRatio, scrollRange, scrollProgress }: UseP
     const applyPositions = () => {
       frameId = null;
       const progress = latestScrollProgress.current;
+      const items = latestTotalItems.current;
 
-      pillRefs.current.forEach((element, index) => {
-        if (!element) return;
+      // Calculate visible range - only process pills in this range
+      const { startIndex, endIndex } = calculateVisibleRange(
+        progress,
+        gapRatio,
+        scrollRange,
+        items,
+        15 // buffer zone
+      );
+
+      // Only iterate through visible pills instead of all 900+
+      for (let index = startIndex; index <= endIndex; index++) {
+        const element = pillRefs.current.get(index);
+        if (!element) continue;
 
         const { x, y, rotation, isVisible } = calculatePillPosition(
           index,
@@ -78,7 +94,7 @@ export function usePillPositions({ gapRatio, scrollRange, scrollProgress }: UseP
           tooltip.style.setProperty("--tooltip-row-justify", orientation.rowJustify);
           tooltip.style.setProperty("--tooltip-arrow-rotation", orientation.arrowRotation);
         }
-      });
+      }
     };
 
     const scheduleUpdate = () => {

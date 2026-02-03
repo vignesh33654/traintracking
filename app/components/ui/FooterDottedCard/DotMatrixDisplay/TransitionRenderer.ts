@@ -54,6 +54,8 @@ export default class TransitionRenderer extends BaseRenderer {
     this.inactiveRgb = parseHex(palette.inactive);
   }
 
+  // Required by abstract base class but this renderer uses renderTransition() instead
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected renderFrame(ctx: MatrixFrameContext): void {
     return;
   }

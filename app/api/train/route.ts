@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { API_CONFIG, SERVER_API_CONFIG } from '@/app/config/api.config';
 
+// Import mock data - only used when USE_MOCK_DATA is true
+let mockTrainData: any = null;
+if (process.env.USE_MOCK_DATA === 'true') {
+  mockTrainData = require('./mock-train-data.json');
+}
+
 function buildExternalApiUrl(trainNumber: string, journeyDate?: string): string {
   const baseUrl = `${API_CONFIG.baseURL}/trains/${trainNumber}`;
   return journeyDate ? `${baseUrl}?journeyDate=${journeyDate}` : baseUrl;
@@ -19,6 +25,20 @@ export async function GET(request: NextRequest) {
     return createErrorResponse('Train number is required', 400);
   }
 
+  // MOCK MODE: Return mock data without making API calls
+  if (process.env.USE_MOCK_DATA === 'true') {
+    // Optional: simulate API delay for realistic testing
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    return NextResponse.json(mockTrainData, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+
+  // REAL API MODE: Make actual API calls
   if (!SERVER_API_CONFIG.apiKey) {
     return createErrorResponse('API configuration error: Missing API key', 500);
   }
@@ -44,4 +64,3 @@ export async function GET(request: NextRequest) {
     return createErrorResponse('Failed to fetch train data', 500);
   }
 }
-

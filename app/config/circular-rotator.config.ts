@@ -10,13 +10,13 @@ export const TRACK_PATH_CONFIG = {
 
 export const PILL_CONFIG = {
   gap: 28,
-  perStation: 18,
+  perStation: 12,
   pillsBeforeFirstStation: 4,
 } as const;
 
 export const MILESTONE_CONFIG = {
   intervalKm: 300,
-  pillOffsetBeforeStation: 4,
+  pillOffsetBeforeStation: 2,
 } as const;
 
 export const TRACK_CONTAINER_WIDTH = 360;
