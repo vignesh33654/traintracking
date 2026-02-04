@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { memo } from "react";
 import type { CSSProperties } from "react";
-import type { TrainSegmentProps } from "./types";
+import type { TrainSegmentProps } from "../types/types";
 
 export const TrainSegment = memo(function TrainSegment({ file, width, height, x, y, rotation }: TrainSegmentProps) {
   // The SVG train parts have nose pointing DOWN by default (0° = down)

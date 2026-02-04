@@ -24,3 +24,10 @@ export interface TrainSegmentProps {
   y: number;
   rotation: number;
 }
+
+export interface SliceConfig {
+  dasharray: string;
+  dashoffset: number;
+  minProgress?: number;
+  maxProgress?: number;
+}

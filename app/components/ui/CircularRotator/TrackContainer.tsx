@@ -6,7 +6,7 @@ import type { RouteStation, CurrentLocation } from "../../../types/train.types";
 import type { PillData } from "../../../types/circular-rotator.types";
 import TrackItem from "./TrackItem";
 import TrackRails from "./TrackRails";
-import { SegmentedTrain } from "../SegmentedTrain";
+import { SegmentedTrain } from "../TrainIcon";
 import { TrainStatus } from "../TrainStatus";
 
 interface TrainIconPositionData {
