@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import { useScrollManager } from "../../../hooks/useScrollManager";
 import { useScrollSound } from "../../../hooks/useScrollSound";
 import { usePillPositions } from "../../../hooks/usePillPositions";
@@ -76,6 +76,13 @@ export default function CircularRotator({
       performAutoScroll();
     }
   }, [onRefresh, performAutoScroll]);
+
+  // Auto-scroll when fresh data arrives (page load, refresh, or train selection)
+  useEffect(() => {
+    const hasLivePosition = distanceFromOriginKm !== null || currentStationSequence !== null;
+    if (!hasLivePosition) return;
+    performAutoScroll();
+  }, [distanceFromOriginKm, currentStationSequence, journeyDate, performAutoScroll]);
 
   return (
     <div ref={scrollRef} className="relative overflow-x-clip" style={{ height: totalScrollHeight }}>

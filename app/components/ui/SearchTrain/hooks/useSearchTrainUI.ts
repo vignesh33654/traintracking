@@ -1,41 +1,48 @@
-import { useState, useRef, useEffect, useMemo } from "react";
-import { useTrainSearch } from "@/app/providers/SearchQueryProvider";
-import { cleanTrainName, saveStoredTrain } from "./cleantrainname-utils";
-import type { TrainSearchResult } from "./types";
+import { useState, useRef, useEffect, useMemo, RefObject } from "react";
+import { saveStoredTrain } from "../store";
+import type { TrainSearchResult } from "../types/types";
 
-interface UseSearchTrainLogicProps {
+interface UseSearchTrainUIProps {
   defaultValue?: string;
   onSelectTrain: (trainNumber: string) => void;
+  results: TrainSearchResult[];
 }
 
-export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSearchTrainLogicProps) {
+interface UseSearchTrainUIReturn {
+  inputValue: string;
+  isOpen: boolean;
+  highlightedIndex: number;
+  containerRef: RefObject<HTMLDivElement | null>;
+  inputRef: RefObject<HTMLInputElement | null>;
+  listboxRef: RefObject<HTMLUListElement | null>;
+  handleSelect: (result: TrainSearchResult) => void;
+  handleKeyDown: (e: React.KeyboardEvent) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFocus: () => void;
+  handleClear: () => void;
+  setHighlightedIndex: (index: number) => void;
+}
+
+export function useSearchTrainUI({
+  defaultValue = "",
+  onSelectTrain,
+  results,
+}: UseSearchTrainUIProps): UseSearchTrainUIReturn {
   const [userInputValue, setUserInputValue] = useState<string | null>(null);
-  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxRef = useRef<HTMLUListElement>(null);
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const { data: results = [], isLoading } = useTrainSearch(debouncedQuery);
-
-  const { data: defaultTrainData } = useTrainSearch(defaultValue, {
-    enabled: !!defaultValue && defaultValue.length >= 2
-  });
-
-  // Derive input value: user input takes precedence, otherwise show default train data
+  // Derive input value: user input takes precedence, otherwise show default value
   const inputValue = useMemo(() => {
     if (userInputValue !== null) {
       return userInputValue;
     }
-    if (defaultTrainData && defaultTrainData.length > 0) {
-      const train = defaultTrainData[0];
-      return `${train.trainNumber} - ${cleanTrainName(train.trainName)}`;
-    }
     return defaultValue;
-  }, [userInputValue, defaultTrainData, defaultValue]);
+  }, [userInputValue, defaultValue]);
 
   // Scroll highlighted item into view
   useEffect(() => {
@@ -57,11 +64,19 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
   }, []);
 
   const handleSelect = (result: TrainSearchResult) => {
-    setUserInputValue(`${result.trainNumber} - ${cleanTrainName(result.trainName)}`);
+    const label = `${result.trainNumber} - ${result.trainName}`;
+    setUserInputValue(label);
     setIsOpen(false);
     setHighlightedIndex(-1);
     onSelectTrain(result.trainNumber);
-    saveStoredTrain(result.trainNumber);
+    saveStoredTrain(result.trainNumber, label);
+  };
+
+  const handleClear = () => {
+    setUserInputValue("");
+    setIsOpen(false);
+    setHighlightedIndex(-1);
+    inputRef.current?.focus();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -101,37 +116,24 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
     setUserInputValue(newValue);
     setHighlightedIndex(-1);
 
-    // Clear existing timer
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-
-    // Set new debounced query with timeout
-    if (newValue.length >= 2) {
-      debounceTimer.current = setTimeout(() => {
-        setDebouncedQuery(newValue);
-        setIsOpen(true);
-      }, 300);
+    // Open dropdown only after 3+ characters to avoid "No trains found" for short queries
+    if (newValue.length >= 3) {
+      setIsOpen(true);
     } else {
       setIsOpen(false);
-      setDebouncedQuery("");
     }
   };
 
   const handleFocus = () => {
-    if (results.length > 0 && debouncedQuery.length >= 2) {
+    if (results.length > 0 && userInputValue && userInputValue.length >= 3) {
       setIsOpen(true);
     }
   };
 
   return {
-
     inputValue,
     isOpen,
     highlightedIndex,
-    results,
-    isLoading,
-    debouncedQuery,
     containerRef,
     inputRef,
     listboxRef,
@@ -139,6 +141,7 @@ export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSea
     handleKeyDown,
     handleInputChange,
     handleFocus,
+    handleClear,
     setHighlightedIndex,
   };
 }

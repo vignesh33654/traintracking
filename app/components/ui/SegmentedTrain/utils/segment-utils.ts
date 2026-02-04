@@ -1,5 +1,5 @@
-import { getPathTotalLength } from "../../../utils/circular-rotator-utils";
-import { TRAIN_CONFIG } from "../../../config/train.config";
+import { getPathTotalLength } from "../../../../utils/circular-rotator-utils";
+import { TRAIN_CONFIG } from "../../../../config/train.config";
 
 export const PATH_LENGTH = getPathTotalLength();
 

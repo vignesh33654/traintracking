@@ -121,7 +121,9 @@ export function calculateStationLabels(
         scrollRange
       );
 
-      const label = station.stationName.toUpperCase();
+      const label = station.platform
+        ? `${station.stationName.toUpperCase()} • PF ${station.platform}`
+        : station.stationName.toUpperCase();
       const distanceAlongBase = clampedProgress * BASE_PATH_LENGTH;
 
       return {

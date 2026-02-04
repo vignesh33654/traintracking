@@ -12,11 +12,20 @@ import ErrorState from "@/app/components/layout/ErrorState";
 import { StatusCard } from "../ui/FooterDottedCard";
 import SearchTrain from "@/app/components/ui/SearchTrain";
 import MobileHeader from "@/app/components/ui/MobileHeader";
+import { getStoredTrain } from "@/app/components/ui/SearchTrain/store";
 
 const JOURNEY_DATE = getTodayDate();
 
 export default function Home() {
-  const [selectedTrain, setSelectedTrain] = useState<string>(API_CONFIG.trainNumber);
+  const [selectedTrain, setSelectedTrain] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = getStoredTrain();
+      return stored?.number || API_CONFIG.trainNumber;
+    }
+    return API_CONFIG.trainNumber;
+  });
+
+  const storedTrainLabel = typeof window !== 'undefined' ? getStoredTrain()?.label : undefined;
 
   const handleTrainSelect = useCallback((trainNumber: string) => {
     setSelectedTrain(trainNumber);
@@ -38,32 +47,49 @@ export default function Home() {
     await refetch();
   }, [refetch]);
 
-  // Show nothing while restoring
   if (isRestoring && !data) {
     return null;
   }
 
-  // Show loading state
   if (isLoading && !data) {
-    return <LoadingState />;
-  }
-
-  // Show error state
-  if (isError && !data) {
     return (
-      <ErrorState
-        message={error?.message || "Error loading train data"}
-        onRetry={refetch}
-      />
+      <>
+        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="fixed" />
+        <MobileHeader>
+          <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="inline" />
+        </MobileHeader>
+        <LoadingState />
+      </>
     );
   }
 
-  // Show empty state
-  if (stations.length === 0) {
-    return <EmptyState />;
+  if (isError && !data) {
+    return (
+      <>
+        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="fixed" />
+        <MobileHeader>
+          <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="inline" />
+        </MobileHeader>
+        <ErrorState
+          message={error?.message || "Error loading train data"}
+          onRetry={refetch}
+        />
+      </>
+    );
   }
 
-  // Extract live train data
+  if (stations.length === 0) {
+    return (
+      <>
+        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="fixed" />
+        <MobileHeader>
+          <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="inline" />
+        </MobileHeader>
+        <EmptyState />
+      </>
+    );
+  }
+
   const journeyDate = data?.liveData?.journeyDate ?? null;
   const distanceFromOriginKm = data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
   const currentLocationStatus = data?.liveData?.currentLocation?.status ?? null;
@@ -73,15 +99,12 @@ export default function Home() {
   const lastUpdatedAt = data?.liveData?.lastUpdatedAt ?? null;
   const destinationStationCode = data?.train?.destinationStationCode;
 
-  // Main content
   return (
     <>
-      {/* Desktop: Fixed search */}
-      <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={selectedTrain} variant="fixed" />
+      <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="fixed" />
 
-      {/* Mobile: Header with search and dark mode toggle */}
       <MobileHeader>
-        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={selectedTrain} variant="inline" />
+        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="inline" />
       </MobileHeader>
 
       <CircularRotator

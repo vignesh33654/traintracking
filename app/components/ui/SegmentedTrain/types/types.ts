@@ -5,6 +5,8 @@ export interface SegmentedTrainProps {
   journeyDate?: string | null;
   distanceFromOriginKm?: number | null;
   showStatusDot?: boolean;
+  currentStationCode?: string | null;
+  destinationStationCode?: string;
 }
 
 export interface SegmentPosition {
@@ -21,4 +23,11 @@ export interface TrainSegmentProps {
   x: number;
   y: number;
   rotation: number;
+}
+
+export interface SliceConfig {
+  dasharray: string;
+  dashoffset: number;
+  minProgress?: number;
+  maxProgress?: number;
 }

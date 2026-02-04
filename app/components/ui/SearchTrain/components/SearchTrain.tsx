@@ -1,35 +1,45 @@
 "use client";
 
-import { SearchIcon } from "./SearchIcon";
-import { cleanTrainName } from "./cleantrainname-utils";
-import { useSearchTrainLogic } from "./useSearchTrainLogic";
-import type { SearchTrainProps } from "./types";
+import { useState } from "react";
+import { SearchIcon, CrossIcon } from "../../../../../public/Icons";
+import { useSearchTrainLogic } from "../hooks/useSearchTrainLogic";
+import { useSearchTrainUI } from "../hooks/useSearchTrainUI";
+import type { SearchTrainProps } from "../types/types";
 
 const LISTBOX_ID = "train-search-listbox";
 
 export default function SearchTrain({ onSelectTrain, defaultValue = "", variant = "fixed" }: SearchTrainProps) {
+  const [userQuery, setUserQuery] = useState("");
+  const { results, isLoading } = useSearchTrainLogic({ query: userQuery });
+
   const {
     inputValue,
     isOpen,
     highlightedIndex,
-    results,
-    isLoading,
     containerRef,
     inputRef,
     listboxRef,
     handleSelect,
     handleKeyDown,
-    handleInputChange,
+    handleInputChange: handleUIInputChange,
     handleFocus,
+    handleClear,
     setHighlightedIndex,
-  } = useSearchTrainLogic({ defaultValue, onSelectTrain });
+  } = useSearchTrainUI({ defaultValue, onSelectTrain, results });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserQuery(e.target.value);
+    handleUIInputChange(e);
+  };
+
+  const showClearIcon = inputValue && inputValue.length > 0;
 
   const containerClasses = variant === "fixed"
     ? "fixed top-4 right-26 z-50 max-md:hidden"
     : "relative flex-1";
 
   const inputContainerClasses = variant === "fixed"
-    ? "flex h-[46px] w-[240px] items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange"
+    ? "flex h-[46px] w-[328px] items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange"
     : "flex h-[38px] w-full items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange";
 
   return (
@@ -45,8 +55,8 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={handleFocus}
-          placeholder="Train number or name"
-          className="min-w-0 flex-1 bg-transparent font-b612-mono-10 text-text-primary placeholder:text-text-secondary focus:outline-none  overflow-hidden"
+          placeholder="SEARCH BY TRAIN NUMBER OR NAME"
+          className="min-w-0 flex-1 bg-transparent font-b612-mono-11 text-text-primary placeholder:text-text-secondary focus:outline-none overflow-hidden"
           style={{ WebkitUserSelect: "text" }}
           aria-label="Search trains"
           aria-expanded={isOpen}
@@ -55,10 +65,20 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
           aria-activedescendant={highlightedIndex >= 0 ? `train-option-${results[highlightedIndex]?.trainNumber}` : undefined}
           role="combobox"
         />
+        {showClearIcon && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="shrink-0 text-text-secondary hover:text-text-primary cursor-pointer"
+            aria-label="Clear search"
+          >
+            <CrossIcon />
+          </button>
+        )}
       </div>
 
       {isOpen && (
-        <div className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-[320px]" : "w-full"}`}>
+        <div className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-[328px]" : "w-full"}`}>
           {isLoading ? (
             <div className="px-2 py-1.5 text-label text-text-secondary">
               Searching...
@@ -94,7 +114,7 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
                     -
                   </span>
                   <span className="font-b612-mono-11 text-text-primary truncate">
-                    {cleanTrainName(result.trainName)}
+                    {result.trainName}
                   </span>
                 </li>
               ))}

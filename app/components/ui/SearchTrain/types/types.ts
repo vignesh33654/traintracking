@@ -6,4 +6,9 @@ export interface SearchTrainProps {
   variant?: "fixed" | "inline";
 }
 
+export type StoredTrain = {
+  number: string;
+  label: string;
+};
+
 export type { TrainSearchResult };
