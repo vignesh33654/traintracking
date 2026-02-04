@@ -116,8 +116,8 @@ export function useSearchTrainUI({
     setUserInputValue(newValue);
     setHighlightedIndex(-1);
 
-    // Open dropdown when there's input, close when empty
-    if (newValue.length >= 1) {
+    // Open dropdown only after 3+ characters to avoid "No trains found" for short queries
+    if (newValue.length >= 3) {
       setIsOpen(true);
     } else {
       setIsOpen(false);
@@ -125,7 +125,7 @@ export function useSearchTrainUI({
   };
 
   const handleFocus = () => {
-    if (results.length > 0 && userInputValue && userInputValue.length >= 1) {
+    if (results.length > 0 && userInputValue && userInputValue.length >= 3) {
       setIsOpen(true);
     }
   };
