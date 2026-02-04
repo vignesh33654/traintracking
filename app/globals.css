@@ -160,6 +160,23 @@
     letter-spacing: -0.04em;
     text-transform: uppercase;
   }
+
+  .font-b612-mono-16 {
+    font-family: var(--font-b612-mono), system-ui, sans-serif;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+  }
+}
+
+@media (width: 390px),
+       (width: 375px),
+       (width: 402px),
+       (width: 430px),
+       (width: 440px) {
+  .font-b612-mobile-responsive {
+    font-size: 16px;
+  }
 }
 
 .focus-ring {
