@@ -64,11 +64,12 @@ export function useSearchTrainUI({
   }, []);
 
   const handleSelect = (result: TrainSearchResult) => {
-    setUserInputValue(`${result.trainNumber} - ${cleanTrainName(result.trainName)}`);
+    const label = `${result.trainNumber} - ${cleanTrainName(result.trainName)}`;
+    setUserInputValue(label);
     setIsOpen(false);
     setHighlightedIndex(-1);
     onSelectTrain(result.trainNumber);
-    saveStoredTrain(result.trainNumber);
+    saveStoredTrain(result.trainNumber, label);
   };
 
   const handleClear = () => {
