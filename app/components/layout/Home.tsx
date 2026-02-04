@@ -12,7 +12,7 @@ import ErrorState from "@/app/components/layout/ErrorState";
 import { StatusCard } from "../ui/FooterDottedCard";
 import SearchTrain from "@/app/components/ui/SearchTrain";
 import MobileHeader from "@/app/components/ui/MobileHeader";
-import { getStoredTrain } from "@/app/components/ui/SearchTrain/cleantrainname-utils";
+import { getStoredTrain } from "@/app/components/ui/SearchTrain/store";
 
 const JOURNEY_DATE = getTodayDate();
 

@@ -1,9 +1,6 @@
 const SELECTED_TRAIN_KEY = 'selectedTrain';
 
-type StoredTrain = {
-  number: string;
-  label: string;
-};
+import type { StoredTrain } from "../types";
 
 export const getStoredTrain = (): StoredTrain | null => {
   if (typeof window === 'undefined') return null;
@@ -15,6 +12,7 @@ export const getStoredTrain = (): StoredTrain | null => {
     try {
       const parsed = JSON.parse(raw) as StoredTrain;
       if (parsed?.number && parsed?.label) return parsed;
+      return null;
     } catch {
       // Not JSON, assume plain number string
       return { number: raw, label: raw };
@@ -30,36 +28,6 @@ export const saveStoredTrain = (trainNumber: string, label: string) => {
     const payload: StoredTrain = { number: trainNumber, label };
     localStorage.setItem(SELECTED_TRAIN_KEY, JSON.stringify(payload));
   } catch {
+    // Ignore storage errors (e.g., quota)
   }
 };
-
-export function cleanTrainName(trainName: string): string {
-  const wordsToRemove = [
-    '\\(Day \\d+\\)',  // Remove "(Day 1)", "(Day 2)", etc.
-    'SUPERFAST',
-    'EXPRESS',
-    'INTERCITY',
-    'WEEKLY',
-    'MEMU',
-    'RAILWAY',
-    'SPECIAL',
-    'MAIL',
-    'JN',
-    'JN.',
-    'CENTRAL',
-    '\\(PT\\)',
-    'M\\. G\\. R',
-    'M\\.G\\.R',
-  ];
-
-  let cleaned = trainName;
-
-  wordsToRemove.forEach(word => {
-    cleaned = cleaned.replace(new RegExp(word, 'gi'), '');
-  });
-
-  cleaned = cleaned.replace(/\s+/g, ' ').trim();
-  cleaned = cleaned.replace(/\s*-\s*/g, ' to ');
-
-  return cleaned;
-}

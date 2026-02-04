@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, RefObject } from "react";
-import { cleanTrainName, saveStoredTrain } from "./cleantrainname-utils";
+import { saveStoredTrain } from "./store";
 import type { TrainSearchResult } from "./types";
 
 interface UseSearchTrainUIProps {
@@ -64,7 +64,7 @@ export function useSearchTrainUI({
   }, []);
 
   const handleSelect = (result: TrainSearchResult) => {
-    const label = `${result.trainNumber} - ${cleanTrainName(result.trainName)}`;
+    const label = `${result.trainNumber} - ${result.trainName}`;
     setUserInputValue(label);
     setIsOpen(false);
     setHighlightedIndex(-1);

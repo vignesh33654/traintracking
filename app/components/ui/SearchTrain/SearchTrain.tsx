@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { SearchIcon, CrossIcon } from "./Icons";
-import { cleanTrainName } from "./cleantrainname-utils";
 import { useSearchTrainLogic } from "./useSearchTrainLogic";
 import { useSearchTrainUI } from "./useSearchTrainUI";
 import type { SearchTrainProps } from "./types";
@@ -115,7 +114,7 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
                     -
                   </span>
                   <span className="font-b612-mono-11 text-text-primary truncate">
-                    {cleanTrainName(result.trainName)}
+                    {result.trainName}
                   </span>
                 </li>
               ))}
