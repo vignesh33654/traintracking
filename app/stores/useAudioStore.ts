@@ -10,10 +10,12 @@ interface AudioSettings {
 
 interface AudioState extends AudioSettings {
   prefersReducedMotion: boolean;
+  isMobileDevice: boolean;
   toggleMute: () => void;
   setVolume: (value: number) => void;
   getEffectiveVolume: () => number;
   initializeFromStorage: () => void;
+  setIsMobileDevice: (isMobile: boolean) => void;
 }
 
 const getStoredSettings = (): AudioSettings | null => {
@@ -49,6 +51,7 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   isMuted: false,
   volume: AUDIO_CONFIG.DEFAULT_VOLUME,
   prefersReducedMotion: false,
+  isMobileDevice: false,
 
   initializeFromStorage: () => {
     const stored = getStoredSettings();
@@ -76,14 +79,19 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   setVolume: (value: number) => {
     const clampedVolume = Math.min(Math.max(value, AUDIO_CONFIG.MIN_VOLUME), AUDIO_CONFIG.MAX_VOLUME);
     const { isMuted } = get();
-    
+
     set({ volume: clampedVolume });
     saveSettings({ isMuted, volume: clampedVolume });
   },
 
+  setIsMobileDevice: (isMobile: boolean) => {
+    set({ isMobileDevice: isMobile });
+  },
+
   getEffectiveVolume: () => {
-    const { isMuted, volume, prefersReducedMotion } = get();
-    if (isMuted || prefersReducedMotion) return 0;
+    const { isMuted, volume, prefersReducedMotion, isMobileDevice } = get();
+    const shouldDisableOnMobile = AUDIO_CONFIG.DISABLE_SCROLL_SOUND_ON_MOBILE && isMobileDevice;
+    if (isMuted || prefersReducedMotion || shouldDisableOnMobile) return 0;
     return volume;
   },
 }));
