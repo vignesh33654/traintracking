@@ -19,7 +19,7 @@ export default function MobileHeader({ children }: MobileHeaderProps) {
       // Show header when scrolling up or at top
       if (currentScrollY < lastScrollY.current || currentScrollY < 10) {
         setIsVisible(true);
-      } else if (currentScrollY > lastScrollY.current && currentScrollY > 60) {
+      } else if (currentScrollY > lastScrollY.current && currentScrollY >60) {
         // Hide header when scrolling down (after 60px threshold)
         setIsVisible(false);
       }
@@ -34,13 +34,17 @@ export default function MobileHeader({ children }: MobileHeaderProps) {
   return (
     <header
       ref={headerRef}
-      className={`fixed left-0 right-0 top-0 z-50 hidden max-md:block transition-transform duration-300 ${
+      className={`fixed left-0 right-0 top-0 z-50 hidden max-md:block transition-transform duration-300  border-[0.3px] border-divider border-r-0 border-l-0 border-t-0 ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="flex h-[60px] w-full items-center gap-2 bg-bg-0 px-6 py-2 shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
-        {children}
-        <DarkModeToggle variant="inline" />
+      <div className="flex h-[72px] w-full max-w-full items-center justify-between gap-2 bg-bg-0 px-4 py-2 shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
+        <div className="flex-1 min-w-0">
+          {children}
+        </div>
+        <div className="shrink-0">
+          <DarkModeToggle variant="inline" />
+        </div>
       </div>
     </header>
   );

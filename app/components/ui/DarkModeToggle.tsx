@@ -67,8 +67,8 @@ export default function DarkModeToggle({ variant = "fixed" }: DarkModeToggleProp
 
   const baseClasses = "hover:cursor-pointer flex rounded-full border border-divider bg-bg-0 p-1 text-text-primary focus-ring";
   const variantClasses = variant === "fixed"
-    ? "fixed top-4 right-4 z-50 max-md:hidden"
-    : "shrink-0";
+    ? "fixed top-4 right-4 z-50 max-md:hidden "
+    : "flex items-center justify-center gap-1 w-[80px] h-[44px]";
 
   return (
     <button

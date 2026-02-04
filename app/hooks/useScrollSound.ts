@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 import { useSound } from './useSound';
+import { useIsMobile } from './useIsMobile';
+import { useAudioStore } from '../stores/useAudioStore';
 import { AUDIO_CONFIG, SOUND_PATHS } from '../config/audio.config';
 import { calculatePillProgress } from '../utils/train-scroll-calculator';
 
@@ -54,8 +56,15 @@ function findPillAtPosition(
 export function useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount }: UseScrollSoundParams) {
   const lastPillAtTrigger = useRef<number>(-1);
   const isInitialized = useRef(false);
+  const isMobile = useIsMobile();
+  const setIsMobileDevice = useAudioStore((state) => state.setIsMobileDevice);
 
   const { play } = useSound(SOUND_PATHS.SCROLL);
+
+  // Update audio store with mobile state
+  useEffect(() => {
+    setIsMobileDevice(isMobile);
+  }, [isMobile, setIsMobileDevice]);
 
   useEffect(() => {
     if (itemCount === 0) return;

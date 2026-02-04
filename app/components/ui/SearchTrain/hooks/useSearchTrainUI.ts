@@ -117,7 +117,7 @@ export function useSearchTrainUI({
     setHighlightedIndex(-1);
 
     // Open dropdown only after 3+ characters to avoid "No trains found" for short queries
-    if (newValue.length >= 3) {
+    if (newValue.length >= 2) {
       setIsOpen(true);
     } else {
       setIsOpen(false);
