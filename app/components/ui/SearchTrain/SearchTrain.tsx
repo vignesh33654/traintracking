@@ -1,29 +1,37 @@
 "use client";
 
+import { useState } from "react";
 import { SearchIcon, CrossIcon } from "./Icons";
 import { cleanTrainName } from "./cleantrainname-utils";
 import { useSearchTrainLogic } from "./useSearchTrainLogic";
+import { useSearchTrainUI } from "./useSearchTrainUI";
 import type { SearchTrainProps } from "./types";
 
 const LISTBOX_ID = "train-search-listbox";
 
 export default function SearchTrain({ onSelectTrain, defaultValue = "", variant = "fixed" }: SearchTrainProps) {
+  const [userQuery, setUserQuery] = useState("");
+  const { results, isLoading } = useSearchTrainLogic({ query: userQuery });
+
   const {
     inputValue,
     isOpen,
     highlightedIndex,
-    results,
-    isLoading,
     containerRef,
     inputRef,
     listboxRef,
     handleSelect,
     handleKeyDown,
-    handleInputChange,
+    handleInputChange: handleUIInputChange,
     handleFocus,
     handleClear,
     setHighlightedIndex,
-  } = useSearchTrainLogic({ defaultValue, onSelectTrain });
+  } = useSearchTrainUI({ defaultValue, onSelectTrain, results });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserQuery(e.target.value);
+    handleUIInputChange(e);
+  };
 
   const showClearIcon = inputValue && inputValue.length > 0;
 
@@ -49,7 +57,7 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
           onKeyDown={handleKeyDown}
           onFocus={handleFocus}
           placeholder="Train number or name"
-          className="min-w-0 flex-1 bg-transparent font-b612-mono-10 text-text-primary placeholder:text-text-secondary focus:outline-none  overflow-hidden"
+          className="min-w-0 flex-1 bg-transparent font-b612-mono-10 text-text-primary placeholder:text-text-secondary focus:outline-none overflow-hidden"
           style={{ WebkitUserSelect: "text" }}
           aria-label="Search trains"
           aria-expanded={isOpen}

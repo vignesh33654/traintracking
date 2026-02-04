@@ -1,184 +1,74 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTrainSearch } from "@/app/providers/SearchQueryProvider";
-import { cleanTrainName, saveStoredTrain } from "./cleantrainname-utils";
 import type { TrainSearchResult } from "./types";
 
-// Filter out invalid trains (special, poster, memu, toy, etc.)
-const filterInvalidTrains = (trains: TrainSearchResult[]) => {
-  const invalidPatterns = ['SPL', 'SPECIAL', 'POSTER', 'MEMU', 'TOY'];
-  return trains.filter(train => {
-    const name = train.trainName.toUpperCase();
-    if (invalidPatterns.some(pattern => name.includes(pattern))) {
-      return false;
-    }
-    if (train.trainNumber.startsWith('0')) {
-      return false;
-    }
-    return true;
-  });
-};
+/**
+ * Fuzzy search - uses "contains" matching with hierarchy
+ * Scoring: exact(1000) > startsWith(900) > wordBoundary(750) > contains(500)
+ */
+function fuzzyScore(text: string, query: string): number {
+  const textLower = text.toLowerCase();
+  const queryLower = query.toLowerCase();
 
-// Sort trains - prefix matches first
-const sortByRelevance = (trains: TrainSearchResult[], query: string) => {
-  return [...trains].sort((a, b) => {
-    const aStartsWith = a.trainNumber.startsWith(query);
-    const bStartsWith = b.trainNumber.startsWith(query);
-    if (aStartsWith && !bStartsWith) return -1;
-    if (!aStartsWith && bStartsWith) return 1;
-    return 0;
-  });
-};
+  // Exact match - highest score
+  if (textLower === queryLower) return 1000;
 
-interface UseSearchTrainLogicProps {
-  defaultValue?: string;
-  onSelectTrain: (trainNumber: string) => void;
+  // Starts with - very high score
+  if (textLower.startsWith(queryLower)) return 900;
+
+  // Word boundary match - high score (for train names like "Rajdhani Express")
+  const words = textLower.split(/[\s\-_()]+/);
+  for (const word of words) {
+    if (word.startsWith(queryLower)) return 750;
+  }
+
+  // Contains match - medium score (for partial matches like "126" in "22126")
+  if (textLower.includes(queryLower)) return 500;
+
+  return 0; // No match
 }
 
-export function useSearchTrainLogic({ defaultValue = "", onSelectTrain }: UseSearchTrainLogicProps) {
-  const [userInputValue, setUserInputValue] = useState<string | null>(null);
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+interface UseSearchTrainLogicProps {
+  query: string;
+}
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const listboxRef = useRef<HTMLUListElement>(null);
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+interface UseSearchTrainLogicReturn {
+  results: TrainSearchResult[];
+  isLoading: boolean;
+}
 
-  const { data: rawResults = [], isLoading } = useTrainSearch(debouncedQuery);
+/**
+ * Pure business logic hook for train search
+ * Handles: fuzzy scoring, filtering, sorting
+ * Does NOT handle: UI state, refs, event handlers
+ */
+export function useSearchTrainLogic({ query }: UseSearchTrainLogicProps): UseSearchTrainLogicReturn {
+  const { data: rawResults = [], isLoading } = useTrainSearch(query);
 
-  // Filter and sort results
+  // Apply fuzzy scoring and sorting
   const results = useMemo(() => {
-    const filtered = filterInvalidTrains(rawResults);
-    return debouncedQuery ? sortByRelevance(filtered, debouncedQuery) : filtered;
-  }, [rawResults, debouncedQuery]);
+    if (!query.trim()) return rawResults;
 
-  const { data: defaultTrainData } = useTrainSearch(defaultValue, {
-    enabled: !!defaultValue && defaultValue.length >= 2
-  });
+    const trimmedQuery = query.trim();
 
-  // Derive input value: user input takes precedence, otherwise show default train data
-  const inputValue = useMemo(() => {
-    if (userInputValue !== null) {
-      return userInputValue;
-    }
-    if (defaultTrainData && defaultTrainData.length > 0) {
-      const train = defaultTrainData[0];
-      return `${train.trainNumber} - ${cleanTrainName(train.trainName)}`;
-    }
-    return defaultValue;
-  }, [userInputValue, defaultTrainData, defaultValue]);
-
-  // Scroll highlighted item into view
-  useEffect(() => {
-    if (highlightedIndex >= 0 && listboxRef.current) {
-      const item = listboxRef.current.children[highlightedIndex] as HTMLElement;
-      item?.scrollIntoView({ block: "nearest" });
-    }
-  }, [highlightedIndex]);
-
-  // Click outside handler
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleSelect = (result: TrainSearchResult) => {
-    setUserInputValue(`${result.trainNumber} - ${cleanTrainName(result.trainName)}`);
-    setIsOpen(false);
-    setHighlightedIndex(-1);
-    onSelectTrain(result.trainNumber);
-    saveStoredTrain(result.trainNumber);
-  };
-
-  const handleClear = () => {
-    setUserInputValue("");
-    setDebouncedQuery("");
-    setIsOpen(false);
-    setHighlightedIndex(-1);
-    inputRef.current?.focus();
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isOpen || results.length === 0) {
-      if (e.key === "ArrowDown" && results.length > 0) {
-        setIsOpen(true);
-      }
-      return;
-    }
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setHighlightedIndex((prev) =>
-          prev < results.length - 1 ? prev + 1 : prev
-        );
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : prev));
-        break;
-      case "Enter":
-        e.preventDefault();
-        if (highlightedIndex >= 0 && highlightedIndex < results.length) {
-          handleSelect(results[highlightedIndex]);
-        }
-        break;
-      case "Escape":
-        setIsOpen(false);
-        setHighlightedIndex(-1);
-        break;
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setUserInputValue(newValue);
-    setHighlightedIndex(-1);
-
-    // Clear existing timer
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-
-    // Set new debounced query with timeout
-    if (newValue.length >= 2) {
-      debounceTimer.current = setTimeout(() => {
-        setDebouncedQuery(newValue);
-        setIsOpen(true);
-      }, 300);
-    } else {
-      setIsOpen(false);
-      setDebouncedQuery("");
-    }
-  };
-
-  const handleFocus = () => {
-    if (results.length > 0 && debouncedQuery.length >= 2) {
-      setIsOpen(true);
-    }
-  };
+    return rawResults
+      .map(train => ({
+        train,
+        score: Math.max(
+          fuzzyScore(train.trainNumber, trimmedQuery),
+          fuzzyScore(train.trainName, trimmedQuery) * 2,         // Name weighted 2x
+          fuzzyScore(train.sourceStationCode, trimmedQuery),      // Source station code
+          fuzzyScore(train.destinationStationCode, trimmedQuery), // Destination station code
+          fuzzyScore(`${train.trainNumber} ${train.trainName}`, trimmedQuery)
+        )
+      }))
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.train);
+  }, [rawResults, query]);
 
   return {
-    inputValue,
-    isOpen,
-    highlightedIndex,
     results,
     isLoading,
-    debouncedQuery,
-    containerRef,
-    inputRef,
-    listboxRef,
-    handleSelect,
-    handleKeyDown,
-    handleInputChange,
-    handleFocus,
-    handleClear,
-    setHighlightedIndex,
   };
 }

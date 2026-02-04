@@ -19,6 +19,7 @@ export const saveStoredTrain = (trainNumber: string) => {
 
 export function cleanTrainName(trainName: string): string {
   const wordsToRemove = [
+    '\\(Day \\d+\\)',  // Remove "(Day 1)", "(Day 2)", etc.
     'SUPERFAST',
     'EXPRESS',
     'INTERCITY',
@@ -26,8 +27,6 @@ export function cleanTrainName(trainName: string): string {
     'MEMU',
     'RAILWAY',
     'SPECIAL',
-    'PASSENGER',
-    'LOCAL',
     'MAIL',
     'JN',
     'JN.',

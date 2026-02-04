@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useState, useEffect } from "react";
+import { useMemo, useCallback, useState } from "react";
 import { useIsRestoring } from "@tanstack/react-query";
 import { API_CONFIG } from "@/app/config/api.config";
 import { useTrainData } from "@/app/hooks/useTrainData";
@@ -23,14 +23,6 @@ export default function Home() {
     }
     return API_CONFIG.trainNumber;
   });
-
-  // Sync with localStorage on mount (handles SSR hydration)
-  useEffect(() => {
-    const stored = getStoredTrain();
-    if (stored && stored !== selectedTrain) {
-      setSelectedTrain(stored);
-    }
-  }, []);
 
   const handleTrainSelect = useCallback((trainNumber: string) => {
     setSelectedTrain(trainNumber);

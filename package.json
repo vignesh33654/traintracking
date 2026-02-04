@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "restart": "lsof -ti:3000 | xargs kill -9 2>/dev/null || true && npm run dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
