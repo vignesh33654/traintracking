@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo, RefObject } from "react";
-import { saveStoredTrain } from "./store";
-import type { TrainSearchResult } from "./types";
+import { saveStoredTrain } from "../store";
+import type { TrainSearchResult } from "../types/types";
 
 interface UseSearchTrainUIProps {
   defaultValue?: string;

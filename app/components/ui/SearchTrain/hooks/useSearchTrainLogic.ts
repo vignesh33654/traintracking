@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTrainSearch } from "@/app/providers/SearchQueryProvider";
-import type { TrainSearchResult } from "./types";
+import type { TrainSearchResult } from "../types/types";
 
 /**
  * Fuzzy search - uses "contains" matching with hierarchy

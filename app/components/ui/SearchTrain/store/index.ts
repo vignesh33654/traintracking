@@ -1,6 +1,6 @@
 const SELECTED_TRAIN_KEY = 'selectedTrain';
 
-import type { StoredTrain } from "../types";
+import type { StoredTrain } from "../types/types";
 
 export const getStoredTrain = (): StoredTrain | null => {
   if (typeof window === 'undefined') return null;

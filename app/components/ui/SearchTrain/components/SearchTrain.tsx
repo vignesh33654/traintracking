@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { SearchIcon, CrossIcon } from "./Icons";
-import { useSearchTrainLogic } from "./useSearchTrainLogic";
-import { useSearchTrainUI } from "./useSearchTrainUI";
-import type { SearchTrainProps } from "./types";
+import { SearchIcon, CrossIcon } from "../../../../../public/Icons";
+import { useSearchTrainLogic } from "../hooks/useSearchTrainLogic";
+import { useSearchTrainUI } from "../hooks/useSearchTrainUI";
+import type { SearchTrainProps } from "../types/types";
 
 const LISTBOX_ID = "train-search-listbox";
 
