@@ -93,7 +93,7 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
               id={LISTBOX_ID}
               role="listbox"
               aria-label="Search results"
-              className="flex max-h-[240px] flex-col gap-0.5 overflow-y-auto"
+              className="flex max-h-60 flex-col gap-0.5 overflow-y-auto"
             >
               {results.map((result, index) => (
                 <li

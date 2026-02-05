@@ -89,7 +89,7 @@ function ChevronIcon({ isOpen }: { isOpen: boolean }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+      className={`transition-none ${isOpen ? "rotate-180" : ""}`}
     >
       <path
         d="M3 4.5L6 7.5L9 4.5"
@@ -213,13 +213,13 @@ export default function JourneyDateDropdown({
 
   const containerClasses =
     variant === "fixed"
-      ? "fixed top-4 right-100 z-50 max-md:hidden"
+      ? "fixed top-4 right-110 z-50 max-md:hidden"
       : "relative";
 
   const buttonClasses =
     variant === "fixed"
-      ? "flex h-[46px] min-w-[140px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 hover:border-orange focus:border-orange focus:outline-none transition-colors duration-200"
-      : "flex h-[44px] min-w-[120px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-3 py-1 hover:border-orange focus:border-orange focus:outline-none transition-colors duration-200";
+      ? "flex h-[46px] min-w-[140px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 hover:border-orange focus:border-orange focus:outline-none transition-none"
+      : "flex h-[44px] min-w-[120px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-3 py-1 hover:border-orange focus:border-orange focus:outline-none transition-none";
 
   const LISTBOX_ID = "journey-date-listbox";
 
@@ -272,7 +272,7 @@ export default function JourneyDateDropdown({
                   aria-selected={isSelected}
                   onClick={() => handleSelect(option)}
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  className={`flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors duration-200 ${
+                  className={`flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 ${
                     highlightedIndex === index ? "bg-bg-0" : "hover:bg-bg-0"
                   }`}
                 >
