@@ -12,35 +12,45 @@ import ErrorState from "@/app/components/layout/ErrorState";
 import { StatusCard } from "../ui/FooterDottedCard";
 import SearchTrain from "@/app/components/ui/SearchTrain";
 import MobileHeader from "@/app/components/ui/MobileHeader";
+import JourneyDateDropdown from "@/app/components/ui/JourneyDateDropdown";
 import { getStoredTrain } from "@/app/components/ui/SearchTrain/store";
 
-const JOURNEY_DATE = getTodayDate();
-
 export default function Home() {
+  const [journeyDate, setJourneyDate] = useState<string>(() => getTodayDate());
   const [selectedTrain, setSelectedTrain] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const stored = getStoredTrain();
       return stored?.number || API_CONFIG.trainNumber;
     }
     return API_CONFIG.trainNumber;
   });
 
-  const storedTrainLabel = typeof window !== 'undefined' ? getStoredTrain()?.label : undefined;
+  const storedTrainLabel =
+    typeof window !== "undefined" ? getStoredTrain()?.label : undefined;
 
   const handleTrainSelect = useCallback((trainNumber: string) => {
     setSelectedTrain(trainNumber);
   }, []);
 
+  const handleJourneyDateChange = useCallback((date: string) => {
+    setJourneyDate(date);
+  }, []);
+
   const { data, isLoading, isError, error, refetch, isFetching } = useTrainData(
     selectedTrain,
-    { journeyDate: JOURNEY_DATE }
+    { journeyDate },
   );
 
   const isRestoring = useIsRestoring();
 
   const stations = useMemo(
-    () => (data?.route ?? []).filter((station) => station.isHalt > 0),
-    [data?.route]
+    () =>
+      (data?.route ?? []).filter(
+        (station) =>
+          station.isHalt > 0 &&
+          typeof station.distanceFromSourceKm === "number",
+      ),
+    [data?.route],
   );
 
   const handleRefresh = useCallback(async () => {
@@ -54,9 +64,27 @@ export default function Home() {
   if (isLoading && !data) {
     return (
       <>
-        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="fixed" />
+        <JourneyDateDropdown
+          value={journeyDate}
+          onChange={handleJourneyDateChange}
+          variant="fixed"
+        />
+        <SearchTrain
+          onSelectTrain={handleTrainSelect}
+          defaultValue={storedTrainLabel || selectedTrain}
+          variant="fixed"
+        />
         <MobileHeader>
-          <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="inline" />
+          <JourneyDateDropdown
+            value={journeyDate}
+            onChange={handleJourneyDateChange}
+            variant="inline"
+          />
+          <SearchTrain
+            onSelectTrain={handleTrainSelect}
+            defaultValue={storedTrainLabel || selectedTrain}
+            variant="inline"
+          />
         </MobileHeader>
         <LoadingState />
       </>
@@ -66,9 +94,27 @@ export default function Home() {
   if (isError && !data) {
     return (
       <>
-        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="fixed" />
+        <JourneyDateDropdown
+          value={journeyDate}
+          onChange={handleJourneyDateChange}
+          variant="fixed"
+        />
+        <SearchTrain
+          onSelectTrain={handleTrainSelect}
+          defaultValue={storedTrainLabel || selectedTrain}
+          variant="fixed"
+        />
         <MobileHeader>
-          <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="inline" />
+          <JourneyDateDropdown
+            value={journeyDate}
+            onChange={handleJourneyDateChange}
+            variant="inline"
+          />
+          <SearchTrain
+            onSelectTrain={handleTrainSelect}
+            defaultValue={storedTrainLabel || selectedTrain}
+            variant="inline"
+          />
         </MobileHeader>
         <ErrorState
           message={error?.message || "Error loading train data"}
@@ -81,35 +127,75 @@ export default function Home() {
   if (stations.length === 0) {
     return (
       <>
-        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="fixed" />
+        <JourneyDateDropdown
+          value={journeyDate}
+          onChange={handleJourneyDateChange}
+          variant="fixed"
+        />
+        <SearchTrain
+          onSelectTrain={handleTrainSelect}
+          defaultValue={storedTrainLabel || selectedTrain}
+          variant="fixed"
+        />
         <MobileHeader>
-          <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="inline" />
+          <JourneyDateDropdown
+            value={journeyDate}
+            onChange={handleJourneyDateChange}
+            variant="inline"
+          />
+          <SearchTrain
+            onSelectTrain={handleTrainSelect}
+            defaultValue={storedTrainLabel || selectedTrain}
+            variant="inline"
+          />
         </MobileHeader>
         <EmptyState />
       </>
     );
   }
 
-  const journeyDate = data?.liveData?.journeyDate ?? null;
-  const distanceFromOriginKm = data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
+  const liveJourneyDate = data?.liveData?.journeyDate ?? null;
+  const distanceFromOriginKm =
+    data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
   const currentLocationStatus = data?.liveData?.currentLocation?.status ?? null;
-  const currentStationSequence = data?.liveData?.currentLocation?.sequence ?? null;
-  const distanceFromLastStationKm = data?.liveData?.currentLocation?.distanceFromLastStationKm ?? null;
-  const currentStationCode = data?.liveData?.currentLocation?.stationCode ?? null;
+  const currentStationSequence =
+    data?.liveData?.currentLocation?.sequence ?? null;
+  const distanceFromLastStationKm =
+    data?.liveData?.currentLocation?.distanceFromLastStationKm ?? null;
+  const currentStationCode =
+    data?.liveData?.currentLocation?.stationCode ?? null;
   const lastUpdatedAt = data?.liveData?.lastUpdatedAt ?? null;
   const destinationStationCode = data?.train?.destinationStationCode;
 
   return (
     <>
-      <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="fixed" />
+      <JourneyDateDropdown
+        value={journeyDate}
+        onChange={handleJourneyDateChange}
+        variant="fixed"
+      />
+      <SearchTrain
+        onSelectTrain={handleTrainSelect}
+        defaultValue={storedTrainLabel || selectedTrain}
+        variant="fixed"
+      />
 
       <MobileHeader>
-        <SearchTrain onSelectTrain={handleTrainSelect} defaultValue={storedTrainLabel || selectedTrain} variant="inline" />
+        <JourneyDateDropdown
+          value={journeyDate}
+          onChange={handleJourneyDateChange}
+          variant="inline"
+        />
+        <SearchTrain
+          onSelectTrain={handleTrainSelect}
+          defaultValue={storedTrainLabel || selectedTrain}
+          variant="inline"
+        />
       </MobileHeader>
 
       <CircularRotator
         stations={stations}
-        journeyDate={journeyDate}
+        journeyDate={liveJourneyDate}
         distanceFromOriginKm={distanceFromOriginKm}
         currentLocationStatus={currentLocationStatus}
         currentStationSequence={currentStationSequence}
