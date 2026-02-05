@@ -74,7 +74,8 @@ export function calculateTrainPillIndex(
       }
     }
 
-    return { absolutePillIndex: 0, isValid: false };
+    // If no data available, position at first station (not at progress 0)
+    return { absolutePillIndex: pillsBeforeFirstStation, isValid: true };
   }
 
   const lastStation = stations[stations.length - 1];
@@ -94,18 +95,25 @@ export function calculateTrainPillIndex(
     return { absolutePillIndex: finalPillIndex, isValid: true };
   }
 
-  // If train is at origin (km = 0) and journey date is in past, assume completed
-  if (distanceFromOriginKm === 0 && journeyDate) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const journey = new Date(journeyDate);
-    journey.setHours(0, 0, 0, 0);
+  // If train hasn't started yet (km = 0), position at first station
+  if (distanceFromOriginKm === 0) {
+    // Check if it's a past journey that has completed
+    if (journeyDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const journey = new Date(journeyDate);
+      journey.setHours(0, 0, 0, 0);
 
-    if (journey < today) {
-      const finalPillIndex =
-        (stations.length - 1) * pillsPerStation + pillsBeforeFirstStation;
-      return { absolutePillIndex: finalPillIndex, isValid: true };
+      if (journey < today) {
+        // Past journey - assume completed, show at destination
+        const finalPillIndex =
+          (stations.length - 1) * pillsPerStation + pillsBeforeFirstStation;
+        return { absolutePillIndex: finalPillIndex, isValid: true };
+      }
     }
+
+    // Journey not started yet - position at first station
+    return { absolutePillIndex: pillsBeforeFirstStation, isValid: true };
   }
 
   // Find which section the train is currently in
