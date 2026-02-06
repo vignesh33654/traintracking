@@ -59,7 +59,7 @@ export default function SearchTrain({
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={handleFocus}
-          placeholder="TRAIN NUMBER OR NAME"
+          placeholder="TRAIN NO OR NAME"
           className="min-w-0 flex-1 bg-transparent font-b612-mono-11 font-b612-mobile-responsive text-text-primary placeholder:text-text-secondary focus:outline-none overflow-hidden"
           style={{ WebkitUserSelect: "text" }}
           aria-label="Search trains"
