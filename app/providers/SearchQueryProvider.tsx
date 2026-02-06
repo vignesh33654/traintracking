@@ -9,16 +9,13 @@ import type {
   TrainSearchResponse,
   TrainSearchResult,
 } from "@/app/types/search.types";
+import { REFETCH_INTERVALS } from "@/app/config/refetch.config";
 
 interface UseTrainSearchOptions {
   enabled?: boolean;
   maxResults?: number;
 }
 
-/**
- * Filter trains based on search query
- * Searches across: train number, name, source station, destination station
- */
 function filterTrains(
   trains: TrainTuple[],
   query: string,
@@ -44,32 +41,19 @@ function filterTrains(
     }));
 }
 
-/**
- * Hook for searching trains with client-side filtering
- *
- * Performance:
- * - First load: ~500ms (fetches all trains from API)
- * - Subsequent searches: <10ms (client-side filtering)
- *
- * @param query - Search query (min 2 characters)
- * @param options - Search options
- * @returns Filtered train results and loading state
- */
 export function useTrainSearch(
   query: string,
   options: UseTrainSearchOptions = {},
 ) {
   const { enabled = true, maxResults = 50 } = options;
 
-  // Fetch all trains once and cache forever
   const { data: allTrains = [], isLoading } = useQuery({
     queryKey: searchQueryKeys.allTrains(),
     queryFn: fetchAllTrains,
-    staleTime: Infinity, // Never refetch automatically
-    gcTime: Infinity, // Keep in cache forever
+    staleTime: REFETCH_INTERVALS.SEARCH_DATA,
+    gcTime: REFETCH_INTERVALS.SEARCH_DATA,
   });
 
-  // Client-side filtering (super fast: <10ms)
   const results: TrainSearchResponse = useMemo(() => {
     if (!enabled || query.length < 2) {
       return [];

@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { API_CONFIG } from "@/app/config/api.config";
+import { CACHE_DURATIONS } from "@/app/config/refetch.config";
 
-/**
- * Train data tuple: [trainNumber, trainName, sourceStationCode, destinationStationCode]
- */
 type TrainTuple = [string, string, string, string];
 
 interface CacheMetadata {
@@ -11,26 +9,18 @@ interface CacheMetadata {
   timestamp: number;
 }
 
-// Server-side cache for all trains data
 let cache: CacheMetadata | null = null;
-const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
 
-/**
- * Check if cache is still valid
- */
 function isCacheValid(): boolean {
   if (!cache) return false;
-  return Date.now() - cache.timestamp < CACHE_DURATION_MS;
+  return Date.now() - cache.timestamp < CACHE_DURATIONS.SEARCH_SERVER;
 }
 
-/**
- * Fetch all trains from RailRadar API
- */
 async function fetchAllTrainsFromAPI(): Promise<TrainTuple[]> {
   const apiUrl = `https://api.railradar.org/api/v2/trains/all-trains?apiKey=${API_CONFIG.apiKey}`;
 
   const response = await fetch(apiUrl, {
-    next: { revalidate: 3600 }, // Next.js cache for 1 hour
+    next: { revalidate: CACHE_DURATIONS.SEARCH_SERVER / 1000 },
   });
 
   if (!response.ok) {
@@ -46,12 +36,7 @@ async function fetchAllTrainsFromAPI(): Promise<TrainTuple[]> {
   return result.data;
 }
 
-/**
- * GET /api/search/all
- * Returns all trains data with server-side caching
- */
 export async function GET() {
-  // Validate API key
   if (!API_CONFIG.apiKey) {
     return NextResponse.json(
       { success: false, error: "Missing API key" },
@@ -60,7 +45,6 @@ export async function GET() {
   }
 
   try {
-    // Return cached data if valid
     if (isCacheValid() && cache) {
       return NextResponse.json({
         success: true,
@@ -70,10 +54,8 @@ export async function GET() {
       });
     }
 
-    // Fetch fresh data
     const trains = await fetchAllTrainsFromAPI();
 
-    // Update cache
     cache = {
       data: trains,
       timestamp: Date.now(),
