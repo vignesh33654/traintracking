@@ -78,7 +78,7 @@ function TrackItem({
       )}
 
       {dayNumber !== undefined && (
-        <div className= "absolute left-[18px] top-[17px] -translate-x-1/2 -translate-y-1/2 z-10 ">
+        <div className= "absolute left-4.5 top-4.25 -translate-x-1/2 -translate-y-1/2 z-10 ">
           <DayMarker dayNumber={dayNumber} />
         </div>
       )}
