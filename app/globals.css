@@ -8,7 +8,7 @@
   --color-bg-0: #ffffff;
   --color-bg-1: #dbdbdb;
   --color-bg-2: #555353;
-  --color-divider:#dcdcdc;
+  --color-divider: #dcdcdc;
 
   --color-text-primary: #0b0b0b;
   --color-text-secondary: #5d5d5d;
@@ -150,7 +150,6 @@
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: -0.04em;
-
   }
 
   .font-doto-11-bold {
@@ -170,10 +169,10 @@
 }
 
 @media (width: 390px),
-       (width: 375px),
-       (width: 402px),
-       (width: 430px),
-       (width: 440px) {
+  (width: 375px),
+  (width: 402px),
+  (width: 430px),
+  (width: 440px) {
   .font-b612-mobile-responsive {
     font-size: 16px;
   }

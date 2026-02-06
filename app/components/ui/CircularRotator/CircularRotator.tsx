@@ -42,6 +42,7 @@ export default function CircularRotator({
     distanceFromOriginKm,
     currentLocationStatus,
     currentStationSequence,
+    currentStationCode: currentStationCode ?? null,
     journeyDate,
     pillGap,
     pillsPerStation,
@@ -59,7 +60,8 @@ export default function CircularRotator({
     journeyDate,
     pillsBeforeFirstStation,
     currentLocationStatus,
-    currentStationCode,
+    currentStationCode: currentStationCode ?? null,
+    currentStationSequence,
   });
 
   // Audio feedback during scroll
@@ -67,7 +69,12 @@ export default function CircularRotator({
   useScrollSound({ scrollProgress, gapRatio, scrollRange, itemCount });
 
   // Pill position tracking for animations (virtualized - only updates visible pills)
-  const registerPillRef = usePillPositions({ gapRatio, scrollRange, scrollProgress, totalItems: itemCount });
+  const registerPillRef = usePillPositions({
+    gapRatio,
+    scrollRange,
+    scrollProgress,
+    totalItems: itemCount,
+  });
 
   // Refresh handler
   const handleRefresh = useCallback(async () => {
@@ -78,14 +85,33 @@ export default function CircularRotator({
   }, [onRefresh, performAutoScroll]);
 
   // Auto-scroll when fresh data arrives (page load, refresh, or train selection)
+  // Uses setTimeout to ensure DOM and scroll metrics are fully updated before scrolling
   useEffect(() => {
-    const hasLivePosition = distanceFromOriginKm !== null || currentStationSequence !== null;
-    if (!hasLivePosition) return;
-    performAutoScroll();
-  }, [distanceFromOriginKm, currentStationSequence, journeyDate, performAutoScroll]);
+    const hasLivePosition =
+      distanceFromOriginKm !== null || currentStationSequence !== null;
+    const hasValidStations = stations.length > 0;
+
+    if (!hasLivePosition || !hasValidStations) return;
+
+    // Small delay to let React batch updates complete and ensure data consistency
+    const timeoutId = setTimeout(() => {
+      performAutoScroll();
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [
+    distanceFromOriginKm,
+    currentStationSequence,
+    stations.length,
+    performAutoScroll,
+  ]);
 
   return (
-    <div ref={scrollRef} className="relative overflow-x-clip" style={{ height: totalScrollHeight }}>
+    <div
+      ref={scrollRef}
+      className="relative overflow-x-clip"
+      style={{ height: totalScrollHeight }}
+    >
       <div className="sticky top-0 w-full h-dvh flex items-center justify-center overflow-x-hidden">
         <TrackContainer
           stations={stations}

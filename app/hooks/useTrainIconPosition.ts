@@ -23,6 +23,7 @@ export interface UseTrainIconPositionParams {
   pillsBeforeFirstStation?: number;
   currentLocationStatus?: CurrentLocation["status"] | null;
   currentStationCode?: string | null;
+  currentStationSequence?: number | null;
 }
 
 export function useTrainIconPosition({
@@ -36,6 +37,7 @@ export function useTrainIconPosition({
   pillsBeforeFirstStation = 0,
   currentLocationStatus,
   currentStationCode,
+  currentStationSequence,
 }: UseTrainIconPositionParams): TrainIconPosition {
   return useMemo(() => {
     // Calculate which pill the train is at based on distance (or station if arrived)
@@ -46,7 +48,8 @@ export function useTrainIconPosition({
       journeyDate,
       pillsBeforeFirstStation,
       currentLocationStatus,
-      currentStationCode
+      currentStationCode,
+      currentStationSequence
     );
 
     if (!isValid) {
@@ -71,5 +74,5 @@ export function useTrainIconPosition({
       progress: clampedProgress,
       isVisible,
     };
-  }, [distanceFromOriginKm, stations, pillsPerStation, gapRatio, scrollRange, scrollProgress, journeyDate, pillsBeforeFirstStation, currentLocationStatus, currentStationCode]);
+  }, [distanceFromOriginKm, stations, pillsPerStation, gapRatio, scrollRange, scrollProgress, journeyDate, pillsBeforeFirstStation, currentLocationStatus, currentStationCode, currentStationSequence]);
 }

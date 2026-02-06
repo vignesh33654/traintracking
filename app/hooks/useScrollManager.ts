@@ -1,6 +1,13 @@
 "use client";
 
-import { RefObject, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { useNativeScroll } from "./useNativeScroll";
 import { useTrainScroll } from "./useTrainScroll";
 import {
@@ -32,6 +39,7 @@ interface UseScrollManagerParams {
   distanceFromOriginKm: number | null;
   currentLocationStatus: CurrentLocation["status"] | null;
   currentStationSequence: number | null;
+  currentStationCode: string | null;
   journeyDate: string | null;
   pillGap: number;
   pillsPerStation: number;
@@ -65,6 +73,7 @@ export function useScrollManager({
   distanceFromOriginKm,
   currentLocationStatus,
   currentStationSequence,
+  currentStationCode,
   journeyDate,
   pillGap,
   pillsPerStation,
@@ -81,7 +90,7 @@ export function useScrollManager({
   const { gapRatio, scrollRange, totalScrollHeight } = useTrainScroll(
     stations.length,
     pillGap,
-    pillsPerStation
+    pillsPerStation,
   );
 
   // ============================================
@@ -89,12 +98,12 @@ export function useScrollManager({
   // ============================================
   const isTrainRunning = useMemo(
     () => isTrainRunningStatus(currentLocationStatus),
-    [currentLocationStatus]
+    [currentLocationStatus],
   );
 
   const initialStationIndex = useMemo(
     () => getInitialStationIndex(isTrainRunning, currentStationSequence),
-    [isTrainRunning, currentStationSequence]
+    [isTrainRunning, currentStationSequence],
   );
 
   // ============================================
@@ -108,7 +117,10 @@ export function useScrollManager({
       stations,
       pillsPerStation,
       journeyDate,
-      pillsBeforeFirstStation
+      pillsBeforeFirstStation,
+      currentLocationStatus,
+      currentStationCode,
+      currentStationSequence,
     );
 
     if (!isValid) return null;
@@ -119,7 +131,7 @@ export function useScrollManager({
         absolutePillIndex,
         scrollProgress,
         gapRatio,
-        scrollRange
+        scrollRange,
       ),
     };
   }, [
@@ -128,6 +140,8 @@ export function useScrollManager({
     pillsPerStation,
     journeyDate,
     pillsBeforeFirstStation,
+    currentLocationStatus,
+    currentStationCode,
     scrollProgress,
     gapRatio,
     scrollRange,
@@ -151,15 +165,33 @@ export function useScrollManager({
   // ============================================
   // 6. INITIAL SCROLL POSITIONING (ONE-TIME)
   // ============================================
+  // Track if we've done initial positioning for current train data
+  const hasInitializedRef = useRef(false);
+  const lastStationCountRef = useRef(0);
+
   useLayoutEffect(() => {
     if (!scrollRef.current || stations.length === 0) return;
+
+    // Reset initialization flag when stations change (new train selected)
+    if (lastStationCountRef.current !== stations.length) {
+      hasInitializedRef.current = false;
+      lastStationCountRef.current = stations.length;
+    }
+
+    // Only do initial positioning once per train
+    // Auto-scroll effect will handle positioning to train icon
+    if (hasInitializedRef.current) return;
+    hasInitializedRef.current = true;
+
+    // If train is running, skip initial scroll - let auto-scroll handle it
+    if (isTrainRunning) return;
 
     const scrollTop = calculateInitialScrollTop(
       initialStationIndex,
       pillsPerStation,
       gapRatio,
       scrollRange,
-      totalScrollHeight
+      totalScrollHeight,
     );
 
     window.scrollTo({ top: scrollTop, behavior: "auto" });
@@ -171,6 +203,7 @@ export function useScrollManager({
     gapRatio,
     scrollRange,
     totalScrollHeight,
+    isTrainRunning,
   ]);
 
   // ============================================
@@ -185,10 +218,13 @@ export function useScrollManager({
       pillsPerStation,
       journeyDate,
       pillsBeforeFirstStation,
+      currentLocationStatus,
+      currentStationCode,
       gapRatio,
       scrollRange,
       totalScrollHeight,
     });
+
     window.scrollTo({ top: scrollTop, behavior: "smooth" });
   }, [
     distanceFromOriginKm,
@@ -198,6 +234,8 @@ export function useScrollManager({
     pillsPerStation,
     journeyDate,
     pillsBeforeFirstStation,
+    currentLocationStatus,
+    currentStationCode,
     gapRatio,
     scrollRange,
     totalScrollHeight,
@@ -220,7 +258,7 @@ export function useScrollManager({
         PHASE_SCROLL_CONFIG.iconLockPosition,
         gapRatio,
         scrollRange,
-        totalScrollHeight
+        totalScrollHeight,
       );
 
       isScrollingRef.current = true;
@@ -237,7 +275,7 @@ export function useScrollManager({
         isScrollingRef.current = false;
       }, PHASE_SCROLL_CONFIG.scrollDebounceMs);
     },
-    [gapRatio, scrollRange, totalScrollHeight]
+    [gapRatio, scrollRange, totalScrollHeight],
   );
 
   // Phase-based scroll effect
