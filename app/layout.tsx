@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import { B612_Mono, Doto } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import DarkModeToggle from "./components/ui/DarkModeToggle";
 import { cn } from "./utils/utils";
 import { QueryProvider } from "./providers/QueryProvider";
-
 
 const b612Mono = B612_Mono({
   variable: "--font-b612-mono",
@@ -76,7 +74,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-      
           circularStd.variable,
           b612Mono.variable,
           doto.variable,
@@ -84,10 +81,7 @@ export default function RootLayout({
         )}
       >
         <script dangerouslySetInnerHTML={{ __html: DARK_MODE_SCRIPT }} />
-        <QueryProvider>
-          <DarkModeToggle />
-          {children}
-        </QueryProvider>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

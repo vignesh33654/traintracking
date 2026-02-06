@@ -8,7 +8,11 @@ import type { SearchTrainProps } from "../types/types";
 
 const LISTBOX_ID = "train-search-listbox";
 
-export default function SearchTrain({ onSelectTrain, defaultValue = "", variant = "fixed" }: SearchTrainProps) {
+export default function SearchTrain({
+  onSelectTrain,
+  defaultValue = "",
+  variant = "fixed",
+}: SearchTrainProps) {
   const [userQuery, setUserQuery] = useState("");
   const { results, isLoading } = useSearchTrainLogic({ query: userQuery });
 
@@ -34,13 +38,13 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
 
   const showClearIcon = inputValue && inputValue.length > 0;
 
-  const containerClasses = variant === "fixed"
-    ? "fixed top-4 right-26 z-50 max-md:hidden"
-    : "relative flex-1";
+  const containerClasses =
+    variant === "fixed" ? "relative" : "relative flex-1 min-w-0";
 
-  const inputContainerClasses = variant === "fixed"
-    ? "flex h-[46px] w-[328px] items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange"
-    : "flex h-[44px] w-full items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1";
+  const inputContainerClasses =
+    variant === "fixed"
+      ? "flex h-[46px] w-[328px] items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange"
+      : "flex h-[44px] w-full items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange";
 
   return (
     <div ref={containerRef} className={containerClasses}>
@@ -62,7 +66,11 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
           aria-expanded={isOpen}
           aria-autocomplete="list"
           aria-controls={isOpen ? LISTBOX_ID : undefined}
-          aria-activedescendant={highlightedIndex >= 0 ? `train-option-${results[highlightedIndex]?.trainNumber}` : undefined}
+          aria-activedescendant={
+            highlightedIndex >= 0
+              ? `train-option-${results[highlightedIndex]?.trainNumber}`
+              : undefined
+          }
           role="combobox"
         />
         {showClearIcon && (
@@ -78,7 +86,9 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
       </div>
 
       {isOpen && (
-        <div className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-82" : "w-full"}`}>
+        <div
+          className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-82" : "w-full"}`}
+        >
           {isLoading ? (
             <div className="px-2 py-1.5 text-label text-text-secondary">
               Searching...

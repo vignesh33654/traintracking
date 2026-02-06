@@ -1,6 +1,6 @@
 "use client";
 
-import { useDark } from "../../hooks/useDark";
+import { useDark } from "@/app/hooks/useDark";
 
 function SunIcon() {
   return (
@@ -62,13 +62,17 @@ interface DarkModeToggleProps {
   variant?: "fixed" | "inline";
 }
 
-export default function DarkModeToggle({ variant = "fixed" }: DarkModeToggleProps) {
+export default function DarkModeToggle({
+  variant = "fixed",
+}: DarkModeToggleProps) {
   const { isDark, toggleDarkMode } = useDark();
 
-  const baseClasses = "hover:cursor-pointer flex rounded-full border border-divider bg-bg-0 p-1 text-text-primary focus-ring";
-  const variantClasses = variant === "fixed"
-    ? "fixed top-4 right-4 z-50 max-md:hidden "
-    : "flex items-center justify-center gap-1 w-[80px] h-[44px]";
+  const baseClasses =
+    "hover:cursor-pointer flex rounded-full border border-divider bg-bg-0 p-1 text-text-primary focus-ring";
+  const variantClasses =
+    variant === "fixed"
+      ? "items-center justify-center gap-1 w-[80px] h-[46px]"
+      : "flex items-center justify-center gap-1 w-[80px] h-[44px]";
 
   return (
     <button
@@ -80,13 +84,13 @@ export default function DarkModeToggle({ variant = "fixed" }: DarkModeToggleProp
       className={`${baseClasses} ${variantClasses}`}
     >
       <span
-        className={`flex items-center justify-center rounded-full transition-colors ${variant === "inline" ? "size-[30px]" : "size-9"} ${isDark ? "bg-bg-1 " : "bg-transparent"}`}
+        className={`flex items-center justify-center rounded-full transition-colors ${variant === "inline" ? "size-7.5" : "size-9"} ${isDark ? "bg-bg-1 " : "bg-transparent"}`}
         aria-hidden
       >
         <MoonIcon />
       </span>
       <span
-        className={`flex items-center justify-center rounded-full transition-colors ${variant === "inline" ? "size-[30px]" : "size-9"} ${!isDark ? "bg-bg-1" : "bg-transparent"}`}
+        className={`flex items-center justify-center rounded-full transition-colors ${variant === "inline" ? "size-7.5" : "size-9"} ${!isDark ? "bg-bg-1" : "bg-transparent"}`}
         aria-hidden
       >
         <SunIcon />

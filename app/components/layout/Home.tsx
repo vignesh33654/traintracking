@@ -10,9 +10,8 @@ import LoadingState from "@/app/components/layout/LoadingState";
 import EmptyState from "@/app/components/layout/EmptyState";
 import ErrorState from "@/app/components/layout/ErrorState";
 import { StatusCard } from "../ui/FooterDottedCard";
-import SearchTrain from "@/app/components/ui/SearchTrain";
+import { TopControlsContainer } from "@/app/components/ui/TopHeader";
 import MobileHeader from "@/app/components/ui/MobileHeader";
-import JourneyDateDropdown from "@/app/components/ui/JourneyDateDropdown";
 import { getStoredTrain } from "@/app/components/ui/SearchTrain/store";
 
 export default function Home() {
@@ -64,25 +63,19 @@ export default function Home() {
   if (isLoading && !data) {
     return (
       <>
-        <JourneyDateDropdown
-          value={journeyDate}
-          onChange={handleJourneyDateChange}
-          variant="fixed"
-        />
-        <SearchTrain
+        <TopControlsContainer
+          journeyDate={journeyDate}
+          onJourneyDateChange={handleJourneyDateChange}
           onSelectTrain={handleTrainSelect}
-          defaultValue={storedTrainLabel || selectedTrain}
+          defaultTrainValue={storedTrainLabel || selectedTrain}
           variant="fixed"
         />
         <MobileHeader>
-          <JourneyDateDropdown
-            value={journeyDate}
-            onChange={handleJourneyDateChange}
-            variant="inline"
-          />
-          <SearchTrain
+          <TopControlsContainer
+            journeyDate={journeyDate}
+            onJourneyDateChange={handleJourneyDateChange}
             onSelectTrain={handleTrainSelect}
-            defaultValue={storedTrainLabel || selectedTrain}
+            defaultTrainValue={storedTrainLabel || selectedTrain}
             variant="inline"
           />
         </MobileHeader>
@@ -94,25 +87,19 @@ export default function Home() {
   if (isError && !data) {
     return (
       <>
-        <JourneyDateDropdown
-          value={journeyDate}
-          onChange={handleJourneyDateChange}
-          variant="fixed"
-        />
-        <SearchTrain
+        <TopControlsContainer
+          journeyDate={journeyDate}
+          onJourneyDateChange={handleJourneyDateChange}
           onSelectTrain={handleTrainSelect}
-          defaultValue={storedTrainLabel || selectedTrain}
+          defaultTrainValue={storedTrainLabel || selectedTrain}
           variant="fixed"
         />
         <MobileHeader>
-          <JourneyDateDropdown
-            value={journeyDate}
-            onChange={handleJourneyDateChange}
-            variant="inline"
-          />
-          <SearchTrain
+          <TopControlsContainer
+            journeyDate={journeyDate}
+            onJourneyDateChange={handleJourneyDateChange}
             onSelectTrain={handleTrainSelect}
-            defaultValue={storedTrainLabel || selectedTrain}
+            defaultTrainValue={storedTrainLabel || selectedTrain}
             variant="inline"
           />
         </MobileHeader>
@@ -127,25 +114,19 @@ export default function Home() {
   if (stations.length === 0) {
     return (
       <>
-        <JourneyDateDropdown
-          value={journeyDate}
-          onChange={handleJourneyDateChange}
-          variant="fixed"
-        />
-        <SearchTrain
+        <TopControlsContainer
+          journeyDate={journeyDate}
+          onJourneyDateChange={handleJourneyDateChange}
           onSelectTrain={handleTrainSelect}
-          defaultValue={storedTrainLabel || selectedTrain}
+          defaultTrainValue={storedTrainLabel || selectedTrain}
           variant="fixed"
         />
         <MobileHeader>
-          <JourneyDateDropdown
-            value={journeyDate}
-            onChange={handleJourneyDateChange}
-            variant="inline"
-          />
-          <SearchTrain
+          <TopControlsContainer
+            journeyDate={journeyDate}
+            onJourneyDateChange={handleJourneyDateChange}
             onSelectTrain={handleTrainSelect}
-            defaultValue={storedTrainLabel || selectedTrain}
+            defaultTrainValue={storedTrainLabel || selectedTrain}
             variant="inline"
           />
         </MobileHeader>
@@ -169,26 +150,20 @@ export default function Home() {
 
   return (
     <>
-      <JourneyDateDropdown
-        value={journeyDate}
-        onChange={handleJourneyDateChange}
-        variant="fixed"
-      />
-      <SearchTrain
+      <TopControlsContainer
+        journeyDate={journeyDate}
+        onJourneyDateChange={handleJourneyDateChange}
         onSelectTrain={handleTrainSelect}
-        defaultValue={storedTrainLabel || selectedTrain}
+        defaultTrainValue={storedTrainLabel || selectedTrain}
         variant="fixed"
       />
 
       <MobileHeader>
-        <JourneyDateDropdown
-          value={journeyDate}
-          onChange={handleJourneyDateChange}
-          variant="inline"
-        />
-        <SearchTrain
+        <TopControlsContainer
+          journeyDate={journeyDate}
+          onJourneyDateChange={handleJourneyDateChange}
           onSelectTrain={handleTrainSelect}
-          defaultValue={storedTrainLabel || selectedTrain}
+          defaultTrainValue={storedTrainLabel || selectedTrain}
           variant="inline"
         />
       </MobileHeader>

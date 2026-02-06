@@ -213,13 +213,13 @@ export default function JourneyDateDropdown({
 
   const containerClasses =
     variant === "fixed"
-      ? "fixed top-4 right-110 z-50 max-md:hidden"
+      ? "relative"
       : "relative";
 
   const buttonClasses =
     variant === "fixed"
-      ? "flex h-[46px] min-w-[140px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 hover:border-orange focus:border-orange focus:outline-none transition-none"
-      : "flex h-[44px] min-w-[120px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-3 py-1 hover:border-orange focus:border-orange focus:outline-none transition-none";
+      ? "flex h-[46px] min-w-[140px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus:outline-none transition-none hover:cursor-pointer"
+      : "flex h-[44px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-3 py-1 hover:border-orange focus:outline-none transition-none";
 
   const LISTBOX_ID = "journey-date-listbox";
 
@@ -239,7 +239,7 @@ export default function JourneyDateDropdown({
         <span className="shrink-0 text-text-secondary">
           <CalendarIcon />
         </span>
-        <span className="font-b612-mono-11 font-b612-mobile-responsive text-text-primary">
+        <span className={`font-b612-mono-11 font-b612-mobile-responsive text-text-primary ${variant === "inline" ? "hidden" : ""}`}>
           {displayLabel}
         </span>
         <span className="shrink-0 text-text-secondary ml-auto">
