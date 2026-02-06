@@ -57,8 +57,6 @@ export const TOOLTIP_OFFSETS = {
   right: { x: 28, y: 19 },
 } as const;
 
-export const DEFAULT_REFETCH_INTERVAL = 60000; // 1 minute
-
 export const TRAIN_PROGRESS_CONFIG = {
   svgSize: 24,
   innerRadius: 8,
