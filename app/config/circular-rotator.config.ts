@@ -39,7 +39,8 @@ export const STATION_LABEL_VERTICAL_OFFSET = {
   right: -10,
 } as const;
 
-export const STATION_LABEL_PILL_OFFSET = PILL_CONFIG.pillsBeforeFirstStation + 0.5;
+export const STATION_LABEL_PILL_OFFSET =
+  PILL_CONFIG.pillsBeforeFirstStation + 0.5;
 
 export const AUTO_SCROLL_CONFIG = {
   targetViewportPercentFromBottom: 0.5, // 0.5 = 50% from bottom = middle of viewport

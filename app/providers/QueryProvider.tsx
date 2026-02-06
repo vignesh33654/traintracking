@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { QueryClient } from '@tanstack/react-query';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { useState, type ReactNode } from 'react';
-import { CACHE_DURATIONS } from '@/app/config/refetch.config';
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { useState, type ReactNode } from "react";
+import { CACHE_DURATIONS } from "@/app/config/refetch.config";
 
 interface QueryProviderProps {
   children: ReactNode;
@@ -23,20 +23,20 @@ export function QueryProvider({ children }: QueryProviderProps) {
             refetchOnWindowFocus: false,
           },
         },
-      })
+      }),
   );
 
   const [persister] = useState(() =>
     createSyncStoragePersister({
       storage:
-        typeof window !== 'undefined'
+        typeof window !== "undefined"
           ? window.localStorage
           : {
               getItem: () => null,
               setItem: () => undefined,
               removeItem: () => undefined,
             },
-    })
+    }),
   );
 
   return (

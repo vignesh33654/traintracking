@@ -27,6 +27,5 @@ export async function searchTrains(
 export const searchQueryKeys = {
   all: ["search"] as const,
   allTrains: () => [...searchQueryKeys.all, "all-trains"] as const,
-  trains: (query: string) =>
-    [...searchQueryKeys.all, "trains", query] as const,
+  trains: (query: string) => [...searchQueryKeys.all, "trains", query] as const,
 };
