@@ -29,7 +29,11 @@ export function SegmentedTrain({
   destinationStationCode,
 }: SegmentedTrainProps) {
   const { isDark } = useDark();
-  const progressState = getProgressState(distanceFromOriginKm, currentStationCode, destinationStationCode);
+  const progressState = getProgressState(
+    distanceFromOriginKm,
+    currentStationCode,
+    destinationStationCode,
+  );
 
   // Calculate positions for all train segments
   const segmentPositions = useSegmentPositions(engineProgress);
@@ -49,7 +53,9 @@ export function SegmentedTrain({
       {shadowSlice && <TrainShadow shadowSlice={shadowSlice} isDark={isDark} />}
 
       {/* Shared-path mask behind trailing cars to smooth curvature */}
-      {maskSlice && <TrainMask maskSlice={maskSlice} backgroundColor={backgroundColor} />}
+      {maskSlice && (
+        <TrainMask maskSlice={maskSlice} backgroundColor={backgroundColor} />
+      )}
 
       {/* Render each train segment */}
       {segments.map((segment, index) => {
@@ -87,9 +93,15 @@ export function SegmentedTrain({
             zIndex: 52,
           }}
         >
-          <div className="relative" style={{ width, height: segments[0].height }}>
-            <div className="absolute top-[10px] right-[9px]">
-              <StatusDot journeyDate={journeyDate} distanceFromOriginKm={distanceFromOriginKm} />
+          <div
+            className="relative"
+            style={{ width, height: segments[0].height }}
+          >
+            <div className="absolute top-2.5 right-2.5">
+              <StatusDot
+                journeyDate={journeyDate}
+                distanceFromOriginKm={distanceFromOriginKm}
+              />
             </div>
           </div>
         </div>

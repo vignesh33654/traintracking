@@ -78,7 +78,7 @@ export default function SearchTrain({ onSelectTrain, defaultValue = "", variant 
       </div>
 
       {isOpen && (
-        <div className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-[328px]" : "w-full"}`}>
+        <div className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-82" : "w-full"}`}>
           {isLoading ? (
             <div className="px-2 py-1.5 text-label text-text-secondary">
               Searching...
