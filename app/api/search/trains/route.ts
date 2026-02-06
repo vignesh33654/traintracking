@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { API_CONFIG, SERVER_API_CONFIG } from '@/app/config/api.config';
+import { NextRequest, NextResponse } from "next/server";
+import { API_CONFIG } from "@/app/config/api.config";
 
 function createErrorResponse(message: string, status: number) {
   return NextResponse.json({ message, status }, { status });
@@ -7,14 +7,17 @@ function createErrorResponse(message: string, status: number) {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
-  const query = searchParams.get('query');
+  const query = searchParams.get("query");
 
   if (!query || query.length < 2) {
-    return createErrorResponse('Search query must be at least 2 characters', 400);
+    return createErrorResponse(
+      "Search query must be at least 2 characters",
+      400,
+    );
   }
 
-  if (!SERVER_API_CONFIG.apiKey) {
-    return createErrorResponse('API configuration error: Missing API key', 500);
+  if (!API_CONFIG.apiKey) {
+    return createErrorResponse("API configuration error: Missing API key", 500);
   }
 
   const apiUrl = `${API_CONFIG.baseURL}/search/trains?query=${encodeURIComponent(query)}`;
@@ -22,7 +25,7 @@ export async function GET(request: NextRequest) {
   try {
     const response = await fetch(apiUrl, {
       headers: {
-        'X-API-Key': SERVER_API_CONFIG.apiKey,
+        "X-API-Key": API_CONFIG.apiKey,
       },
     });
 
@@ -35,6 +38,6 @@ export async function GET(request: NextRequest) {
     const data = await response.json();
     return NextResponse.json(data.success ? data.data : data);
   } catch {
-    return createErrorResponse('Failed to search trains', 500);
+    return createErrorResponse("Failed to search trains", 500);
   }
 }
