@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { API_CONFIG } from "@/app/config/api.config";
 import { CACHE_DURATIONS } from "@/app/config/refetch.config";
 
 type TrainTuple = [string, string, string, string];
@@ -16,8 +15,8 @@ function isCacheValid(): boolean {
   return Date.now() - cache.timestamp < CACHE_DURATIONS.SEARCH_SERVER;
 }
 
-async function fetchAllTrainsFromAPI(): Promise<TrainTuple[]> {
-  const apiUrl = `https://api.railradar.org/api/v2/trains/all-trains?apiKey=${API_CONFIG.apiKey}`;
+async function fetchAllTrainsFromAPI(apiKey: string): Promise<TrainTuple[]> {
+  const apiUrl = `https://api.railradar.org/api/v1/trains/all-trains?apiKey=${apiKey}`;
 
   const response = await fetch(apiUrl, {
     next: { revalidate: CACHE_DURATIONS.SEARCH_SERVER / 1000 },
@@ -37,7 +36,10 @@ async function fetchAllTrainsFromAPI(): Promise<TrainTuple[]> {
 }
 
 export async function GET() {
-  if (!API_CONFIG.apiKey) {
+  // Read environment variable directly in the route handler (Next.js App Router best practice)
+  const apiKey = process.env.RAIL_RADAR_API_KEY;
+
+  if (!apiKey) {
     return NextResponse.json(
       { success: false, error: "Missing API key" },
       { status: 500 },
@@ -54,7 +56,7 @@ export async function GET() {
       });
     }
 
-    const trains = await fetchAllTrainsFromAPI();
+    const trains = await fetchAllTrainsFromAPI(apiKey);
 
     cache = {
       data: trains,

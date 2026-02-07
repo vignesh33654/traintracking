@@ -22,7 +22,10 @@ export async function GET(request: NextRequest) {
     return createErrorResponse("Train number is required", 400);
   }
 
-  if (!API_CONFIG.apiKey) {
+  // Read environment variable directly in the route handler (Next.js App Router best practice)
+  const apiKey = process.env.RAIL_RADAR_API_KEY;
+
+  if (!apiKey) {
     return createErrorResponse("API configuration error: Missing API key", 500);
   }
 
@@ -31,7 +34,7 @@ export async function GET(request: NextRequest) {
   try {
     const response = await fetch(apiUrl, {
       headers: {
-        "X-API-Key": API_CONFIG.apiKey,
+        "X-API-Key": apiKey,
       },
     });
 
