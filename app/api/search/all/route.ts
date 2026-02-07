@@ -16,9 +16,10 @@ function isCacheValid(): boolean {
 }
 
 async function fetchAllTrainsFromAPI(apiKey: string): Promise<TrainTuple[]> {
-  const apiUrl = `https://api.railradar.org/api/v1/trains/all-trains?apiKey=${apiKey}`;
+  const apiUrl = "https://api.railradar.org/api/v2/trains/all-trains";
 
   const response = await fetch(apiUrl, {
+    headers: { "X-API-Key": apiKey },
     next: { revalidate: CACHE_DURATIONS.SEARCH_SERVER / 1000 },
   });
 

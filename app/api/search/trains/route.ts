@@ -39,8 +39,10 @@ async function getAllTrains(apiKey: string): Promise<TrainTuple[]> {
   }
 
   // Fetch fresh data
-  const apiUrl = `https://api.railradar.org/api/v1/trains/all-trains?apiKey=${apiKey}`;
-  const response = await fetch(apiUrl);
+  const apiUrl = "https://api.railradar.org/api/v2/trains/all-trains";
+  const response = await fetch(apiUrl, {
+    headers: { "X-API-Key": apiKey },
+  });
 
   if (!response.ok) {
     throw new Error(`API Error: ${response.status}`);
