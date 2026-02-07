@@ -65,14 +65,14 @@ function CalendarIcon() {
       <path
         d="M12.667 2.667H3.333C2.597 2.667 2 3.264 2 4v9.333c0 .737.597 1.334 1.333 1.334h9.334c.736 0 1.333-.597 1.333-1.334V4c0-.736-.597-1.333-1.333-1.333Z"
         stroke="currentColor"
-        strokeWidth="1.33"
+        strokeWidth="1"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M10.667 1.333v2.667M5.333 1.333v2.667M2 6.667h12"
         stroke="currentColor"
-        strokeWidth="1.33"
+        strokeWidth="1"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -94,7 +94,7 @@ function ChevronIcon({ isOpen }: { isOpen: boolean }) {
       <path
         d="M3 4.5L6 7.5L9 4.5"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
