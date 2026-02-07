@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * DEPRECATED: Use /api/search/all + client-side filtering instead
- * This endpoint is kept for backward compatibility
  *
  * TODO: Remove this endpoint once all clients migrate to client-side search
  */
@@ -16,7 +15,7 @@ interface CacheMetadata {
 
 // Server-side cache shared with /api/search/all
 let cache: CacheMetadata | null = null;
-const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
+const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour cache
 
 function createErrorResponse(message: string, status: number) {
   return NextResponse.json({ message, status }, { status });
