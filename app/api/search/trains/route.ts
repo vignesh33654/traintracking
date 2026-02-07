@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { API_CONFIG } from "@/app/config/api.config";
 
 /**
  * DEPRECATED: Use /api/search/all + client-side filtering instead
@@ -34,14 +33,14 @@ function isCacheValid(): boolean {
 /**
  * Fetch all trains from RailRadar API
  */
-async function getAllTrains(): Promise<TrainTuple[]> {
+async function getAllTrains(apiKey: string): Promise<TrainTuple[]> {
   // Return cached data if valid
   if (isCacheValid() && cache) {
     return cache.data;
   }
 
   // Fetch fresh data
-  const apiUrl = `https://api.railradar.org/api/v2/trains/all-trains?apiKey=${API_CONFIG.apiKey}`;
+  const apiUrl = `https://api.railradar.org/api/v1/trains/all-trains?apiKey=${apiKey}`;
   const response = await fetch(apiUrl);
 
   if (!response.ok) {
@@ -76,12 +75,15 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (!API_CONFIG.apiKey) {
+  // Read environment variable directly in the route handler (Next.js App Router best practice)
+  const apiKey = process.env.RAIL_RADAR_API_KEY;
+
+  if (!apiKey) {
     return createErrorResponse("API configuration error: Missing API key", 500);
   }
 
   try {
-    const allTrains = await getAllTrains();
+    const allTrains = await getAllTrains(apiKey);
 
     // Server-side filtering
     const queryLower = query.toLowerCase();
