@@ -67,20 +67,28 @@ export function SegmentedTrain({
   const tooltipVariant = getTooltipVariant(engineProgress);
 
   const [showTooltip, setShowTooltip] = useState(false);
+  const showTooltipRef = useRef(false);
   const timersRef = useRef<{ show: ReturnType<typeof setTimeout>; hide: ReturnType<typeof setTimeout> } | null>(null);
+  const lastProcessedTriggerRef = useRef(0);
 
   useEffect(() => {
     if (timersRef.current) {
       clearTimeout(timersRef.current.show);
       clearTimeout(timersRef.current.hide);
+      timersRef.current = null;
     }
-    setShowTooltip(false);
+    if (showTooltipRef.current) {
+      showTooltipRef.current = false;
+      setShowTooltip(false);
+    }
 
     if (!isVisible || userActionTrigger === 0) return;
+    if (userActionTrigger === lastProcessedTriggerRef.current) return;
+    lastProcessedTriggerRef.current = userActionTrigger;
 
     timersRef.current = {
-      show: setTimeout(() => setShowTooltip(true), TOOLTIP_TIMING.SHOW_DELAY_MS),
-      hide: setTimeout(() => setShowTooltip(false), TOOLTIP_TIMING.SHOW_DELAY_MS + TOOLTIP_TIMING.VISIBLE_DURATION_MS),
+      show: setTimeout(() => { showTooltipRef.current = true; setShowTooltip(true); }, TOOLTIP_TIMING.SHOW_DELAY_MS),
+      hide: setTimeout(() => { showTooltipRef.current = false; setShowTooltip(false); }, TOOLTIP_TIMING.SHOW_DELAY_MS + TOOLTIP_TIMING.VISIBLE_DURATION_MS),
     };
 
     onTooltipShown?.();
@@ -97,10 +105,12 @@ export function SegmentedTrain({
     if (!showTooltip) return;
 
     const dismiss = () => {
+      showTooltipRef.current = false;
       setShowTooltip(false);
       if (timersRef.current) {
         clearTimeout(timersRef.current.show);
         clearTimeout(timersRef.current.hide);
+        timersRef.current = null;
       }
     };
 

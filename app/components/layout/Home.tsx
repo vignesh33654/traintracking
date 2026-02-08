@@ -28,7 +28,7 @@ export default function Home() {
   const storedTrainLabel =
     typeof window !== "undefined" ? getStoredTrain()?.label : undefined;
 
-  const pendingTooltipRef = useRef(false);
+  const pendingTooltipRef = useRef(true);
 
   const handleTrainSelect = useCallback((trainNumber: string) => {
     setSelectedTrain(trainNumber);
@@ -37,6 +37,7 @@ export default function Home() {
 
   const handleJourneyDateChange = useCallback((date: string) => {
     setJourneyDate(date);
+    pendingTooltipRef.current = true;
   }, []);
 
   const { data, isLoading, isError, error, refetch, isFetching } = useTrainData(

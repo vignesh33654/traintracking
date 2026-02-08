@@ -108,22 +108,20 @@ export default function TrackContainer({
         />
       ))}
 
-      {trainIconPosition.isVisible && (
-        <SegmentedTrain
-          engineProgress={trainIconPosition.progress}
-          isVisible={trainIconPosition.isVisible}
-          journeyDate={journeyDate}
-          distanceFromOriginKm={distanceFromOriginKm}
-          currentStationCode={currentStationCode}
-          destinationStationCode={destinationStationCode}
-          currentLocationStatus={currentLocationStatus}
-          distanceFromLastStationKm={distanceFromLastStationKm}
-          currentSequence={currentSequence}
-          route={route}
-          lastUpdatedAt={lastUpdatedAt}
-          userActionTrigger={userActionTrigger}
-        />
-      )}
+      <SegmentedTrain
+        engineProgress={trainIconPosition.isVisible ? trainIconPosition.progress : 0}
+        isVisible={trainIconPosition.isVisible}
+        journeyDate={journeyDate}
+        distanceFromOriginKm={distanceFromOriginKm}
+        currentStationCode={currentStationCode}
+        destinationStationCode={destinationStationCode}
+        currentLocationStatus={currentLocationStatus}
+        distanceFromLastStationKm={distanceFromLastStationKm}
+        currentSequence={currentSequence}
+        route={route}
+        lastUpdatedAt={lastUpdatedAt}
+        userActionTrigger={userActionTrigger}
+      />
 
       <TrainStatus
         lastUpdatedAt={lastUpdatedAt}
