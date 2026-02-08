@@ -1,8 +1,13 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import { cn } from "@/app/utils/utils";
 import type { RouteStation } from "@/app/types/train.types";
 import { getNextStationSummary, getStationName } from "@/app/utils/train-status.utils";
 import { formatRelativeTime } from "@/app/utils/time-formatters";
 import { TrainProgress } from "./TrainProgress";
+import { useSound } from "@/app/hooks/useSound";
+import { SOUND_PATHS, AUDIO_CONFIG } from "@/app/config/audio.config";
 
 export interface TrainStatusProps {
   className?: string;
@@ -69,6 +74,28 @@ export function TrainStatus(props: TrainStatusProps) {
     destinationStationCode,
   } = props;
 
+  const statusMessage = getStatusMessage(props);
+  const { play: playNotStarted } = useSound(SOUND_PATHS.NOT_STARTED);
+  const { play: playDestinationReached } = useSound(SOUND_PATHS.DESTINATION_REACHED);
+  const prevStatusRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (statusMessage === prevStatusRef.current) return;
+    prevStatusRef.current = statusMessage;
+
+    if (statusMessage === "NOT STARTED YET" || statusMessage === "REACHED YOUR DESTINATION") {
+      const timer = setTimeout(() => {
+        if (statusMessage === "NOT STARTED YET") {
+          playNotStarted();
+        } else {
+          playDestinationReached();
+        }
+      }, AUDIO_CONFIG.STATUS_SOUND_DELAY_MS);
+
+      return () => clearTimeout(timer);
+    }
+  }, [statusMessage, playNotStarted, playDestinationReached]);
+
   return (
     <div
       role="status"
@@ -92,7 +119,7 @@ export function TrainStatus(props: TrainStatusProps) {
           LAST UPDATED {formatRelativeTime(lastUpdatedAt)}
         </p>
         <p className="font-b612-mono-12 text-text-primary uppercase tracking-[-0.48px] leading-[20px] whitespace-nowrap">
-          {getStatusMessage(props)}
+          {statusMessage}
         </p>
       </div>
     </div>
