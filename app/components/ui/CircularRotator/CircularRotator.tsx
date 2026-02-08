@@ -97,12 +97,13 @@ export default function CircularRotator({
 
     if (!hasLivePosition || !hasValidStations) return;
 
-    setStartObservingTooltip(true);
+    const tooltipTimeoutId = setTimeout(() => setStartObservingTooltip(true), 0);
     const scrollTimeoutId = setTimeout(() => {
       performAutoScroll();
     }, 100);
 
     return () => {
+      clearTimeout(tooltipTimeoutId);
       clearTimeout(scrollTimeoutId);
     };
   }, [

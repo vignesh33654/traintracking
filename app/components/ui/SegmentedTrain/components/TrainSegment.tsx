@@ -30,6 +30,7 @@ export const TrainSegment = memo(function TrainSegment({ file, width, height, x,
         height={height}
         priority
         className="pointer-events-none"
+        style={{ width: 'auto', height: 'auto' }}
       />
     </div>
   );

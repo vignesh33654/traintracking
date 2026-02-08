@@ -44,7 +44,6 @@ export function SegmentedTrain({
   distanceFromLastStationKm,
   currentSequence,
   route,
-  lastUpdatedAt,
   startObservingTooltip,
   onTooltipShown,
 }: SegmentedTrainProps) {
@@ -101,13 +100,14 @@ export function SegmentedTrain({
       clearTimeout(timersRef.current.hide);
     }
 
-    setShowTooltip(false);
+    const reset = setTimeout(() => setShowTooltip(false), 0);
     timersRef.current = {
       show: setTimeout(() => setShowTooltip(true), TOOLTIP_TIMING.SHOW_DELAY_MS),
       hide: setTimeout(() => setShowTooltip(false), TOOLTIP_TIMING.SHOW_DELAY_MS + TOOLTIP_TIMING.VISIBLE_DURATION_MS),
     };
 
     return () => {
+      clearTimeout(reset);
       if (timersRef.current) {
         clearTimeout(timersRef.current.show);
         clearTimeout(timersRef.current.hide);

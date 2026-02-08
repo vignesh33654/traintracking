@@ -142,6 +142,7 @@ export function useScrollManager({
     pillsBeforeFirstStation,
     currentLocationStatus,
     currentStationCode,
+    currentStationSequence,
     scrollProgress,
     gapRatio,
     scrollRange,
@@ -213,7 +214,6 @@ export function useScrollManager({
     const scrollTop = getAutoScrollTop({
       distanceFromOriginKm,
       currentStationSequence,
-      isTrainRunning,
       stations,
       pillsPerStation,
       journeyDate,
@@ -229,7 +229,6 @@ export function useScrollManager({
   }, [
     distanceFromOriginKm,
     currentStationSequence,
-    isTrainRunning,
     stations,
     pillsPerStation,
     journeyDate,

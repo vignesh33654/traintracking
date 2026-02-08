@@ -47,6 +47,7 @@ export function TrainHeadlight({ enginePosition, isDark, progressState }: TrainH
         height={headlight.height}
         priority
         className="pointer-events-none"
+        style={{ width: 'auto', height: 'auto' }}
       />
     </div>
   );
