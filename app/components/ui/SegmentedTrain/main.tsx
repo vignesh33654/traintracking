@@ -70,14 +70,14 @@ export function SegmentedTrain({
   const timersRef = useRef<{ show: ReturnType<typeof setTimeout>; hide: ReturnType<typeof setTimeout> } | null>(null);
 
   useEffect(() => {
-    if (!isVisible || userActionTrigger === 0) return;
-
     if (timersRef.current) {
       clearTimeout(timersRef.current.show);
       clearTimeout(timersRef.current.hide);
     }
+    setShowTooltip(false);
 
-    const reset = setTimeout(() => setShowTooltip(false), 0);
+    if (!isVisible || userActionTrigger === 0) return;
+
     timersRef.current = {
       show: setTimeout(() => setShowTooltip(true), TOOLTIP_TIMING.SHOW_DELAY_MS),
       hide: setTimeout(() => setShowTooltip(false), TOOLTIP_TIMING.SHOW_DELAY_MS + TOOLTIP_TIMING.VISIBLE_DURATION_MS),
@@ -86,13 +86,27 @@ export function SegmentedTrain({
     onTooltipShown?.();
 
     return () => {
-      clearTimeout(reset);
       if (timersRef.current) {
         clearTimeout(timersRef.current.show);
         clearTimeout(timersRef.current.hide);
       }
     };
   }, [userActionTrigger, isVisible, onTooltipShown]);
+
+  useEffect(() => {
+    if (!showTooltip) return;
+
+    const dismiss = () => {
+      setShowTooltip(false);
+      if (timersRef.current) {
+        clearTimeout(timersRef.current.show);
+        clearTimeout(timersRef.current.hide);
+      }
+    };
+
+    document.addEventListener("pointerdown", dismiss);
+    return () => document.removeEventListener("pointerdown", dismiss);
+  }, [showTooltip]);
 
   const segmentPositions = useSegmentPositions(engineProgress);
   const maskSlice = useMaskSlice(segmentPositions);
