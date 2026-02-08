@@ -48,7 +48,7 @@ export default function Home() {
   useEffect(() => {
     if (pendingTooltipRef.current && !isFetching && data) {
       pendingTooltipRef.current = false;
-      setUserActionTrigger((prev) => prev + 1);
+      queueMicrotask(() => setUserActionTrigger((prev) => prev + 1));
     }
   }, [isFetching, data]);
 

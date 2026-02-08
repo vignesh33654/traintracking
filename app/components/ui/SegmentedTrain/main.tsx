@@ -79,7 +79,7 @@ export function SegmentedTrain({
     }
     if (showTooltipRef.current) {
       showTooltipRef.current = false;
-      setShowTooltip(false);
+      queueMicrotask(() => setShowTooltip(false));
     }
 
     if (!isVisible || userActionTrigger === 0) return;
