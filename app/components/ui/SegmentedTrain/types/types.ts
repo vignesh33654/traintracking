@@ -14,8 +14,8 @@ export interface SegmentedTrainProps {
   currentSequence?: number | null;
   route?: RouteStation[];
   lastUpdatedAt?: string | null;
-  startObservingTooltip: boolean;
-  onTooltipShown: () => void;
+  userActionTrigger: number;
+  onTooltipShown?: () => void;
 }
 
 export interface SegmentPosition {

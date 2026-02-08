@@ -218,7 +218,7 @@ export default function JourneyDateDropdown({
 
   const buttonClasses =
     variant === "fixed"
-      ? "flex h-[46px] w-[146px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus:outline-none transition-none hover:cursor-pointer"
+      ? "flex h-[46px] w-[152px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus:outline-none transition-none hover:cursor-pointer"
       : "flex h-[44px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-3 py-1 hover:border-orange focus:outline-none transition-none";
 
   const LISTBOX_ID = "journey-date-listbox";

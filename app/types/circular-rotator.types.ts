@@ -15,6 +15,7 @@ export interface CircularRotatorProps {
   pillsPerStation?: number;
   onRefresh?: () => Promise<void>;
   isRefreshing?: boolean;
+  userActionTrigger: number;
 }
 
 export interface TrackItemProps {

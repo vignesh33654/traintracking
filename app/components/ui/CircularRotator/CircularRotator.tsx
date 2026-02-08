@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback, useEffect, useState } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import { useScrollManager } from "../../../hooks/useScrollManager";
 import { useScrollSound } from "../../../hooks/useScrollSound";
 import { usePillPositions } from "../../../hooks/usePillPositions";
@@ -26,6 +26,7 @@ export default function CircularRotator({
   pillsPerStation = PILL_CONFIG.perStation,
   onRefresh,
   isRefreshing,
+  userActionTrigger,
 }: CircularRotatorProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const pillsBeforeFirstStation = PILL_CONFIG.pillsBeforeFirstStation;
@@ -77,19 +78,13 @@ export default function CircularRotator({
     totalItems: itemCount,
   });
 
-  // Flag to start observing train visibility for tooltip trigger
-  const [startObservingTooltip, setStartObservingTooltip] = useState(false);
-
-  // Refresh handler
   const handleRefresh = useCallback(async () => {
     if (onRefresh) {
       await onRefresh();
-      setStartObservingTooltip(true);
       performAutoScroll();
     }
   }, [onRefresh, performAutoScroll]);
 
-  // Auto-scroll when fresh data arrives (page load, refresh, or train selection)
   useEffect(() => {
     const hasLivePosition =
       distanceFromOriginKm !== null || currentStationSequence !== null;
@@ -97,13 +92,11 @@ export default function CircularRotator({
 
     if (!hasLivePosition || !hasValidStations) return;
 
-    const tooltipTimeoutId = setTimeout(() => setStartObservingTooltip(true), 0);
     const scrollTimeoutId = setTimeout(() => {
       performAutoScroll();
     }, 100);
 
     return () => {
-      clearTimeout(tooltipTimeoutId);
       clearTimeout(scrollTimeoutId);
     };
   }, [
@@ -138,8 +131,7 @@ export default function CircularRotator({
           currentLocationStatus={currentLocationStatus}
           currentSequence={currentStationSequence}
           route={route}
-          startObservingTooltip={startObservingTooltip}
-          onTooltipShown={() => setStartObservingTooltip(false)}
+          userActionTrigger={userActionTrigger}
         />
       </div>
 

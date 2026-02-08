@@ -44,7 +44,7 @@ export function SegmentedTrain({
   distanceFromLastStationKm,
   currentSequence,
   route,
-  startObservingTooltip,
+  userActionTrigger,
   onTooltipShown,
 }: SegmentedTrainProps) {
   const { isDark } = useDark();
@@ -68,32 +68,9 @@ export function SegmentedTrain({
 
   const [showTooltip, setShowTooltip] = useState(false);
   const timersRef = useRef<{ show: ReturnType<typeof setTimeout>; hide: ReturnType<typeof setTimeout> } | null>(null);
-  const trainRef = useRef<HTMLDivElement>(null);
-  const [tooltipTrigger, setTooltipTrigger] = useState(0);
 
   useEffect(() => {
-    if (!isVisible || !startObservingTooltip || !trainRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setTooltipTrigger((c) => c + 1);
-            onTooltipShown();
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-
-    observer.observe(trainRef.current);
-
-    return () => observer.disconnect();
-  }, [isVisible, startObservingTooltip, onTooltipShown]);
-
-  useEffect(() => {
-    if (tooltipTrigger === 0) return;
+    if (!isVisible || userActionTrigger === 0) return;
 
     if (timersRef.current) {
       clearTimeout(timersRef.current.show);
@@ -106,6 +83,8 @@ export function SegmentedTrain({
       hide: setTimeout(() => setShowTooltip(false), TOOLTIP_TIMING.SHOW_DELAY_MS + TOOLTIP_TIMING.VISIBLE_DURATION_MS),
     };
 
+    onTooltipShown?.();
+
     return () => {
       clearTimeout(reset);
       if (timersRef.current) {
@@ -113,7 +92,7 @@ export function SegmentedTrain({
         clearTimeout(timersRef.current.hide);
       }
     };
-  }, [tooltipTrigger]);
+  }, [userActionTrigger, isVisible, onTooltipShown]);
 
   const segmentPositions = useSegmentPositions(engineProgress);
   const maskSlice = useMaskSlice(segmentPositions);
@@ -125,7 +104,7 @@ export function SegmentedTrain({
   const { width, segments } = TRAIN_CONFIG;
 
   return (
-    <div ref={trainRef}>
+    <div>
       {shadowSlice && <TrainShadow shadowSlice={shadowSlice} isDark={isDark} />}
 
       {maskSlice && (

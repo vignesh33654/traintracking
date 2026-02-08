@@ -36,8 +36,7 @@ interface TrackContainerProps {
   currentLocationStatus?: CurrentLocation["status"] | null;
   currentSequence?: number | null;
   route?: RouteStation[];
-  startObservingTooltip: boolean;
-  onTooltipShown: () => void;
+  userActionTrigger: number;
 }
 
 export default function TrackContainer({
@@ -58,8 +57,7 @@ export default function TrackContainer({
   currentLocationStatus,
   currentSequence,
   route,
-  startObservingTooltip,
-  onTooltipShown,
+  userActionTrigger,
 }: TrackContainerProps) {
   const itemCount = stations.length * pillsPerStation;
 
@@ -123,8 +121,7 @@ export default function TrackContainer({
           currentSequence={currentSequence}
           route={route}
           lastUpdatedAt={lastUpdatedAt}
-          startObservingTooltip={startObservingTooltip}
-          onTooltipShown={onTooltipShown}
+          userActionTrigger={userActionTrigger}
         />
       )}
 
