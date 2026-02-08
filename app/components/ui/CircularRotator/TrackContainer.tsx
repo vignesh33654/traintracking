@@ -36,6 +36,7 @@ interface TrackContainerProps {
   currentLocationStatus?: CurrentLocation["status"] | null;
   currentSequence?: number | null;
   route?: RouteStation[];
+  userActionTrigger: number;
 }
 
 export default function TrackContainer({
@@ -56,6 +57,7 @@ export default function TrackContainer({
   currentLocationStatus,
   currentSequence,
   route,
+  userActionTrigger,
 }: TrackContainerProps) {
   const itemCount = stations.length * pillsPerStation;
 
@@ -106,16 +108,20 @@ export default function TrackContainer({
         />
       ))}
 
-      {trainIconPosition.isVisible && (
-        <SegmentedTrain
-          engineProgress={trainIconPosition.progress}
-          isVisible={trainIconPosition.isVisible}
-          journeyDate={journeyDate}
-          distanceFromOriginKm={distanceFromOriginKm}
-          currentStationCode={currentStationCode}
-          destinationStationCode={destinationStationCode}
-        />
-      )}
+      <SegmentedTrain
+        engineProgress={trainIconPosition.isVisible ? trainIconPosition.progress : 0}
+        isVisible={trainIconPosition.isVisible}
+        journeyDate={journeyDate}
+        distanceFromOriginKm={distanceFromOriginKm}
+        currentStationCode={currentStationCode}
+        destinationStationCode={destinationStationCode}
+        currentLocationStatus={currentLocationStatus}
+        distanceFromLastStationKm={distanceFromLastStationKm}
+        currentSequence={currentSequence}
+        route={route}
+        lastUpdatedAt={lastUpdatedAt}
+        userActionTrigger={userActionTrigger}
+      />
 
       <TrainStatus
         lastUpdatedAt={lastUpdatedAt}

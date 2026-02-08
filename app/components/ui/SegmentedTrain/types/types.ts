@@ -1,3 +1,5 @@
+import type { RouteStation } from "@/app/types/train.types";
+
 export interface SegmentedTrainProps {
   engineProgress: number;
   backgroundColor?: string;
@@ -7,6 +9,13 @@ export interface SegmentedTrainProps {
   showStatusDot?: boolean;
   currentStationCode?: string | null;
   destinationStationCode?: string;
+  currentLocationStatus?: string | null;
+  distanceFromLastStationKm?: number | null;
+  currentSequence?: number | null;
+  route?: RouteStation[];
+  lastUpdatedAt?: string | null;
+  userActionTrigger: number;
+  onTooltipShown?: () => void;
 }
 
 export interface SegmentPosition {

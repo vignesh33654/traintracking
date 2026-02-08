@@ -45,7 +45,6 @@ export function calculateScrollTopForTrainPosition(
 interface AutoScrollParams {
   distanceFromOriginKm: number | null;
   currentStationSequence: number | null;
-  isTrainRunning: boolean;
   stations: RouteStation[];
   pillsPerStation: number;
   journeyDate: string | null;
@@ -77,7 +76,6 @@ export function getInitialStationIndex(
 export function getAutoScrollTop({
   distanceFromOriginKm,
   currentStationSequence,
-  isTrainRunning,
   stations,
   pillsPerStation,
   journeyDate,

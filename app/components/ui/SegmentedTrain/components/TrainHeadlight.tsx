@@ -1,7 +1,10 @@
+import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { TRAIN_CONFIG } from "../../../../config/train.config";
 import type { ProgressState } from "../../../../utils/train-progress-utils";
 import type { SegmentPosition } from "../types/types";
+
+const BLINK_CLASS = "animate-headlight-blink";
 
 interface TrainHeadlightProps {
   enginePosition: SegmentPosition;
@@ -14,6 +17,22 @@ interface TrainHeadlightProps {
  */
 export function TrainHeadlight({ enginePosition, isDark, progressState }: TrainHeadlightProps) {
   const { headlight } = TRAIN_CONFIG;
+  const blinkRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = blinkRef.current;
+    if (!el) return;
+
+    const handleHonk = () => {
+      el.classList.remove(BLINK_CLASS);
+      void el.offsetWidth;
+      el.classList.add(BLINK_CLASS);
+      el.addEventListener("animationend", () => el.classList.remove(BLINK_CLASS), { once: true });
+    };
+
+    window.addEventListener("horn-honk", handleHonk);
+    return () => window.removeEventListener("horn-honk", handleHonk);
+  }, []);
 
   if (!headlight?.enabled) {
     return null;
@@ -40,14 +59,17 @@ export function TrainHeadlight({ enginePosition, isDark, progressState }: TrainH
         opacity: headlight.opacity,
       }}
     >
-      <Image
-        src={headlight.file}
-        alt=""
-        width={headlight.width}
-        height={headlight.height}
-        priority
-        className="pointer-events-none"
-      />
+      <div ref={blinkRef} style={{ transformOrigin: "bottom center" }}>
+        <Image
+          src={headlight.file}
+          alt=""
+          width={headlight.width}
+          height={headlight.height}
+          priority
+          className="pointer-events-none"
+          style={{ width: 'auto', height: 'auto' }}
+        />
+      </div>
     </div>
   );
 }

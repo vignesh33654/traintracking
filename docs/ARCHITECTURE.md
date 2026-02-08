@@ -284,14 +284,14 @@ scrollDebounceMs: 300; // Debounce time
 - **Output**: Scroll position in pixels
 - **Used For**: Refresh button, initial load positioning
 
-#### `getAutoScrollTop({ distanceFromOriginKm, isTrainRunning, ... })`
+#### `getAutoScrollTop({ distanceFromOriginKm, currentStationSequence, ... })`
 
-- **Input**: Current distance, running status, configuration
+- **Input**: Current distance, station sequence, scroll configuration
 - **Output**: Scroll position to apply
 - **Logic**:
-  - If running: Position train at 50% viewport
-  - If completed: Position at end
-  - If future: Position at start
+  - Primary: Uses `distanceFromOriginKm` to calculate target pill index
+  - Fallback: Uses `currentStationSequence` when distance is null
+  - Returns 0 if no live position data available
 
 ---
 
@@ -313,6 +313,9 @@ scrollDebounceMs: 300; // Debounce time
 | `clamp01`                            | circular-rotator-utils        | Keep value between 0-1                                       |
 | `detectTrainPhase`                   | train-phase-utils             | Determine current phase (1, 2, or 3)                         |
 | `calculateScrollTopForTrainPosition` | train-auto-scroll             | Position pill at viewport location                           |
+| `getAutoScrollTop`                   | train-auto-scroll             | Distance/sequence → scroll position for auto-scroll          |
+| `isTrainRunningStatus`               | train-auto-scroll             | Check if train status is running (AT_STATION/ARRIVED/DEPARTED)|
+| `getInitialStationIndex`             | train-auto-scroll             | Get starting station index based on running state            |
 | `getProgressState`                   | train-progress-utils          | Determine journey state (not-started, in-progress, complete) |
 | `calculatePercentage`                | train-progress-utils          | Calculate journey completion percentage (0-100%)             |
 | `generateProgressArcPath`            | train-progress-utils          | Generate SVG path for circular progress arc                  |

@@ -213,3 +213,31 @@
     animation: none;
   }
 }
+
+@keyframes headlight-blink {
+  0% {
+    opacity: 1;
+  }
+  12.5% {
+    opacity: 0.2;
+  }
+  25% {
+    opacity: 1;
+  }
+  37.5% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  62.5% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@utility animate-headlight-blink {
+  animation: headlight-blink 1000ms ease-in-out;
+}

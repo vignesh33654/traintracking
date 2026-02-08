@@ -9,6 +9,7 @@ import { PILL_CONFIG } from "../../../config/circular-rotator.config";
 import type { CircularRotatorProps } from "../../../types/circular-rotator.types";
 import TrackContainer from "./TrackContainer";
 import RefreshButton from "../RefreshButton";
+import HornButton from "../HornButton";
 
 export default function CircularRotator({
   stations,
@@ -25,6 +26,7 @@ export default function CircularRotator({
   pillsPerStation = PILL_CONFIG.perStation,
   onRefresh,
   isRefreshing,
+  userActionTrigger,
 }: CircularRotatorProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const pillsBeforeFirstStation = PILL_CONFIG.pillsBeforeFirstStation;
@@ -76,7 +78,6 @@ export default function CircularRotator({
     totalItems: itemCount,
   });
 
-  // Refresh handler
   const handleRefresh = useCallback(async () => {
     if (onRefresh) {
       await onRefresh();
@@ -84,8 +85,6 @@ export default function CircularRotator({
     }
   }, [onRefresh, performAutoScroll]);
 
-  // Auto-scroll when fresh data arrives (page load, refresh, or train selection)
-  // Uses setTimeout to ensure DOM and scroll metrics are fully updated before scrolling
   useEffect(() => {
     const hasLivePosition =
       distanceFromOriginKm !== null || currentStationSequence !== null;
@@ -93,12 +92,13 @@ export default function CircularRotator({
 
     if (!hasLivePosition || !hasValidStations) return;
 
-    // Small delay to let React batch updates complete and ensure data consistency
-    const timeoutId = setTimeout(() => {
+    const scrollTimeoutId = setTimeout(() => {
       performAutoScroll();
     }, 100);
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(scrollTimeoutId);
+    };
   }, [
     distanceFromOriginKm,
     currentStationSequence,
@@ -131,9 +131,11 @@ export default function CircularRotator({
           currentLocationStatus={currentLocationStatus}
           currentSequence={currentStationSequence}
           route={route}
+          userActionTrigger={userActionTrigger}
         />
       </div>
 
+      <HornButton />
       {onRefresh && (
         <RefreshButton onRefresh={handleRefresh} isRefreshing={isRefreshing} />
       )}

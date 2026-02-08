@@ -52,14 +52,14 @@ export function StatusDot({
       {animate && (
         <span
           className={cn(
-            "absolute inline-flex h-full w-full animate-ping rounded-full opacity-75",
+            "absolute inline-flex h-full w-full animate-ping rounded-full opacity-90",
             color
           )}
         />
       )}
       <span
         className={cn(
-          "relative inline-flex rounded-full border border-white dark:border-bg-0",
+          "relative inline-flex rounded-full border border-white dark:border-bg-[#ffffff]",
           sizeClass,
           color
         )}

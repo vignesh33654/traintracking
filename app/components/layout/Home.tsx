@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useState } from "react";
+import { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import { useIsRestoring } from "@tanstack/react-query";
 import { API_CONFIG } from "@/app/config/api.config";
 import { useTrainData } from "@/app/hooks/useTrainData";
@@ -23,22 +23,34 @@ export default function Home() {
     }
     return API_CONFIG.trainNumber;
   });
+  const [userActionTrigger, setUserActionTrigger] = useState(0);
 
   const storedTrainLabel =
     typeof window !== "undefined" ? getStoredTrain()?.label : undefined;
 
+  const pendingTooltipRef = useRef(true);
+
   const handleTrainSelect = useCallback((trainNumber: string) => {
     setSelectedTrain(trainNumber);
+    pendingTooltipRef.current = true;
   }, []);
 
   const handleJourneyDateChange = useCallback((date: string) => {
     setJourneyDate(date);
+    pendingTooltipRef.current = true;
   }, []);
 
   const { data, isLoading, isError, error, refetch, isFetching } = useTrainData(
     selectedTrain,
     { journeyDate },
   );
+
+  useEffect(() => {
+    if (pendingTooltipRef.current && !isFetching && data) {
+      pendingTooltipRef.current = false;
+      setUserActionTrigger((prev) => prev + 1);
+    }
+  }, [isFetching, data]);
 
   const isRestoring = useIsRestoring();
 
@@ -54,6 +66,7 @@ export default function Home() {
 
   const handleRefresh = useCallback(async () => {
     await refetch();
+    setUserActionTrigger((prev) => prev + 1);
   }, [refetch]);
 
   if (isRestoring && !data) {
@@ -181,6 +194,7 @@ export default function Home() {
         route={data?.route}
         onRefresh={handleRefresh}
         isRefreshing={isFetching}
+        userActionTrigger={userActionTrigger}
       />
 
       <StatusCard train={data?.train ?? null} />
