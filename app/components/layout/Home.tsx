@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useState, useEffect } from "react";
+import { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import { useIsRestoring } from "@tanstack/react-query";
 import { API_CONFIG } from "@/app/config/api.config";
 import { useTrainData } from "@/app/hooks/useTrainData";
@@ -28,13 +28,11 @@ export default function Home() {
   const storedTrainLabel =
     typeof window !== "undefined" ? getStoredTrain()?.label : undefined;
 
-  useEffect(() => {
-    setUserActionTrigger((prev) => prev + 1);
-  }, []);
+  const pendingTooltipRef = useRef(false);
 
   const handleTrainSelect = useCallback((trainNumber: string) => {
     setSelectedTrain(trainNumber);
-    setUserActionTrigger((prev) => prev + 1);
+    pendingTooltipRef.current = true;
   }, []);
 
   const handleJourneyDateChange = useCallback((date: string) => {
@@ -45,6 +43,13 @@ export default function Home() {
     selectedTrain,
     { journeyDate },
   );
+
+  useEffect(() => {
+    if (pendingTooltipRef.current && !isFetching && data) {
+      pendingTooltipRef.current = false;
+      setUserActionTrigger((prev) => prev + 1);
+    }
+  }, [isFetching, data]);
 
   const isRestoring = useIsRestoring();
 

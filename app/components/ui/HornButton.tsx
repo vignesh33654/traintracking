@@ -22,9 +22,14 @@ function HornIcon({ className }: { className?: string }) {
 export default function HornButton() {
   const { play } = useSound(SOUND_PATHS.HORN);
 
+  const handleClick = () => {
+    play();
+    window.dispatchEvent(new CustomEvent("horn-honk"));
+  };
+
   return (
     <button
-      onClick={play}
+      onClick={handleClick}
       className="hover:cursor-pointer fixed right-4 bottom-[72px] w-10 h-10 z-50 flex flex-col justify-center items-center rounded-full bg-bg-0 border border-divider text-text-primary transition-none hover:bg-bg-1 focus-ring"
       aria-label="Play horn sound"
     >
