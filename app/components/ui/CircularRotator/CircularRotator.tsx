@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import { useScrollManager } from "../../../hooks/useScrollManager";
 import { useScrollSound } from "../../../hooks/useScrollSound";
 import { usePillPositions } from "../../../hooks/usePillPositions";
@@ -77,16 +77,19 @@ export default function CircularRotator({
     totalItems: itemCount,
   });
 
+  // Flag to start observing train visibility for tooltip trigger
+  const [startObservingTooltip, setStartObservingTooltip] = useState(false);
+
   // Refresh handler
   const handleRefresh = useCallback(async () => {
     if (onRefresh) {
       await onRefresh();
+      setStartObservingTooltip(true);
       performAutoScroll();
     }
   }, [onRefresh, performAutoScroll]);
 
   // Auto-scroll when fresh data arrives (page load, refresh, or train selection)
-  // Uses setTimeout to ensure DOM and scroll metrics are fully updated before scrolling
   useEffect(() => {
     const hasLivePosition =
       distanceFromOriginKm !== null || currentStationSequence !== null;
@@ -94,12 +97,14 @@ export default function CircularRotator({
 
     if (!hasLivePosition || !hasValidStations) return;
 
-    // Small delay to let React batch updates complete and ensure data consistency
-    const timeoutId = setTimeout(() => {
+    setStartObservingTooltip(true);
+    const scrollTimeoutId = setTimeout(() => {
       performAutoScroll();
     }, 100);
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(scrollTimeoutId);
+    };
   }, [
     distanceFromOriginKm,
     currentStationSequence,
@@ -132,6 +137,8 @@ export default function CircularRotator({
           currentLocationStatus={currentLocationStatus}
           currentSequence={currentStationSequence}
           route={route}
+          startObservingTooltip={startObservingTooltip}
+          onTooltipShown={() => setStartObservingTooltip(false)}
         />
       </div>
 

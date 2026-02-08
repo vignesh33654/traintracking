@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { cn } from "@/app/utils/utils";
 import type { RouteStation } from "@/app/types/train.types";
-import { getNextStationSummary, getStationName } from "@/app/utils/train-status.utils";
+import { getStatusMessage } from "@/app/utils/train-status.utils";
 import { formatRelativeTime } from "@/app/utils/time-formatters";
 import { TrainProgress } from "./TrainProgress";
 import { useSound } from "@/app/hooks/useSound";
@@ -19,50 +19,6 @@ export interface TrainStatusProps {
   currentSequence?: number | null;
   route?: RouteStation[];
   destinationStationCode?: string;
-}
-
-function getStatusMessage(props: TrainStatusProps): string {
-  const {
-    currentLocationStatus,
-    distanceFromLastStationKm,
-    distanceFromOriginKm,
-    currentStationCode,
-    currentSequence,
-    route,
-    destinationStationCode,
-  } = props;
-
-  if (currentStationCode && currentStationCode === destinationStationCode) {
-    return "REACHED YOUR DESTINATION";
-  }
-
-  // Only show "ARRIVED" if train has actually started (moved from origin)
-  if ((currentLocationStatus === "AT_STATION" || currentLocationStatus === "ARRIVED") &&
-      distanceFromOriginKm != null && distanceFromOriginKm > 0) {
-    const name = getStationName(currentStationCode, route);
-    return `ARRIVED AT ${name}`;
-  }
-
-  const { nextStationName, distanceToNextKm } = getNextStationSummary(
-    currentSequence,
-    currentStationCode,
-    distanceFromOriginKm,
-    route
-  );
-
-  if (currentLocationStatus === "DEPARTED" && distanceFromLastStationKm != null) {
-    if (distanceToNextKm != null && nextStationName) {
-      return `${Math.round(distanceToNextKm)} KM TO ${nextStationName}`;
-    }
-  }
-
-  if (distanceFromLastStationKm != null && distanceFromLastStationKm > 0) {
-    if (distanceToNextKm != null && nextStationName) {
-      return `${Math.round(distanceToNextKm)} KM TO ${nextStationName}`;
-    }
-  }
-
-  return "NOT STARTED YET";
 }
 
 export function TrainStatus(props: TrainStatusProps) {

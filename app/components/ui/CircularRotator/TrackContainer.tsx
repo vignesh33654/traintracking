@@ -36,6 +36,8 @@ interface TrackContainerProps {
   currentLocationStatus?: CurrentLocation["status"] | null;
   currentSequence?: number | null;
   route?: RouteStation[];
+  startObservingTooltip: boolean;
+  onTooltipShown: () => void;
 }
 
 export default function TrackContainer({
@@ -56,6 +58,8 @@ export default function TrackContainer({
   currentLocationStatus,
   currentSequence,
   route,
+  startObservingTooltip,
+  onTooltipShown,
 }: TrackContainerProps) {
   const itemCount = stations.length * pillsPerStation;
 
@@ -114,6 +118,13 @@ export default function TrackContainer({
           distanceFromOriginKm={distanceFromOriginKm}
           currentStationCode={currentStationCode}
           destinationStationCode={destinationStationCode}
+          currentLocationStatus={currentLocationStatus}
+          distanceFromLastStationKm={distanceFromLastStationKm}
+          currentSequence={currentSequence}
+          route={route}
+          lastUpdatedAt={lastUpdatedAt}
+          startObservingTooltip={startObservingTooltip}
+          onTooltipShown={onTooltipShown}
         />
       )}
 
