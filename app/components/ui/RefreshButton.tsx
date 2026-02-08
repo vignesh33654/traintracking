@@ -29,7 +29,7 @@ export default function RefreshButton({ onRefresh, isRefreshing = false }: Refre
     <button
       onClick={onRefresh}
       disabled={isRefreshing}
-      className="hover:cursor-pointer fixed right-4 bottom-4 w-10 h-10 z-50 flex flex-col justify-center items-center rounded-full bg-orange  text-text-primary transition-none hover:bg-orange-500 focus-ring disabled:opacity-50 "
+      className="hover:cursor-pointer fixed right-4 bottom-4 w-14 h-14 md:w-10 md:h-10 z-50 flex flex-col justify-center items-center rounded-full bg-orange  text-text-primary transition-none hover:bg-orange-500 focus-ring disabled:opacity-50 "
       aria-label="Refresh train data"
     >
       <RefreshIcon className={isRefreshing ? "animate-spin" : ""} />
