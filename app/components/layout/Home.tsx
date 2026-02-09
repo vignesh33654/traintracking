@@ -14,8 +14,31 @@ import { TopControlsContainer } from "@/app/components/ui/TopHeader";
 import MobileHeader from "@/app/components/ui/MobileHeader";
 import { getStoredTrain } from "@/app/components/ui/SearchTrain/store";
 
+const JOURNEY_DATE_KEY = "journeyDate";
+
+function getStoredJourneyDate(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(JOURNEY_DATE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function saveJourneyDate(date: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(JOURNEY_DATE_KEY, date);
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 export default function Home() {
-  const [journeyDate, setJourneyDate] = useState<string>(() => getTodayDate());
+  const [journeyDate, setJourneyDate] = useState<string>(
+    () => getStoredJourneyDate() || getTodayDate(),
+  );
+  const [hasUserChangedDate, setHasUserChangedDate] = useState(false);
   const [selectedTrain, setSelectedTrain] = useState<string>(() => {
     if (typeof window !== "undefined") {
       const stored = getStoredTrain();
@@ -37,6 +60,8 @@ export default function Home() {
 
   const handleJourneyDateChange = useCallback((date: string) => {
     setJourneyDate(date);
+    setHasUserChangedDate(true);
+    saveJourneyDate(date);
     pendingTooltipRef.current = true;
   }, []);
 
@@ -44,6 +69,20 @@ export default function Home() {
     selectedTrain,
     { journeyDate },
   );
+
+  // Sync journey date with API's live date (unless user manually changed it)
+  const liveJourneyDate = data?.liveData?.journeyDate ?? null;
+  useEffect(() => {
+    if (liveJourneyDate && !hasUserChangedDate) {
+      setJourneyDate(liveJourneyDate);
+      saveJourneyDate(liveJourneyDate);
+    }
+  }, [liveJourneyDate, hasUserChangedDate]);
+
+  // Reset user override when train changes
+  useEffect(() => {
+    setHasUserChangedDate(false);
+  }, [selectedTrain]);
 
   useEffect(() => {
     if (pendingTooltipRef.current && !isFetching && data) {
@@ -148,7 +187,6 @@ export default function Home() {
     );
   }
 
-  const liveJourneyDate = data?.liveData?.journeyDate ?? null;
   const distanceFromOriginKm =
     data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
   const currentLocationStatus = data?.liveData?.currentLocation?.status ?? null;
