@@ -52,8 +52,65 @@ const circularStd = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Train Tracker",
-  description: "Live train tracking application",
+  metadataBase: new URL("https://trainstracking.in"),
+  title: {
+    default: "Live train running status | Where is my train | Live status updates",
+    template: "%s | Live train running status | Where is my train | Live status updates",
+  },
+  description:
+    "Indian railway running status - Get live running status, current location, delay information, and platform details for trains across India.",
+  keywords: [
+  "train tracking",
+"live train status",
+"Indian Railways",
+"train location",
+"railway tracking",
+"train running status",
+"real time train status",
+"spot your train",
+"train ETA",
+"live Indian trains",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://trainstracking.in",
+      title: "Live train running status | Where is my train | Live status updates",
+      description:
+      "Track Indian Railways trains in real-time. Get live running status, current location, delay information, and platform details.",
+    siteName: "Train Tracker",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Train Tracker - Live Indian Railway Train Tracking",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Live train running status",
+    description:
+      "Track Indian Railways trains in real-time with crafted interactions",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon-apple.svg",
+  },
+  manifest: "/manifest.json",
 };
 
 const DARK_MODE_SCRIPT = `
