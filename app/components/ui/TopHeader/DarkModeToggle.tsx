@@ -84,13 +84,13 @@ export default function DarkModeToggle({
       className={`${baseClasses} ${variantClasses}`}
     >
       <span
-        className={`flex items-center justify-center rounded-full transition-colors ${variant === "inline" ? "size-7.5" : "size-9"} ${isDark ? "bg-bg-1 " : "bg-transparent"}`}
+        className={`flex items-center justify-center rounded-full transition-colors ${variant === "inline" ? "size-8" : "size-8"} ${isDark ? "bg-bg-1 " : "bg-transparent"}`}
         aria-hidden
       >
         <MoonIcon />
       </span>
       <span
-        className={`flex items-center justify-center rounded-full transition-colors ${variant === "inline" ? "size-7.5" : "size-9"} ${!isDark ? "bg-bg-1" : "bg-transparent"}`}
+        className={`flex items-center justify-center rounded-full transition-colors ${variant === "inline" ? "size-8" : "size-8"} ${!isDark ? "bg-bg-1" : "bg-transparent"}`}
         aria-hidden
       >
         <SunIcon />
