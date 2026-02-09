@@ -16,6 +16,7 @@ import { getStoredTrain } from "@/app/components/ui/SearchTrain/store";
 
 export default function Home() {
   const [journeyDate, setJourneyDate] = useState<string>(() => getTodayDate());
+  const [hasUserChangedDate, setHasUserChangedDate] = useState(false);
   const [selectedTrain, setSelectedTrain] = useState<string>(() => {
     if (typeof window !== "undefined") {
       const stored = getStoredTrain();
@@ -37,6 +38,7 @@ export default function Home() {
 
   const handleJourneyDateChange = useCallback((date: string) => {
     setJourneyDate(date);
+    setHasUserChangedDate(true);
     pendingTooltipRef.current = true;
   }, []);
 
@@ -44,6 +46,17 @@ export default function Home() {
     selectedTrain,
     { journeyDate },
   );
+
+  const liveJourneyDate = data?.liveData?.journeyDate ?? null;
+  useEffect(() => {
+    if (liveJourneyDate && !hasUserChangedDate) {
+      setJourneyDate(liveJourneyDate);
+    }
+  }, [liveJourneyDate, hasUserChangedDate]);
+
+  useEffect(() => {
+    setHasUserChangedDate(false);
+  }, [selectedTrain]);
 
   useEffect(() => {
     if (pendingTooltipRef.current && !isFetching && data) {
@@ -148,7 +161,6 @@ export default function Home() {
     );
   }
 
-  const liveJourneyDate = data?.liveData?.journeyDate ?? null;
   const distanceFromOriginKm =
     data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
   const currentLocationStatus = data?.liveData?.currentLocation?.status ?? null;
