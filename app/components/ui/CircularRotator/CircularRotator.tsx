@@ -10,6 +10,7 @@ import type { CircularRotatorProps } from "../../../types/circular-rotator.types
 import TrackContainer from "./TrackContainer";
 import RefreshButton from "../RefreshButton";
 import HornButton from "../HornButton";
+import ScrollDownIndicator from "../ScrollDownIndicator";
 
 export default function CircularRotator({
   stations,
@@ -135,6 +136,7 @@ export default function CircularRotator({
         />
       </div>
 
+      <ScrollDownIndicator scrollProgress={scrollProgress} />
       <HornButton />
       {onRefresh && (
         <RefreshButton onRefresh={handleRefresh} isRefreshing={isRefreshing} />
