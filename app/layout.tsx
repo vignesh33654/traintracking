@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "./utils/utils";
 import { QueryProvider } from "./providers/QueryProvider";
+import { Analytics } from "./components/Analytics";
 
 const b612Mono = B612_Mono({
   variable: "--font-b612-mono",
@@ -138,6 +139,7 @@ export default function RootLayout({
         )}
       >
         <script dangerouslySetInnerHTML={{ __html: DARK_MODE_SCRIPT }} />
+        <Analytics />
         <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
