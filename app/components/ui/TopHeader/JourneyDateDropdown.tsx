@@ -249,7 +249,7 @@ export default function JourneyDateDropdown({
 
       {isOpen && (
         <div
-          className={`absolute top-full z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${
+          className={`absolute w-[152] top-full z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${
             variant === "fixed" ? "min-w-35" : "min-w-30"
           }`}
         >
