@@ -7,7 +7,7 @@ import { getStatusMessage } from "@/app/utils/train-status.utils";
 import { formatRelativeTime } from "@/app/utils/time-formatters";
 import { TrainProgress } from "./TrainProgress";
 import { useSound } from "@/app/hooks/useSound";
-import { SOUND_PATHS, AUDIO_CONFIG } from "@/app/config/audio.config";
+import { SOUND_PATHS } from "@/app/config/audio.config";
 
 export interface TrainStatusProps {
   className?: string;
@@ -19,6 +19,7 @@ export interface TrainStatusProps {
   currentSequence?: number | null;
   route?: RouteStation[];
   destinationStationCode?: string;
+  isTrainVisible?: boolean;
 }
 
 export function TrainStatus(props: TrainStatusProps) {
@@ -28,29 +29,38 @@ export function TrainStatus(props: TrainStatusProps) {
     distanceFromOriginKm,
     currentStationCode,
     destinationStationCode,
+    isTrainVisible,
   } = props;
 
   const statusMessage = getStatusMessage(props);
   const { play: playNotStarted } = useSound(SOUND_PATHS.NOT_STARTED);
   const { play: playDestinationReached } = useSound(SOUND_PATHS.DESTINATION_REACHED);
   const prevStatusRef = useRef<string | null>(null);
+  const pendingSoundRef = useRef<"not-started" | "destination-reached" | null>(null);
 
+  // When status changes, queue the sound to play once train is visible
   useEffect(() => {
     if (statusMessage === prevStatusRef.current) return;
     prevStatusRef.current = statusMessage;
 
-    if (statusMessage === "NOT STARTED YET" || statusMessage === "REACHED YOUR DESTINATION") {
-      const timer = setTimeout(() => {
-        if (statusMessage === "NOT STARTED YET") {
-          playNotStarted();
-        } else {
-          playDestinationReached();
-        }
-      }, AUDIO_CONFIG.STATUS_SOUND_DELAY_MS);
-
-      return () => clearTimeout(timer);
+    if (statusMessage === "NOT STARTED YET") {
+      pendingSoundRef.current = "not-started";
+    } else if (statusMessage === "REACHED YOUR DESTINATION") {
+      pendingSoundRef.current = "destination-reached";
     }
-  }, [statusMessage, playNotStarted, playDestinationReached]);
+  }, [statusMessage]);
+
+  // Play the pending sound when the train becomes visible
+  useEffect(() => {
+    if (!isTrainVisible || !pendingSoundRef.current) return;
+
+    if (pendingSoundRef.current === "not-started") {
+      playNotStarted();
+    } else {
+      playDestinationReached();
+    }
+    pendingSoundRef.current = null;
+  }, [isTrainVisible, playNotStarted, playDestinationReached]);
 
   return (
     <div

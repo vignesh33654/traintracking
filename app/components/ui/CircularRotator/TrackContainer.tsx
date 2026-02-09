@@ -132,6 +132,7 @@ export default function TrackContainer({
         currentSequence={currentSequence}
         route={route}
         destinationStationCode={destinationStationCode}
+        isTrainVisible={trainIconPosition.isVisible}
       />
     </div>
   );
