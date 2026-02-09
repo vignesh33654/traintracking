@@ -18,7 +18,7 @@ const tooltipVariants = cva("flex items-center", {
 });
 
 const textVariants = cva(
-  "bg-orange text-white font-b612-mono-10 leading-[14px] p-1 max-w-[130px] w-fit line-clamp-3",
+  "bg-orange text-white font-b612-mono-10 leading-[14px] p-1 max-w-[180px] w-fit line-clamp-3",
   {
     variants: {
       variant: {
@@ -79,7 +79,7 @@ export default function Tooltip({ label, variant, className }: TooltipProps) {
       <TooltipArrow direction={variant} />
       <span
         className={textVariants({ variant })}
-        style={{ fontSize: "8px" }}
+        style={{ fontSize: "10px" }}
       >
         {label}
       </span>

@@ -30,7 +30,7 @@ export default function HornButton() {
   return (
     <button
       onClick={handleClick}
-      className="hover:cursor-pointer fixed right-4 bottom-[72px] w-10 h-10 z-50 flex flex-col justify-center items-center rounded-full bg-bg-0 border border-divider text-text-primary transition-none hover:bg-bg-1 focus-ring"
+      className="hover:cursor-pointer fixed left-4 bottom-4 md:right-4 md:bottom-[72px] w-14 h-14 md:w-10 md:h-10 z-50 flex flex-col justify-center items-center rounded-full bg-bg-0 border border-divider text-text-primary transition-none hover:bg-bg-1 focus-ring"
       aria-label="Play horn sound"
     >
       <HornIcon />

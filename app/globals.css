@@ -39,6 +39,10 @@
     max-width: 100vw;
   }
 
+  :root {
+    --loading-spinner-color: var(--color-text-secondary);
+  }
+
   .dark {
     --color-bg-0: #131313;
     --color-bg-1: #262626;
@@ -52,6 +56,14 @@
     --color-red: #ff4646;
     --color-green: #6acf6a;
     --color-yellow: #fba303;
+  }
+
+  .loading-spinner-dots {
+    filter: brightness(0) !important;
+  }
+
+  .dark .loading-spinner-dots {
+    filter: brightness(0) invert(1) !important;
   }
 
   .no-transition,
