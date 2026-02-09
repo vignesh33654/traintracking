@@ -6,7 +6,7 @@
 /**
  * Safely access gtag function with error handling
  */
-function getGtag(): ((...args: any[]) => void) | null {
+function getGtag(): ((...args: [string, ...unknown[]]) => void) | null {
   if (typeof window === 'undefined') {
     return null;
   }

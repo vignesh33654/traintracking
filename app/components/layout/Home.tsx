@@ -55,6 +55,7 @@ export default function Home() {
 
   const handleTrainSelect = useCallback((trainNumber: string) => {
     setSelectedTrain(trainNumber);
+    setHasUserChangedDate(false);
     pendingTooltipRef.current = true;
   }, []);
 
@@ -74,15 +75,9 @@ export default function Home() {
   const liveJourneyDate = data?.liveData?.journeyDate ?? null;
   useEffect(() => {
     if (liveJourneyDate && !hasUserChangedDate) {
-      setJourneyDate(liveJourneyDate);
       saveJourneyDate(liveJourneyDate);
     }
   }, [liveJourneyDate, hasUserChangedDate]);
-
-  // Reset user override when train changes
-  useEffect(() => {
-    setHasUserChangedDate(false);
-  }, [selectedTrain]);
 
   useEffect(() => {
     if (pendingTooltipRef.current && !isFetching && data) {
