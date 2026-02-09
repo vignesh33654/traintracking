@@ -1,0 +1,21 @@
+{
+  "name": "Train Tracker - Live Indian Railway Tracking",
+  "short_name": "Train Tracker",
+  "description": "Track Indian Railways trains in real-time",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon-apple.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
