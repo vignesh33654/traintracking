@@ -67,7 +67,10 @@ export function SegmentedTrain({
     route,
     destinationStationCode,
   });
-  const delay = formatDelay(currentStationDelayMinutes);
+  const hasReachedDestination = currentStationCode === destinationStationCode;
+  const delay = hasReachedDestination
+    ? null
+    : formatDelay(currentStationDelayMinutes);
   const tooltipVariant = getTooltipVariant(engineProgress);
 
   const [showTooltip, setShowTooltip] = useState(false);

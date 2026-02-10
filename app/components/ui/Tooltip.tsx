@@ -3,7 +3,7 @@ import { cn } from "../../utils/utils";
 
 export const TOOLTIP_TIMING = {
   SHOW_DELAY_MS: 50,
-  VISIBLE_DURATION_MS: 2600,
+  VISIBLE_DURATION_MS: 3200,
 } as const;
 
 const tooltipVariants = cva("flex items-center", {
