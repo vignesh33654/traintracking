@@ -14,8 +14,9 @@ export function formatMinutesToHoursAndMinutes(totalMinutes: number): string {
 }
 
 /** Formats delay time in minutes to human-readable string */
-export function formatDelay(minutes: number | null | undefined): string {
-  if (minutes == null || minutes <= 0) return "On Time";
+export function formatDelay(minutes: number | null | undefined): string | null {
+  if (minutes == null) return null;
+  if (minutes <= 0) return "On Time";
   if (minutes >= MINUTES_PER_HOUR) return `${formatMinutesToHoursAndMinutes(minutes)} late`;
   return `${minutes} min late`;
 }

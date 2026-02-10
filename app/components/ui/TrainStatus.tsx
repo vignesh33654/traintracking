@@ -78,12 +78,14 @@ export function TrainStatus(props: TrainStatusProps) {
         <p className="font-b612-mono-12 text-text-primary uppercase tracking-[-0.48px] leading-[20px] whitespace-nowrap">
           {statusMessage}
         </p>
-        <p className={cn(
-          "font-b612-mono-9 uppercase tracking-[-0.4px] leading-[12px] whitespace-nowrap",
-          props.currentStationDelayMinutes && props.currentStationDelayMinutes > 0 ? "text-red" : "text-green"
-        )}>
-          {formatDelay(props.currentStationDelayMinutes)}
-        </p>
+        {formatDelay(props.currentStationDelayMinutes) && (
+          <p className={cn(
+            "font-b612-mono-9 uppercase tracking-[-0.4px] leading-[12px] whitespace-nowrap",
+            props.currentStationDelayMinutes && props.currentStationDelayMinutes > 0 ? "text-red" : "text-green"
+          )}>
+            {formatDelay(props.currentStationDelayMinutes)}
+          </p>
+        )}
       </div>
     </div>
   );
