@@ -22,6 +22,7 @@ export default function CircularRotator({
   lastUpdatedAt,
   destinationStationCode,
   route,
+  currentStationDelayMinutes,
   pillGap = PILL_CONFIG.gap,
   pillsPerStation = PILL_CONFIG.perStation,
   onRefresh,
@@ -131,6 +132,7 @@ export default function CircularRotator({
           currentLocationStatus={currentLocationStatus}
           currentSequence={currentStationSequence}
           route={route}
+          currentStationDelayMinutes={currentStationDelayMinutes}
           userActionTrigger={userActionTrigger}
         />
       </div>

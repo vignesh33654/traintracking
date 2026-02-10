@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { getProgressState } from "../../../utils/train-progress-utils";
 import { getStatusMessage } from "../../../utils/train-status.utils";
+import { formatDelay } from "../../../utils/time-formatters";
 import { TRAIN_CONFIG } from "../../../config/train.config";
 import { TRACK_PATH_CONFIG } from "../../../config/circular-rotator.config";
 import { useDark } from "../../../hooks/useDark";
@@ -44,6 +45,7 @@ export function SegmentedTrain({
   distanceFromLastStationKm,
   currentSequence,
   route,
+  currentStationDelayMinutes,
   userActionTrigger,
   onTooltipShown,
 }: SegmentedTrainProps) {
@@ -202,7 +204,7 @@ export function SegmentedTrain({
                     : "translate(-50%, 13px)"
             }}
           >
-            <Tooltip label={statusMessage} variant={tooltipVariant} />
+            <Tooltip label={statusMessage} delay={formatDelay(currentStationDelayMinutes)} variant={tooltipVariant} />
           </div>
         </div>
       )}

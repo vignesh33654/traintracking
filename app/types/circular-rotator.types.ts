@@ -11,6 +11,7 @@ export interface CircularRotatorProps {
   lastUpdatedAt?: string | null;
   destinationStationCode?: string;
   route?: RouteStation[];
+  currentStationDelayMinutes?: number | null;
   pillGap?: number;
   pillsPerStation?: number;
   onRefresh?: () => Promise<void>;

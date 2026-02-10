@@ -193,6 +193,9 @@ export default function Home() {
     data?.liveData?.currentLocation?.stationCode ?? null;
   const lastUpdatedAt = data?.liveData?.lastUpdatedAt ?? null;
   const destinationStationCode = data?.train?.destinationStationCode;
+  const currentStationDelayMinutes =
+    data?.liveData?.route?.find((s) => s.stationCode === currentStationCode)
+      ?.delayArrivalMinutes ?? null;
 
   return (
     <>
@@ -225,6 +228,7 @@ export default function Home() {
         lastUpdatedAt={lastUpdatedAt}
         destinationStationCode={destinationStationCode}
         route={data?.route}
+        currentStationDelayMinutes={currentStationDelayMinutes}
         onRefresh={handleRefresh}
         isRefreshing={isFetching}
         userActionTrigger={userActionTrigger}
