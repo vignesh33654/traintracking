@@ -64,7 +64,7 @@ export function SegmentedTrain({
     currentSequence,
     route,
     destinationStationCode,
-  });
+  }) ?? "";
 
   const tooltipVariant = getTooltipVariant(engineProgress);
 
