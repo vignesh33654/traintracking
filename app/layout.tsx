@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     siteName: "Train Tracker",
     images: [
       {
-        url: "/og-image.png",
+        url: "/Cover.png",
         width: 1200,
         height: 630,
         alt: "Train Tracker - Live Indian Railway Train Tracking",
@@ -94,7 +94,7 @@ export const metadata: Metadata = {
     title: "Live train running status",
     description:
       "Track Indian Railways trains in real-time with crafted interactions",
-    images: ["/og-image.png"],
+    images: ["/Cover.png"],
   },
   robots: {
     index: true,
