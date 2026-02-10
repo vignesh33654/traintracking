@@ -86,8 +86,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/Cover.png",
-        width: 2400,
-        height: 1200,
+        width: 1200,
+        height: 630,
         alt: "Train Tracker - Live Indian Railway Train Tracking",
       },
     ],
