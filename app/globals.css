@@ -258,3 +258,17 @@
 @utility animate-headlight-blink {
   animation: headlight-blink 1000ms ease-in-out;
 }
+
+@keyframes chevron-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+@utility animate-chevron-bounce {
+  animation: chevron-bounce 1.5s ease-in-out infinite;
+}
