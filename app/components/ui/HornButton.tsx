@@ -32,7 +32,7 @@ function HornIcon({
 }
 
 export default function HornButton() {
-  const { play } = useSound(SOUND_PATHS.HORN);
+  const { play } = useSound(SOUND_PATHS.HORN, 1);
   const { isDark } = useDark();
 
   const handleClick = () => {

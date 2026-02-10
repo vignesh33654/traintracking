@@ -75,9 +75,9 @@ export function SegmentedTrain({
     : formatDelay(currentStationDelayMinutes);
   const tooltipVariant = getTooltipVariant(engineProgress);
 
-  const { play: playNotStarted } = useSound(SOUND_PATHS.NOT_STARTED);
+  const { play: playNotStarted } = useSound(SOUND_PATHS.NOT_STARTED, 1);
   const { play: playDestinationReached } = useSound(
-    SOUND_PATHS.DESTINATION_REACHED,
+    SOUND_PATHS.DESTINATION_REACHED, 1,
   );
 
   const playStatusSound = useCallback(() => {

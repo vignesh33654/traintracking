@@ -4,9 +4,9 @@ import { useRef, useEffect, useCallback } from 'react';
 import { useAudioStore } from '../stores/useAudioStore';
 import { AUDIO_CONFIG } from '../config/audio.config';
 
-const { POOL_SIZE } = AUDIO_CONFIG;
+const POOL_SIZE: number = AUDIO_CONFIG.POOL_SIZE;
 
-export function useSound(src: string) {
+export function useSound(src: string, poolSize = POOL_SIZE) {
   const audioPoolRef = useRef<HTMLAudioElement[]>([]);
   const poolIndexRef = useRef(0);
   const isReadyRef = useRef(false);
@@ -18,13 +18,13 @@ export function useSound(src: string) {
     const pool: HTMLAudioElement[] = [];
     let readyCount = 0;
 
-    for (let i = 0; i < POOL_SIZE; i++) {
+    for (let i = 0; i < poolSize; i++) {
       const audio = new Audio(src);
       audio.preload = 'auto';
 
       audio.addEventListener('canplaythrough', () => {
         readyCount++;
-        if (readyCount === POOL_SIZE) {
+        if (readyCount === poolSize) {
           isReadyRef.current = true;
         }
       });
@@ -45,7 +45,7 @@ export function useSound(src: string) {
       audioPoolRef.current = [];
       isReadyRef.current = false;
     };
-  }, [src, initializeFromStorage]);
+  }, [src, initializeFromStorage, poolSize]);
 
   const play = useCallback(() => {
     if (!isReadyRef.current || audioPoolRef.current.length === 0) return;
@@ -54,7 +54,7 @@ export function useSound(src: string) {
     if (volume === 0) return;
 
     const audio = audioPoolRef.current[poolIndexRef.current];
-    poolIndexRef.current = (poolIndexRef.current + 1) % POOL_SIZE;
+    poolIndexRef.current = (poolIndexRef.current + 1) % poolSize;
 
     audio.volume = volume;
     audio.currentTime = 0;
