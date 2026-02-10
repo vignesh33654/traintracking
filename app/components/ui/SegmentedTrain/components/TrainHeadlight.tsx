@@ -15,19 +15,26 @@ interface TrainHeadlightProps {
 /**
  * Renders the headlight beam (dark mode only) that rotates with train direction
  */
-export function TrainHeadlight({ enginePosition, isDark, progressState }: TrainHeadlightProps) {
+export function TrainHeadlight({
+  enginePosition,
+  isDark,
+  progressState,
+}: TrainHeadlightProps) {
   const { headlight } = TRAIN_CONFIG;
   const blinkRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = blinkRef.current;
-    if (!el) return;
-
     const handleHonk = () => {
+      const el = blinkRef.current;
+      if (!el) return;
       el.classList.remove(BLINK_CLASS);
       void el.offsetWidth;
       el.classList.add(BLINK_CLASS);
-      el.addEventListener("animationend", () => el.classList.remove(BLINK_CLASS), { once: true });
+      el.addEventListener(
+        "animationend",
+        () => el.classList.remove(BLINK_CLASS),
+        { once: true },
+      );
     };
 
     window.addEventListener("horn-honk", handleHonk);
@@ -67,7 +74,7 @@ export function TrainHeadlight({ enginePosition, isDark, progressState }: TrainH
           height={headlight.height}
           priority
           className="pointer-events-none"
-          style={{ width: 'auto', height: 'auto' }}
+          style={{ width: "auto", height: "auto" }}
         />
       </div>
     </div>
