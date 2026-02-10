@@ -14,8 +14,31 @@ import { TopControlsContainer } from "@/app/components/ui/TopHeader";
 import MobileHeader from "@/app/components/ui/MobileHeader";
 import { getStoredTrain } from "@/app/components/ui/SearchTrain/store";
 
+const JOURNEY_DATE_KEY = "journeyDate";
+
+function getStoredJourneyDate(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(JOURNEY_DATE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function saveJourneyDate(date: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(JOURNEY_DATE_KEY, date);
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 export default function Home() {
-  const [journeyDate, setJourneyDate] = useState<string>(() => getTodayDate());
+  const [journeyDate, setJourneyDate] = useState<string>(
+    () => getStoredJourneyDate() || getTodayDate(),
+  );
+  const [hasUserChangedDate, setHasUserChangedDate] = useState(false);
   const [selectedTrain, setSelectedTrain] = useState<string>(() => {
     if (typeof window !== "undefined") {
       const stored = getStoredTrain();
@@ -32,11 +55,14 @@ export default function Home() {
 
   const handleTrainSelect = useCallback((trainNumber: string) => {
     setSelectedTrain(trainNumber);
+    setHasUserChangedDate(false);
     pendingTooltipRef.current = true;
   }, []);
 
   const handleJourneyDateChange = useCallback((date: string) => {
     setJourneyDate(date);
+    setHasUserChangedDate(true);
+    saveJourneyDate(date);
     pendingTooltipRef.current = true;
   }, []);
 
@@ -44,6 +70,14 @@ export default function Home() {
     selectedTrain,
     { journeyDate },
   );
+
+  // Sync journey date with API's live date (unless user manually changed it)
+  const liveJourneyDate = data?.liveData?.journeyDate ?? null;
+  useEffect(() => {
+    if (liveJourneyDate && !hasUserChangedDate) {
+      saveJourneyDate(liveJourneyDate);
+    }
+  }, [liveJourneyDate, hasUserChangedDate]);
 
   useEffect(() => {
     if (pendingTooltipRef.current && !isFetching && data) {
@@ -148,7 +182,6 @@ export default function Home() {
     );
   }
 
-  const liveJourneyDate = data?.liveData?.journeyDate ?? null;
   const distanceFromOriginKm =
     data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
   const currentLocationStatus = data?.liveData?.currentLocation?.status ?? null;
@@ -160,6 +193,9 @@ export default function Home() {
     data?.liveData?.currentLocation?.stationCode ?? null;
   const lastUpdatedAt = data?.liveData?.lastUpdatedAt ?? null;
   const destinationStationCode = data?.train?.destinationStationCode;
+  const currentStationDelayMinutes =
+    data?.liveData?.route?.find((s) => s.stationCode === currentStationCode)
+      ?.delayArrivalMinutes ?? null;
 
   return (
     <>
@@ -192,6 +228,7 @@ export default function Home() {
         lastUpdatedAt={lastUpdatedAt}
         destinationStationCode={destinationStationCode}
         route={data?.route}
+        currentStationDelayMinutes={currentStationDelayMinutes}
         onRefresh={handleRefresh}
         isRefreshing={isFetching}
         userActionTrigger={userActionTrigger}

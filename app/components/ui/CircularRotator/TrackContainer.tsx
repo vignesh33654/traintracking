@@ -36,6 +36,7 @@ interface TrackContainerProps {
   currentLocationStatus?: CurrentLocation["status"] | null;
   currentSequence?: number | null;
   route?: RouteStation[];
+  currentStationDelayMinutes?: number | null;
   userActionTrigger: number;
 }
 
@@ -57,6 +58,7 @@ export default function TrackContainer({
   currentLocationStatus,
   currentSequence,
   route,
+  currentStationDelayMinutes,
   userActionTrigger,
 }: TrackContainerProps) {
   const itemCount = stations.length * pillsPerStation;
@@ -120,6 +122,7 @@ export default function TrackContainer({
         currentSequence={currentSequence}
         route={route}
         lastUpdatedAt={lastUpdatedAt}
+        currentStationDelayMinutes={currentStationDelayMinutes}
         userActionTrigger={userActionTrigger}
       />
 
@@ -133,6 +136,7 @@ export default function TrackContainer({
         route={route}
         destinationStationCode={destinationStationCode}
         isTrainVisible={trainIconPosition.isVisible}
+        currentStationDelayMinutes={currentStationDelayMinutes}
       />
     </div>
   );

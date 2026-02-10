@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { cn } from "@/app/utils/utils";
 import type { RouteStation } from "@/app/types/train.types";
 import { getStatusMessage } from "@/app/utils/train-status.utils";
-import { formatRelativeTime } from "@/app/utils/time-formatters";
+import { formatRelativeTime, formatDelay } from "@/app/utils/time-formatters";
 import { TrainProgress } from "./TrainProgress";
 import { useSound } from "@/app/hooks/useSound";
 import { SOUND_PATHS } from "@/app/config/audio.config";
@@ -20,6 +20,7 @@ export interface TrainStatusProps {
   route?: RouteStation[];
   destinationStationCode?: string;
   isTrainVisible?: boolean;
+  currentStationDelayMinutes?: number | null;
 }
 
 export function TrainStatus(props: TrainStatusProps) {
@@ -87,6 +88,14 @@ export function TrainStatus(props: TrainStatusProps) {
         <p className="font-b612-mono-12 text-text-primary uppercase tracking-[-0.48px] leading-[20px] whitespace-nowrap">
           {statusMessage}
         </p>
+        {formatDelay(props.currentStationDelayMinutes) && (
+          <p className={cn(
+            "font-b612-mono-9 uppercase tracking-[-0.4px] leading-[12px] whitespace-nowrap",
+            props.currentStationDelayMinutes && props.currentStationDelayMinutes > 0 ? "text-red" : "text-green"
+          )}>
+            {formatDelay(props.currentStationDelayMinutes)}
+          </p>
+        )}
       </div>
     </div>
   );

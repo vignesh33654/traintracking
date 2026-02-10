@@ -180,13 +180,18 @@
   }
 }
 
-@media (width: 390px),
-  (width: 375px),
-  (width: 402px),
-  (width: 430px),
-  (width: 440px) {
+@media (width: 375px),
+  (width: 390px),
+  (width: 393px),
+  (width: 414px),
+  (width: 428px),
+  (width: 430px) {
   .font-b612-mobile-responsive {
     font-size: 16px;
+  }
+  
+  .hide-horn-mobile {
+    display: none;
   }
 }
 

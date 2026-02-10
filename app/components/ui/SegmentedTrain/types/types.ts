@@ -14,6 +14,7 @@ export interface SegmentedTrainProps {
   currentSequence?: number | null;
   route?: RouteStation[];
   lastUpdatedAt?: string | null;
+  currentStationDelayMinutes?: number | null;
   userActionTrigger: number;
   onTooltipShown?: () => void;
 }

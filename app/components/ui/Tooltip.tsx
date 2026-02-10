@@ -3,7 +3,7 @@ import { cn } from "../../utils/utils";
 
 export const TOOLTIP_TIMING = {
   SHOW_DELAY_MS: 50,
-  VISIBLE_DURATION_MS: 2600,
+  VISIBLE_DURATION_MS: 3200,
 } as const;
 
 const tooltipVariants = cva("flex items-center", {
@@ -65,23 +65,24 @@ function TooltipArrow({ direction }: { direction: ArrowDirection }) {
 
 interface TooltipProps {
   label: string;
+  delay?: string | null;
   variant: "right" | "left" | "top" | "bottom";
   className?: string;
 }
 
-export default function Tooltip({ label, variant, className }: TooltipProps) {
+export default function Tooltip({ label, delay, variant, className }: TooltipProps) {
   return (
     <div
       className={cn(tooltipVariants({ variant }), className)}
       role="tooltip"
-      aria-label={label}
+      aria-label={delay ? `${label} - ${delay}` : label}
     >
       <TooltipArrow direction={variant} />
       <span
         className={textVariants({ variant })}
         style={{ fontSize: "10px" }}
       >
-        {label}
+        {label}{delay && ` • ${delay}`}
       </span>
     </div>
   );
