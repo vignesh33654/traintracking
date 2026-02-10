@@ -75,7 +75,7 @@ function InfoItem({ icon, label }: { icon: string; label: string }) {
         aria-hidden="true"
         className="shrink-0"
       />
-      <span className="font-b612-mono-10 leading-[14px] text-text-secondary uppercase whitespace-nowrap text-pretty">
+      <span className="font-b612-mono-10 leading-3.5 text-text-secondary uppercase whitespace-nowrap text-pretty">
         {label}
       </span>
     </div>
@@ -111,7 +111,7 @@ export default function StationTooltip({
   return (
     <div
       className={cn(
-        "flex items-center gap-pill-height max-w-[210px]",
+        "flex items-center gap-pill-height max-w-52.5",
         className
       )}
       style={containerStyle}
@@ -122,7 +122,7 @@ export default function StationTooltip({
 
       <div className="flex flex-col gap-pill-dot" style={contentStyle}>
         <p
-          className="font-b612-mono-10 leading-[14px] text-text-primary uppercase w-full text-pretty"
+          className="font-b612-mono-10 leading-3.5 text-text-primary uppercase w-full text-pretty"
           style={textStyle}
         >
           {stationName}

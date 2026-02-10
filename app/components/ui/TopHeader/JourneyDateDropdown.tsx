@@ -215,8 +215,8 @@ export default function JourneyDateDropdown({
 
   const buttonClasses =
     variant === "fixed"
-      ? "flex h-[46px] w-[152px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 transition-none hover:cursor-pointer focus-ring"
-      : "flex h-[44px] items-center gap-2 rounded-[40px] border border-divider bg-bg-0 px-3 py-1 hover:border-orange transition-none focus-ring";
+      ? "flex h-11.5 w-38 items-center gap-2 rounded-full border border-divider bg-bg-0 px-4 py-1 transition-none hover:cursor-pointer focus-ring"
+      : "flex h-11 items-center gap-2 rounded-full border border-divider bg-bg-0 px-3 py-1 hover:border-orange transition-none focus-ring";
 
   const LISTBOX_ID = "journey-date-listbox";
 
@@ -248,7 +248,7 @@ export default function JourneyDateDropdown({
 
       {isOpen && (
         <div
-          className={`absolute w-[152] top-full z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${
+          className={`absolute w-38 top-full z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${
             variant === "fixed" ? "min-w-35" : "min-w-30"
           }`}
         >

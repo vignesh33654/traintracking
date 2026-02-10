@@ -36,8 +36,8 @@ export function TrainStatus(props: TrainStatusProps) {
       aria-live="polite"
       aria-label="Train status information"
       className={cn(
-        "absolute left-1/2 top-[546px] -translate-y-1/2 -rotate-90 origin-left",
-        "flex items-center max-w-[500px] gap-2",
+        "absolute left-1/2 top-136.5 -translate-y-1/2 -rotate-90 origin-left",
+        "flex items-center max-w-125 gap-2",
         className,
       )}
     >
@@ -49,16 +49,16 @@ export function TrainStatus(props: TrainStatusProps) {
         size={34}
       />
       <div className="flex flex-col gap-pill-dot justify-center min-w-0 shrink-0">
-        <p className="font-b612-mono-9 text-text-secondary uppercase tracking-[-0.4px] leading-[12px] whitespace-nowrap">
+        <p className="font-b612-mono-9 text-text-secondary uppercase tracking-[-0.4px] leading-3 whitespace-nowrap">
           LAST UPDATED {formatRelativeTime(lastUpdatedAt)}
         </p>
-        <p className="font-b612-mono-12 text-text-primary uppercase tracking-[-0.48px] leading-[20px] whitespace-nowrap">
+        <p className="font-b612-mono-12 text-text-primary uppercase tracking-[-0.48px] leading-5 whitespace-nowrap">
           {statusMessage}
         </p>
         {formatDelay(props.currentStationDelayMinutes) && (
           <p
             className={cn(
-              "font-b612-mono-9 uppercase tracking-[-0.4px] leading-[12px] whitespace-nowrap",
+              "font-b612-mono-9 uppercase tracking-[-0.4px] leading-3 whitespace-nowrap",
               props.currentStationDelayMinutes &&
                 props.currentStationDelayMinutes > 0
                 ? "text-red"

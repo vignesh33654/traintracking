@@ -41,7 +41,7 @@ export function StatusDot({
   className,
 }: StatusDotProps) {
   const { color, animate } = getStatusColor(journeyDate, distanceFromOriginKm);
-  const sizeClass = size === "sm" ? "size-[6px]" : "size-[8px]";
+  const sizeClass = size === "sm" ? "size-1.5" : "size-2";
 
   return (
     <span
@@ -59,7 +59,7 @@ export function StatusDot({
       )}
       <span
         className={cn(
-          "relative inline-flex rounded-full border border-white dark:border-bg-[#ffffff]",
+          "relative inline-flex rounded-full border border-white dark:border-white",
           sizeClass,
           color
         )}

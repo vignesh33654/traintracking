@@ -43,7 +43,7 @@ export default function ScrollDownIndicator({
       onClick={() =>
         window.scrollBy({ top: window.innerHeight, behavior: "smooth" })
       }
-      className={`md:hidden fixed right-6 bottom-[80px] z-50 w-10 h-10 flex items-center justify-center rounded-full bg-bg-0 border border-divider ${
+      className={`md:hidden fixed right-6 bottom-20 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-bg-0 border border-divider ${
         isVisible ? "scale-100" : "scale-0 "
       }`}
       aria-label="Scroll down to see more stations"

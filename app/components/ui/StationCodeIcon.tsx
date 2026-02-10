@@ -10,10 +10,10 @@ export default function StationCodeIcon({
   className,
 }: StationCodeIconProps) {
   return (
-    <div className={cn("relative size-[24px]", className)}>
-      <div className="absolute left-1/2 top-[3px] h-[10px] w-[24px] -translate-x-1/2 border border-yellow" />
-      <div className="absolute left-[5px] top-[13px] h-[8px] w-px bg-yellow" />
-      <div className="absolute right-[5px] top-[13px] h-[8px] w-px bg-yellow" />
+    <div className={cn("relative size-6", className)}>
+      <div className="absolute left-1/2 top-0.75 h-2.5 w-6 -translate-x-1/2 border border-yellow" />
+      <div className="absolute left-1.25 top-3.25 h-2 w-px bg-yellow" />
+      <div className="absolute right-1.25 top-3.25 h-2 w-px bg-yellow" />
       <span className="absolute left-1/2 top-pill-dot -translate-x-1/2 text-center text-[8px] uppercase text-yellow font-circular">
         {stationCode}
       </span>

@@ -18,7 +18,7 @@ const tooltipVariants = cva("flex items-center", {
 });
 
 const textVariants = cva(
-  "bg-orange text-white font-b612-mono-10 leading-[14px] p-1 max-w-[180px] w-fit line-clamp-3",
+  "bg-orange text-white font-b612-mono-10 leading-3.5 p-1 max-w-45 w-fit line-clamp-3",
   {
     variants: {
       variant: {

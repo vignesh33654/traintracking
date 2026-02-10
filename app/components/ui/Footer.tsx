@@ -34,9 +34,9 @@ export function Footer({
         className
       )}
     >
-      <div className="marquee-container p-[8px]">
+      <div className="marquee-container p-2">
         <div
-          className="marquee-content font-doto font-bold uppercase text-[14px] text-text-primary tracking-[-0.56px]"
+          className="marquee-content font-doto font-bold uppercase text-sm text-text-primary tracking-[-0.56px]"
           style={{
             animationDuration: `${duration}s`,
           }}

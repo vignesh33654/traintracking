@@ -43,7 +43,7 @@ export function TrainIcon({
 
   return (
     <div
-      className={cn("relative size-[30px]", className)}
+      className={cn("relative size-7.5", className)}
       style={trackPositionStyle}
     >
       <div
@@ -52,7 +52,7 @@ export function TrainIcon({
       >
         {children || (
           <div
-            className="size-[16px] bg-text-primary"
+            className="size-4 bg-text-primary"
             style={{
               maskImage: 'url("/Train icon.svg")',
               maskSize: "contain",
@@ -72,7 +72,7 @@ export function TrainIcon({
           journeyDate={journeyDate}
           distanceFromOriginKm={distanceFromOriginKm}
           size="sm"
-          className="absolute top-[7px] right-[7px]"
+          className="absolute top-1.75 right-1.75"
         />
       )}
     </div>

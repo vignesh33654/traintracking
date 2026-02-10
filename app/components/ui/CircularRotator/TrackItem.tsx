@@ -7,7 +7,7 @@ import { DayMarker } from "../DayMarker";
 import { TOOLTIP_OFFSETS } from "../../../utils/pillTooltip";
 import type { TrackItemProps } from "../../../types/circular-rotator.types";
 
-const ICON_POSITION_CLASS = "absolute left-[18px] top-[19px] -translate-x-1/2 -translate-y-1/2";
+const ICON_POSITION_CLASS = "absolute left-4.5 top-4.75 -translate-x-1/2 -translate-y-1/2";
 
 const pillStyle: CSSProperties = {
   transform:

@@ -43,8 +43,8 @@ export default function SearchTrain({
 
   const inputContainerClasses =
     variant === "fixed"
-      ? "flex h-[46px] w-[240px] items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange"
-      : "flex h-[44px] w-full items-center gap-1.5 rounded-[40px] border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange";
+      ? "flex h-11.5 w-60 items-center gap-1.5 rounded-full border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange"
+      : "flex h-11 w-full items-center gap-1.5 rounded-full border border-divider bg-bg-0 px-4 py-1 focus-within:border-orange";
 
   return (
     <div ref={containerRef} className={containerClasses}>
@@ -87,7 +87,7 @@ export default function SearchTrain({
 
       {isOpen && (
         <div
-          className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-[240]" : "w-full"}`}
+          className={`absolute top-top z-50 mt-1 overflow-hidden rounded-xl bg-bg-1 p-1 ${variant === "fixed" ? "w-60" : "w-full"}`}
         >
           {isLoading ? (
             <div className="px-2 py-1.5 text-label text-text-secondary">
