@@ -3,11 +3,22 @@ const MS_PER_MINUTE = 60000;
 const MINUTES_PER_HOUR = 60;
 const HOURS_PER_DAY = 24;
 
+/** Converts total minutes to hours and minutes string (e.g., 125 → "2h 5m") */
+export function formatMinutesToHoursAndMinutes(totalMinutes: number): string {
+  const hours = Math.floor(totalMinutes / MINUTES_PER_HOUR);
+  const minutes = totalMinutes % MINUTES_PER_HOUR;
+
+  if (hours === 0) return `${minutes}m`;
+  if (minutes === 0) return `${hours}hr`;
+  return `${hours}hr ${minutes}m`;
+}
+
 /** Formats delay time in minutes to human-readable string */
-export function formatDelay(minutes: number | null | undefined): string {
-  if (minutes == null) return "N/A";
-  if (minutes === 0) return "On Time";
-  return minutes > 0 ? `${minutes} min late` : `${Math.abs(minutes)} min early`;
+export function formatDelay(minutes: number | null | undefined): string | null {
+  if (minutes == null) return null;
+  if (minutes <= 0) return "On Time";
+  if (minutes >= MINUTES_PER_HOUR) return `${formatMinutesToHoursAndMinutes(minutes)} late`;
+  return `${minutes} min late`;
 }
 
 /** Converts minutes since midnight to HH:MM format */

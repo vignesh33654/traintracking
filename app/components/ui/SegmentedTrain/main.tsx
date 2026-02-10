@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { getProgressState } from "../../../utils/train-progress-utils";
 import { getStatusMessage } from "../../../utils/train-status.utils";
+import { formatDelay } from "../../../utils/time-formatters";
 import { TRAIN_CONFIG } from "../../../config/train.config";
 import { TRACK_PATH_CONFIG } from "../../../config/circular-rotator.config";
 import { useDark } from "../../../hooks/useDark";
@@ -18,7 +19,9 @@ import Tooltip, { TOOLTIP_TIMING } from "../Tooltip";
 import type { SegmentedTrainProps } from "./types/types";
 
 // progress (0-1) → tooltip position based on train location on track
-function getTooltipVariant(progress: number): "left" | "right" | "top" | "bottom" {
+function getTooltipVariant(
+  progress: number,
+): "left" | "right" | "top" | "bottom" {
   const { railTop, arcStartY, arcRadius } = TRACK_PATH_CONFIG;
   const straightLength = arcStartY - railTop;
   const arcLength = Math.PI * arcRadius;
@@ -44,6 +47,7 @@ export function SegmentedTrain({
   distanceFromLastStationKm,
   currentSequence,
   route,
+  currentStationDelayMinutes,
   userActionTrigger,
   onTooltipShown,
 }: SegmentedTrainProps) {
@@ -63,12 +67,15 @@ export function SegmentedTrain({
     route,
     destinationStationCode,
   });
-
+  const delay = formatDelay(currentStationDelayMinutes);
   const tooltipVariant = getTooltipVariant(engineProgress);
 
   const [showTooltip, setShowTooltip] = useState(false);
   const showTooltipRef = useRef(false);
-  const timersRef = useRef<{ show: ReturnType<typeof setTimeout>; hide: ReturnType<typeof setTimeout> } | null>(null);
+  const timersRef = useRef<{
+    show: ReturnType<typeof setTimeout>;
+    hide: ReturnType<typeof setTimeout>;
+  } | null>(null);
   const lastProcessedTriggerRef = useRef(0);
 
   useEffect(() => {
@@ -87,8 +94,14 @@ export function SegmentedTrain({
     lastProcessedTriggerRef.current = userActionTrigger;
 
     timersRef.current = {
-      show: setTimeout(() => { showTooltipRef.current = true; setShowTooltip(true); }, TOOLTIP_TIMING.SHOW_DELAY_MS),
-      hide: setTimeout(() => { showTooltipRef.current = false; setShowTooltip(false); }, TOOLTIP_TIMING.SHOW_DELAY_MS + TOOLTIP_TIMING.VISIBLE_DURATION_MS),
+      show: setTimeout(() => {
+        showTooltipRef.current = true;
+        setShowTooltip(true);
+      }, TOOLTIP_TIMING.SHOW_DELAY_MS),
+      hide: setTimeout(() => {
+        showTooltipRef.current = false;
+        setShowTooltip(false);
+      }, TOOLTIP_TIMING.SHOW_DELAY_MS + TOOLTIP_TIMING.VISIBLE_DURATION_MS),
     };
 
     onTooltipShown?.();
@@ -199,10 +212,14 @@ export function SegmentedTrain({
                   ? "translate(13px, -50%)"
                   : tooltipVariant === "right"
                     ? "translate(-100%, -50%)"
-                    : "translate(-50%, 13px)"
+                    : "translate(-50%, 13px)",
             }}
           >
-            <Tooltip label={statusMessage} variant={tooltipVariant} />
+            <Tooltip
+              label={statusMessage}
+              delay={delay}
+              variant={tooltipVariant}
+            />
           </div>
         </div>
       )}

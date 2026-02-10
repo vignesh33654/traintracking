@@ -65,23 +65,24 @@ function TooltipArrow({ direction }: { direction: ArrowDirection }) {
 
 interface TooltipProps {
   label: string;
+  delay?: string | null;
   variant: "right" | "left" | "top" | "bottom";
   className?: string;
 }
 
-export default function Tooltip({ label, variant, className }: TooltipProps) {
+export default function Tooltip({ label, delay, variant, className }: TooltipProps) {
   return (
     <div
       className={cn(tooltipVariants({ variant }), className)}
       role="tooltip"
-      aria-label={label}
+      aria-label={delay ? `${label} - ${delay}` : label}
     >
       <TooltipArrow direction={variant} />
       <span
         className={textVariants({ variant })}
         style={{ fontSize: "10px" }}
       >
-        {label}
+        {label}{delay && ` • ${delay}`}
       </span>
     </div>
   );
