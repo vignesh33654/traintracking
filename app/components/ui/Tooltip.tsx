@@ -65,7 +65,7 @@ function TooltipArrow({ direction }: { direction: ArrowDirection }) {
 
 interface TooltipProps {
   label: string;
-  delay?: string;
+  delay?: string | null;
   variant: "right" | "left" | "top" | "bottom";
   className?: string;
 }

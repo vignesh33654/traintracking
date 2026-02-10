@@ -58,17 +58,16 @@ export function SegmentedTrain({
     destinationStationCode,
   );
 
-  const statusMessage =
-    getStatusMessage({
-      currentLocationStatus,
-      distanceFromLastStationKm,
-      distanceFromOriginKm,
-      currentStationCode,
-      currentSequence,
-      route,
-      destinationStationCode,
-    }) ?? "";
-
+  const statusMessage = getStatusMessage({
+    currentLocationStatus,
+    distanceFromLastStationKm,
+    distanceFromOriginKm,
+    currentStationCode,
+    currentSequence,
+    route,
+    destinationStationCode,
+  });
+  const delay = formatDelay(currentStationDelayMinutes);
   const tooltipVariant = getTooltipVariant(engineProgress);
 
   const [showTooltip, setShowTooltip] = useState(false);
@@ -218,7 +217,7 @@ export function SegmentedTrain({
           >
             <Tooltip
               label={statusMessage}
-              delay={formatDelay(currentStationDelayMinutes)}
+              delay={delay}
               variant={tooltipVariant}
             />
           </div>
