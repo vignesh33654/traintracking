@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from 'react';
-import { useAudioStore } from '../stores/useAudioStore';
-import { AUDIO_CONFIG } from '../config/audio.config';
+import { useRef, useEffect, useCallback } from "react";
+import { useAudioStore } from "../stores/useAudioStore";
+import { AUDIO_CONFIG } from "../config/audio.config";
 
 const POOL_SIZE: number = AUDIO_CONFIG.POOL_SIZE;
 
@@ -20,17 +20,17 @@ export function useSound(src: string, poolSize = POOL_SIZE) {
 
     for (let i = 0; i < poolSize; i++) {
       const audio = new Audio(src);
-      audio.preload = 'auto';
+      audio.preload = "auto";
 
-      audio.addEventListener('canplaythrough', () => {
+      audio.addEventListener("canplaythrough", () => {
         readyCount++;
         if (readyCount === poolSize) {
           isReadyRef.current = true;
         }
       });
 
-      audio.addEventListener('error', (e) => {
-        console.error('Audio load error:', src, e);
+      audio.addEventListener("error", (e) => {
+        console.error("Audio load error:", src, e);
       });
 
       pool.push(audio);
@@ -59,11 +59,11 @@ export function useSound(src: string, poolSize = POOL_SIZE) {
     audio.volume = volume;
     audio.currentTime = 0;
     audio.play().catch((e) => {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('Audio play failed:', e.message);
+      if (process.env.NODE_ENV === "development") {
+        console.warn("Audio play failed:", e.message);
       }
     });
-  }, [getEffectiveVolume]);
+  }, [getEffectiveVolume, poolSize]);
 
   const stop = useCallback(() => {
     audioPoolRef.current.forEach((audio) => {
