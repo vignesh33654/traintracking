@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { getProgressState } from "../../../utils/train-progress-utils";
 import { getStatusMessage } from "../../../utils/train-status.utils";
 import { formatDelay } from "../../../utils/time-formatters";
@@ -16,6 +16,8 @@ import { TrainSegment } from "./components/TrainSegment";
 import { TrainHeadlight } from "./components/TrainHeadlight";
 import { StatusDot } from "../StatusDot";
 import Tooltip, { TOOLTIP_TIMING } from "../Tooltip";
+import { useSound } from "../../../hooks/useSound";
+import { SOUND_PATHS } from "../../../config/audio.config";
 import type { SegmentedTrainProps } from "./types/types";
 
 // progress (0-1) → tooltip position based on train location on track
@@ -73,6 +75,17 @@ export function SegmentedTrain({
     : formatDelay(currentStationDelayMinutes);
   const tooltipVariant = getTooltipVariant(engineProgress);
 
+  const { play: playNotStarted } = useSound(SOUND_PATHS.NOT_STARTED);
+  const { play: playDestinationReached } = useSound(
+    SOUND_PATHS.DESTINATION_REACHED,
+  );
+
+  const playStatusSound = useCallback(() => {
+    if (statusMessage === "NOT STARTED YET") playNotStarted();
+    else if (statusMessage === "REACHED YOUR DESTINATION")
+      playDestinationReached();
+  }, [statusMessage, playNotStarted, playDestinationReached]);
+
   const [showTooltip, setShowTooltip] = useState(false);
   const showTooltipRef = useRef(false);
   const timersRef = useRef<{
@@ -100,6 +113,7 @@ export function SegmentedTrain({
       show: setTimeout(() => {
         showTooltipRef.current = true;
         setShowTooltip(true);
+        playStatusSound();
       }, TOOLTIP_TIMING.SHOW_DELAY_MS),
       hide: setTimeout(() => {
         showTooltipRef.current = false;
@@ -115,7 +129,7 @@ export function SegmentedTrain({
         clearTimeout(timersRef.current.hide);
       }
     };
-  }, [userActionTrigger, isVisible, onTooltipShown]);
+  }, [userActionTrigger, isVisible, onTooltipShown, playStatusSound]);
 
   useEffect(() => {
     if (!showTooltip) return;

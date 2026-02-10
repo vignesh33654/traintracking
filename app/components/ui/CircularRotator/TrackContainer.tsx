@@ -64,8 +64,14 @@ export default function TrackContainer({
   const itemCount = stations.length * pillsPerStation;
 
   const pills = useMemo(
-    () => generatePillData(itemCount, stations, pillsPerStation, pillsBeforeFirstStation),
-    [itemCount, stations, pillsPerStation, pillsBeforeFirstStation]
+    () =>
+      generatePillData(
+        itemCount,
+        stations,
+        pillsPerStation,
+        pillsBeforeFirstStation,
+      ),
+    [itemCount, stations, pillsPerStation, pillsBeforeFirstStation],
   );
 
   const { startIndex, endIndex } = calculateVisibleRange(
@@ -73,12 +79,15 @@ export default function TrackContainer({
     gapRatio,
     scrollRange,
     itemCount,
-    15 // extra items just before and after the screen so scrolling feels smoother
+    15, // extra items just before and after the screen so scrolling feels smoother
   );
 
   const visiblePills = useMemo(
-    () => pills.filter((pill: PillData) => pill.index >= startIndex && pill.index <= endIndex),
-    [pills, startIndex, endIndex]
+    () =>
+      pills.filter(
+        (pill: PillData) => pill.index >= startIndex && pill.index <= endIndex,
+      ),
+    [pills, startIndex, endIndex],
   );
 
   return (
@@ -111,7 +120,9 @@ export default function TrackContainer({
       ))}
 
       <SegmentedTrain
-        engineProgress={trainIconPosition.isVisible ? trainIconPosition.progress : 0}
+        engineProgress={
+          trainIconPosition.isVisible ? trainIconPosition.progress : 0
+        }
         isVisible={trainIconPosition.isVisible}
         journeyDate={journeyDate}
         distanceFromOriginKm={distanceFromOriginKm}
@@ -135,7 +146,6 @@ export default function TrackContainer({
         currentSequence={currentSequence}
         route={route}
         destinationStationCode={destinationStationCode}
-        isTrainVisible={trainIconPosition.isVisible}
         currentStationDelayMinutes={currentStationDelayMinutes}
       />
     </div>
