@@ -55,22 +55,22 @@ const circularStd = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://trainstracking.in"),
   title: {
-    default: "Live train running status | Where is my train | Live status updates",
+    default: " Train tracking - Live indian railways train status | Train running status",
     template: "%s | Live train running status | Where is my train | Live status updates",
   },
   description:
     "Indian railway running status - Get live running status, current location, delay information, and platform details for trains across India.",
   keywords: [
   "train tracking",
-"live train status",
-"Indian Railways",
-"train location",
-"railway tracking",
-"train running status",
-"real time train status",
-"spot your train",
-"train ETA",
-"live Indian trains",
+  "live train status",
+  "Indian Railways",
+  "train location",
+  "railway tracking",
+  "train running status",
+  "real time train status",
+  "spot your train",
+  "train ETA",
+  "live Indian trains",
   ],
   openGraph: {
     type: "website",
