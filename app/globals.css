@@ -188,6 +188,10 @@
   .font-b612-mobile-responsive {
     font-size: 16px;
   }
+  
+  .hide-horn-mobile {
+    display: none;
+  }
 }
 
 .focus-ring {
