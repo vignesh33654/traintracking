@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { API_CONFIG } from "@/app/config/api.config";
-
-function buildExternalApiUrl(
-  trainNumber: string,
-  journeyDate?: string,
-): string {
-  const baseUrl = `${API_CONFIG.baseURL}/trains/${trainNumber}`;
-  return journeyDate ? `${baseUrl}?journeyDate=${journeyDate}` : baseUrl;
-}
+import {
+  buildLegacyTrainUrl,
+  getRailRadarAuthHeaders,
+  parseRailRadarResponse,
+  RailRadarApiError,
+} from "@/app/lib/railradar-api";
 
 function createErrorResponse(message: string, status: number) {
   return NextResponse.json({ message, status }, { status });
@@ -22,31 +19,26 @@ export async function GET(request: NextRequest) {
     return createErrorResponse("Train number is required", 400);
   }
 
-  // Read environment variable directly in the route handler (Next.js App Router best practice)
   const apiKey = process.env.RAIL_RADAR_API_KEY;
 
   if (!apiKey) {
     return createErrorResponse("API configuration error: Missing API key", 500);
   }
 
-  const apiUrl = buildExternalApiUrl(trainNumber, journeyDate);
+  const apiUrl = buildLegacyTrainUrl(trainNumber, journeyDate || undefined);
 
   try {
     const response = await fetch(apiUrl, {
-      headers: {
-        "X-API-Key": apiKey,
-      },
+      headers: getRailRadarAuthHeaders(apiKey),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const message = errorData.message || `API Error: ${response.status}`;
-      return createErrorResponse(message, response.status);
+    const data = await parseRailRadarResponse(response);
+    return NextResponse.json(data);
+  } catch (error) {
+    if (error instanceof RailRadarApiError) {
+      return createErrorResponse(error.message, error.status);
     }
 
-    const data = await response.json();
-    return NextResponse.json(data.success ? data.data : data);
-  } catch {
     return createErrorResponse("Failed to fetch train data", 500);
   }
 }

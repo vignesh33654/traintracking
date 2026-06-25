@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { CACHE_DURATIONS } from "@/app/config/refetch.config";
-
-type TrainTuple = [string, string, string, string];
+import {
+  buildLookupTrainsUrl,
+  getRailRadarAuthHeaders,
+  normalizeLookupTrainsData,
+  parseRailRadarResponse,
+  type TrainTuple,
+} from "@/app/lib/railradar-api";
 
 interface CacheMetadata {
   data: TrainTuple[];
@@ -16,28 +21,22 @@ function isCacheValid(): boolean {
 }
 
 async function fetchAllTrainsFromAPI(apiKey: string): Promise<TrainTuple[]> {
-  const apiUrl = "https://api.railradar.org/api/v2/trains/all-trains";
-
-  const response = await fetch(apiUrl, {
-    headers: { "X-API-Key": apiKey },
+  const response = await fetch(buildLookupTrainsUrl(), {
+    headers: getRailRadarAuthHeaders(apiKey),
     next: { revalidate: CACHE_DURATIONS.SEARCH_SERVER / 1000 },
   });
 
-  if (!response.ok) {
-    throw new Error(`RailRadar API error: ${response.status}`);
-  }
+  const data = await parseRailRadarResponse<unknown>(response);
+  const trains = normalizeLookupTrainsData(data);
 
-  const result = await response.json();
-
-  if (!result.success || !Array.isArray(result.data)) {
+  if (trains.length === 0) {
     throw new Error("Invalid API response format");
   }
 
-  return result.data;
+  return trains;
 }
 
 export async function GET() {
-  // Read environment variable directly in the route handler (Next.js App Router best practice)
   const apiKey = process.env.RAIL_RADAR_API_KEY;
 
   if (!apiKey) {

@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  buildLookupTrainsUrl,
+  getRailRadarAuthHeaders,
+  normalizeLookupTrainsData,
+  parseRailRadarResponse,
+  type TrainTuple,
+} from "@/app/lib/railradar-api";
 
 /**
  * DEPRECATED: Use /api/search/all + client-side filtering instead
@@ -6,65 +13,47 @@ import { NextRequest, NextResponse } from "next/server";
  * TODO: Remove this endpoint once all clients migrate to client-side search
  */
 
-type TrainTuple = [string, string, string, string];
-
 interface CacheMetadata {
   data: TrainTuple[];
   timestamp: number;
 }
 
-// Server-side cache shared with /api/search/all
 let cache: CacheMetadata | null = null;
-const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour cache
+const CACHE_DURATION_MS = 60 * 60 * 1000;
 
 function createErrorResponse(message: string, status: number) {
   return NextResponse.json({ message, status }, { status });
 }
 
-/**
- * Check if cache is still valid
- */
 function isCacheValid(): boolean {
   if (!cache) return false;
   return Date.now() - cache.timestamp < CACHE_DURATION_MS;
 }
 
-/**
- * Fetch all trains from RailRadar API
- */
 async function getAllTrains(apiKey: string): Promise<TrainTuple[]> {
-  // Return cached data if valid
   if (isCacheValid() && cache) {
     return cache.data;
   }
 
-  // Fetch fresh data
-  const apiUrl = "https://api.railradar.org/api/v2/trains/all-trains";
-  const response = await fetch(apiUrl, {
-    headers: { "X-API-Key": apiKey },
+  const response = await fetch(buildLookupTrainsUrl(), {
+    headers: getRailRadarAuthHeaders(apiKey),
   });
 
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.status}`);
+  const data = await parseRailRadarResponse<unknown>(response);
+  const trains = normalizeLookupTrainsData(data);
+
+  if (trains.length === 0) {
+    throw new Error("Invalid API response format");
   }
 
-  const result = await response.json();
+  cache = {
+    data: trains,
+    timestamp: Date.now(),
+  };
 
-  if (result.success && Array.isArray(result.data)) {
-    cache = {
-      data: result.data,
-      timestamp: Date.now(),
-    };
-    return result.data;
-  }
-
-  throw new Error("Invalid API response format");
+  return trains;
 }
 
-/**
- * GET /api/search/trains?query=...
- * Server-side search with filtering
- */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const query = searchParams.get("query");
@@ -76,7 +65,6 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Read environment variable directly in the route handler (Next.js App Router best practice)
   const apiKey = process.env.RAIL_RADAR_API_KEY;
 
   if (!apiKey) {
@@ -85,9 +73,8 @@ export async function GET(request: NextRequest) {
 
   try {
     const allTrains = await getAllTrains(apiKey);
-
-    // Server-side filtering
     const queryLower = query.toLowerCase();
+
     const filteredTrains = allTrains.filter(([number, name, from, to]) => {
       return (
         number.toLowerCase().includes(queryLower) ||
@@ -97,7 +84,6 @@ export async function GET(request: NextRequest) {
       );
     });
 
-    // Transform to response format
     const results = filteredTrains.map(([number, name, from, to]) => ({
       trainNumber: number,
       trainName: name,
