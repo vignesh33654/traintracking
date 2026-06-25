@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { API_CONFIG } from "@/app/config/api.config";
+import {
+  buildAverageDelayUrl,
+  getRailRadarAuthHeaders,
+  parseRailRadarResponse,
+  RailRadarApiError,
+} from "@/app/lib/railradar-api";
 
 function createErrorResponse(message: string, status: number) {
   return NextResponse.json({ message, status }, { status });
@@ -19,24 +24,20 @@ export async function GET(request: NextRequest) {
     return createErrorResponse("API configuration error: Missing API key", 500);
   }
 
-  const apiUrl = `${API_CONFIG.baseURL}/trains/${trainNumber}/average-delay`;
+  const apiUrl = buildAverageDelayUrl(trainNumber);
 
   try {
     const response = await fetch(apiUrl, {
-      headers: {
-        "X-API-Key": apiKey,
-      },
+      headers: getRailRadarAuthHeaders(apiKey),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const message = errorData.message || `API Error: ${response.status}`;
-      return createErrorResponse(message, response.status);
+    const data = await parseRailRadarResponse(response);
+    return NextResponse.json(data);
+  } catch (error) {
+    if (error instanceof RailRadarApiError) {
+      return createErrorResponse(error.message, error.status);
     }
 
-    const data = await response.json();
-    return NextResponse.json(data.success ? data.data : data);
-  } catch {
     return createErrorResponse("Failed to fetch average delay data", 500);
   }
 }
