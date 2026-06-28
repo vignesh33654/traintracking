@@ -15,6 +15,50 @@ function getNextStationByCode(
   return route[currentIndex + 1];
 }
 
+function getStationByCode(
+  currentStationCode: string | null | undefined,
+  route?: RouteStation[]
+): RouteStation | null {
+  if (!currentStationCode || !route) return null;
+  return route.find((s) => s.stationCode === currentStationCode) ?? null;
+}
+
+function hasJourneyStarted(
+  distanceFromOriginKm: number | null | undefined,
+  currentSequence: number | null | undefined,
+  currentStationCode: string | null | undefined,
+  route?: RouteStation[]
+): boolean {
+  if (distanceFromOriginKm != null && distanceFromOriginKm > 0) return true;
+  if (!route || route.length === 0) return false;
+
+  const firstStation = route[0];
+  if (currentSequence != null && currentSequence > firstStation.sequence) {
+    return true;
+  }
+
+  return Boolean(
+    currentStationCode && currentStationCode !== firstStation.stationCode
+  );
+}
+
+function getEffectiveDistanceFromOriginKm(
+  distanceFromOriginKm: number | null | undefined,
+  currentStationCode: string | null | undefined,
+  route?: RouteStation[]
+): number | null {
+  if (distanceFromOriginKm != null && distanceFromOriginKm > 0) {
+    return distanceFromOriginKm;
+  }
+
+  const currentStation = getStationByCode(currentStationCode, route);
+  if (currentStation && currentStation.distanceFromSourceKm > 0) {
+    return currentStation.distanceFromSourceKm;
+  }
+
+  return distanceFromOriginKm ?? null;
+}
+
 export interface NextStationSummary {
   nextStationName: string;
   nextStationCode: string | null;
@@ -47,8 +91,20 @@ export function getStatusMessage(params: StatusMessageParams): string {
     return "REACHED YOUR DESTINATION";
   }
 
+  const effectiveDistanceFromOriginKm = getEffectiveDistanceFromOriginKm(
+    distanceFromOriginKm,
+    currentStationCode,
+    route
+  );
+  const journeyStarted = hasJourneyStarted(
+    effectiveDistanceFromOriginKm,
+    currentSequence,
+    currentStationCode,
+    route
+  );
+
   if ((currentLocationStatus === "AT_STATION" || currentLocationStatus === "ARRIVED") &&
-      distanceFromOriginKm != null && distanceFromOriginKm > 0) {
+      journeyStarted) {
     const name = getStationName(currentStationCode, route);
     return `ARRIVED AT ${name}`;
   }
@@ -56,7 +112,7 @@ export function getStatusMessage(params: StatusMessageParams): string {
   const { nextStationName, distanceToNextKm } = getNextStationSummary(
     currentSequence,
     currentStationCode,
-    distanceFromOriginKm,
+    effectiveDistanceFromOriginKm,
     route
   );
 
@@ -70,6 +126,19 @@ export function getStatusMessage(params: StatusMessageParams): string {
     if (distanceToNextKm != null && nextStationName) {
       return `${Math.round(distanceToNextKm)} KM TO ${nextStationName}`;
     }
+  }
+
+  if (journeyStarted) {
+    if (distanceToNextKm != null && nextStationName) {
+      return `${Math.round(distanceToNextKm)} KM TO ${nextStationName}`;
+    }
+
+    const name = getStationName(currentStationCode, route);
+    if (name) {
+      return `ARRIVED AT ${name}`;
+    }
+
+    return "RUNNING";
   }
 
   return "NOT STARTED YET";
@@ -120,4 +189,3 @@ export function getNextStationSummary(
     distanceToNextKm,
   };
 }
-

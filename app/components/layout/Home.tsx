@@ -75,6 +75,7 @@ export default function Home() {
   const liveJourneyDate = data?.liveData?.journeyDate ?? null;
   useEffect(() => {
     if (liveJourneyDate && !hasUserChangedDate) {
+      setJourneyDate(liveJourneyDate);
       saveJourneyDate(liveJourneyDate);
     }
   }, [liveJourneyDate, hasUserChangedDate]);
