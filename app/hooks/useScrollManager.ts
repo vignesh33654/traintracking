@@ -16,6 +16,10 @@ import {
   isTrainRunningStatus,
   calculateScrollTopForTrainPosition,
 } from "../utils/train-auto-scroll";
+import {
+  cancelSmoothWindowScroll,
+  smoothWindowScrollTo,
+} from "../utils/smooth-window-scroll";
 import { calculateInitialScrollTop } from "../utils/circular-rotator-calculations";
 import { calculateTrainPillIndex } from "../utils/train-position-utils";
 import { calculatePillProgress } from "../utils/train-scroll-calculator";
@@ -225,7 +229,7 @@ export function useScrollManager({
       totalScrollHeight,
     });
 
-    window.scrollTo({ top: scrollTop, behavior: "smooth" });
+    smoothWindowScrollTo(scrollTop, 1000);
   }, [
     distanceFromOriginKm,
     currentStationSequence,
@@ -261,10 +265,7 @@ export function useScrollManager({
       );
 
       isScrollingRef.current = true;
-      window.scrollTo({
-        top: targetScrollTop,
-        behavior: "smooth",
-      });
+      smoothWindowScrollTo(targetScrollTop, 750);
 
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
@@ -324,6 +325,7 @@ export function useScrollManager({
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
+      cancelSmoothWindowScroll();
     };
   }, []);
 

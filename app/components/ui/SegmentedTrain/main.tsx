@@ -206,6 +206,9 @@ export function SegmentedTrain({
               <StatusDot
                 journeyDate={journeyDate}
                 distanceFromOriginKm={distanceFromOriginKm}
+                currentStationCode={currentStationCode}
+                currentSequence={currentSequence}
+                route={route}
               />
             </div>
           </div>

@@ -74,11 +74,11 @@ export default function Home() {
   // Sync journey date with API's live date (unless user manually changed it)
   const liveJourneyDate = data?.liveData?.journeyDate ?? null;
   useEffect(() => {
-    if (liveJourneyDate && !hasUserChangedDate) {
-      setJourneyDate(liveJourneyDate);
+    if (liveJourneyDate && !hasUserChangedDate && liveJourneyDate !== journeyDate) {
+      queueMicrotask(() => setJourneyDate(liveJourneyDate));
       saveJourneyDate(liveJourneyDate);
     }
-  }, [liveJourneyDate, hasUserChangedDate]);
+  }, [liveJourneyDate, hasUserChangedDate, journeyDate]);
 
   useEffect(() => {
     if (pendingTooltipRef.current && !isFetching && data) {
@@ -183,15 +183,20 @@ export default function Home() {
     );
   }
 
+  const currentStationCode =
+    data?.liveData?.currentLocation?.stationCode ?? null;
+  const currentRouteStation = data?.route?.find(
+    (station) => station.stationCode === currentStationCode,
+  );
   const distanceFromOriginKm =
-    data?.liveData?.currentLocation?.distanceFromOriginKm ?? null;
+    data?.liveData?.currentLocation?.distanceFromOriginKm ??
+    currentRouteStation?.distanceFromSourceKm ??
+    null;
   const currentLocationStatus = data?.liveData?.currentLocation?.status ?? null;
   const currentStationSequence =
     data?.liveData?.currentLocation?.sequence ?? null;
   const distanceFromLastStationKm =
     data?.liveData?.currentLocation?.distanceFromLastStationKm ?? null;
-  const currentStationCode =
-    data?.liveData?.currentLocation?.stationCode ?? null;
   const lastUpdatedAt = data?.liveData?.lastUpdatedAt ?? null;
   const destinationStationCode = data?.train?.destinationStationCode;
   const currentStationDelayMinutes =

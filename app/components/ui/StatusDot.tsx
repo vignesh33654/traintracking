@@ -1,16 +1,42 @@
 import { cn } from "@/app/utils/utils";
 import { isToday } from "@/app/utils/todaydate";
+import type { RouteStation } from "@/app/types/train.types";
 
 export interface StatusDotProps {
   journeyDate?: string | null;
   distanceFromOriginKm?: number | null;
+  currentStationCode?: string | null;
+  currentSequence?: number | null;
+  route?: RouteStation[];
   size?: "sm" | "md";
   className?: string;
 }
 
+function hasJourneyStarted(
+  distanceFromOriginKm?: number | null,
+  currentStationCode?: string | null,
+  currentSequence?: number | null,
+  route?: RouteStation[]
+): boolean {
+  if (distanceFromOriginKm != null && distanceFromOriginKm > 0) return true;
+  if (!route || route.length === 0) return false;
+
+  const firstStation = route[0];
+  if (currentSequence != null && currentSequence > firstStation.sequence) {
+    return true;
+  }
+
+  return Boolean(
+    currentStationCode && currentStationCode !== firstStation.stationCode
+  );
+}
+
 function getStatusColor(
   journeyDate?: string | null,
-  distanceFromOriginKm?: number | null
+  distanceFromOriginKm?: number | null,
+  currentStationCode?: string | null,
+  currentSequence?: number | null,
+  route?: RouteStation[]
 ): { color: string; animate: boolean } {
   // If no journey date, default to gray
   if (!journeyDate) {
@@ -21,9 +47,15 @@ function getStatusColor(
 
   // If journey is today
   if (isTodayDate) {
-    
-    // Train is running (distance > 0) = green with animation
-    if (distanceFromOriginKm && distanceFromOriginKm > 0) {
+    // Train is running = green with animation
+    if (
+      hasJourneyStarted(
+        distanceFromOriginKm,
+        currentStationCode,
+        currentSequence,
+        route
+      )
+    ) {
       return { color: "bg-green", animate: true };
     }
     // Train not started (distance = 0) = red
@@ -37,10 +69,19 @@ function getStatusColor(
 export function StatusDot({
   journeyDate,
   distanceFromOriginKm,
+  currentStationCode,
+  currentSequence,
+  route,
   size = "sm",
   className,
 }: StatusDotProps) {
-  const { color, animate } = getStatusColor(journeyDate, distanceFromOriginKm);
+  const { color, animate } = getStatusColor(
+    journeyDate,
+    distanceFromOriginKm,
+    currentStationCode,
+    currentSequence,
+    route
+  );
   const sizeClass = size === "sm" ? "size-1.5" : "size-2";
 
   return (

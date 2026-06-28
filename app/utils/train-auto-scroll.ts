@@ -59,8 +59,11 @@ interface AutoScrollParams {
 export function isTrainRunningStatus(
   status: CurrentLocation["status"] | null,
 ): boolean {
+  const normalizedStatus = status?.toUpperCase();
   return (
-    status === "AT_STATION" || status === "ARRIVED" || status === "DEPARTED"
+    normalizedStatus === "AT_STATION" ||
+    normalizedStatus === "ARRIVED" ||
+    normalizedStatus === "DEPARTED"
   );
 }
 
