@@ -74,11 +74,15 @@ export default function Home() {
   // Sync journey date with API's live date (unless user manually changed it)
   const liveJourneyDate = data?.liveData?.journeyDate ?? null;
   useEffect(() => {
-    if (liveJourneyDate && !hasUserChangedDate && liveJourneyDate !== journeyDate) {
-      queueMicrotask(() => setJourneyDate(liveJourneyDate));
+    if (liveJourneyDate && !hasUserChangedDate) {
+      queueMicrotask(() => {
+        setJourneyDate((currentDate) =>
+          currentDate === liveJourneyDate ? currentDate : liveJourneyDate,
+        );
+      });
       saveJourneyDate(liveJourneyDate);
     }
-  }, [liveJourneyDate, hasUserChangedDate, journeyDate]);
+  }, [liveJourneyDate, hasUserChangedDate]);
 
   useEffect(() => {
     if (pendingTooltipRef.current && !isFetching && data) {
