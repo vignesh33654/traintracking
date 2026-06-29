@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { SearchIcon, CrossIcon } from "../../../../../public/Icons";
 import { useSearchTrainLogic } from "../hooks/useSearchTrainLogic";
 import { useSearchTrainUI } from "../hooks/useSearchTrainUI";
 import type { SearchTrainProps } from "../types/types";
 
 const LISTBOX_ID = "train-search-listbox";
+const FOCUS_SCROLL_RESTORE_DELAYS_MS = [0, 50, 150, 300];
 
 export default function SearchTrain({
   onSelectTrain,
@@ -36,6 +37,27 @@ export default function SearchTrain({
     handleUIInputChange(e);
   };
 
+  const restoreScrollPositionAfterFocus = useCallback(() => {
+    const scrollY = window.scrollY;
+    const restoreScroll = () => window.scrollTo(0, scrollY);
+
+    requestAnimationFrame(restoreScroll);
+    FOCUS_SCROLL_RESTORE_DELAYS_MS.forEach((delay) => {
+      window.setTimeout(restoreScroll, delay);
+    });
+  }, []);
+
+  const handleInputPointerDown = useCallback(
+    (event: React.PointerEvent<HTMLInputElement>) => {
+      if (event.pointerType !== "touch") return;
+
+      event.preventDefault();
+      event.currentTarget.focus({ preventScroll: true });
+      restoreScrollPositionAfterFocus();
+    },
+    [restoreScrollPositionAfterFocus],
+  );
+
   const showClearIcon = inputValue && inputValue.length > 0;
 
   const containerClasses =
@@ -59,8 +81,9 @@ export default function SearchTrain({
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={handleFocus}
+          onPointerDown={handleInputPointerDown}
           placeholder="TRAIN NO OR NAME"
-          className="min-w-0 flex-1 bg-transparent font-b612-mono-11 font-b612-mobile-responsive text-text-primary placeholder:text-text-secondary focus:outline-none overflow-hidden"
+          className="safari-focus-safe-input min-w-0 flex-1 bg-transparent font-b612-mono-11 font-b612-mobile-responsive text-text-primary placeholder:text-text-secondary focus:outline-none overflow-hidden"
           style={{ WebkitUserSelect: "text" }}
           aria-label="Search trains"
           aria-expanded={isOpen}

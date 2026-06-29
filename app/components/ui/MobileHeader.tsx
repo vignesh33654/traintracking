@@ -10,10 +10,17 @@ export default function MobileHeader({ children }: MobileHeaderProps) {
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
   const headerRef = useRef<HTMLDivElement>(null);
+  const isFocusInsideHeaderRef = useRef(false);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+
+      if (isFocusInsideHeaderRef.current) {
+        setIsVisible(true);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
 
       // Show header when scrolling up or at top
       if (currentScrollY < lastScrollY.current || currentScrollY < 10) {
@@ -28,6 +35,30 @@ export default function MobileHeader({ children }: MobileHeaderProps) {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const handleFocusIn = () => {
+      isFocusInsideHeaderRef.current = true;
+      setIsVisible(true);
+    };
+
+    const handleFocusOut = () => {
+      window.setTimeout(() => {
+        isFocusInsideHeaderRef.current = header.contains(document.activeElement);
+      }, 0);
+    };
+
+    header.addEventListener("focusin", handleFocusIn);
+    header.addEventListener("focusout", handleFocusOut);
+
+    return () => {
+      header.removeEventListener("focusin", handleFocusIn);
+      header.removeEventListener("focusout", handleFocusOut);
+    };
   }, []);
 
   return (

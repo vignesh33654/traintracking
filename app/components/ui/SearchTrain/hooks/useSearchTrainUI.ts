@@ -76,7 +76,7 @@ export function useSearchTrainUI({
     setUserInputValue("");
     setIsOpen(false);
     setHighlightedIndex(-1);
-    inputRef.current?.focus();
+    inputRef.current?.focus({ preventScroll: true });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
